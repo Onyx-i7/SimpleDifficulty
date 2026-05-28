@@ -13,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.Fluid;
@@ -22,11 +21,34 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import javax.annotation.Nullable;
-
-import static net.minecraft.block.Block.REGISTRY;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ThirstUtilInternal implements IThirstUtil
 {
+	// Cached HashSet for river blocks lookup - O(1) instead of O(n) array iteration
+	private static final Set<String> RIVER_BLOCKS_SET = new HashSet<>();
+	static
+	{
+		RIVER_BLOCKS_SET.add("river/tile.water/-1/-2");
+		RIVER_BLOCKS_SET.add("river/tile.water/-1/2");
+		RIVER_BLOCKS_SET.add("river/tile.water/-2/-1");
+		RIVER_BLOCKS_SET.add("river/tile.water/-2/-2");
+		RIVER_BLOCKS_SET.add("river/tile.water/-2/0");
+		RIVER_BLOCKS_SET.add("river/tile.water/-2/1");
+		RIVER_BLOCKS_SET.add("river/tile.water/-2/2");
+		RIVER_BLOCKS_SET.add("river/tile.water/0/-2");
+		RIVER_BLOCKS_SET.add("river/tile.water/0/0");
+		RIVER_BLOCKS_SET.add("river/tile.water/0/2");
+		RIVER_BLOCKS_SET.add("river/tile.water/1/-2");
+		RIVER_BLOCKS_SET.add("river/tile.water/1/2");
+		RIVER_BLOCKS_SET.add("river/tile.water/2/-1");
+		RIVER_BLOCKS_SET.add("river/tile.water/2/-2");
+		RIVER_BLOCKS_SET.add("river/tile.water/2/0");
+		RIVER_BLOCKS_SET.add("river/tile.water/2/1");
+		RIVER_BLOCKS_SET.add("river/tile.water/2/2");
+	}
+	
 	//Returns an object based on what is being drunk
 	//Not API visible
 	@Nullable
@@ -103,7 +125,6 @@ public class ThirstUtilInternal implements IThirstUtil
 			return null;
 		
 		//Hit a block
-		//TODO is there a better way to do this?
 		Block traceBlock = player.getEntityWorld().getBlockState(trace.getBlockPos()).getBlock();
 		if(traceBlock == Blocks.WATER)
 		{
@@ -117,39 +138,17 @@ public class ThirstUtilInternal implements IThirstUtil
 		{
 			return new ThirstEnumBlockPos(ThirstEnum.SALT, trace.getBlockPos());
 		}
-		int i;
-		String x;
-		for (i = 0; i < riverBlocks.length; i++)
+		// Optimized lookup using HashSet instead of array iteration
+		String blockRegistryName = traceBlock.getRegistryName().toString();
+		if(RIVER_BLOCKS_SET.contains(blockRegistryName))
 		{
-			x = riverBlocks[i];
-			if (traceBlock == REGISTRY.getObject(new ResourceLocation("streams", x)))
-			{
-				return new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos());
-			}
+			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos());
 		}
 		
 		return null;
 	}
-
-	String[] riverBlocks = {
-		"river/tile.water/-1/-2",
-		"river/tile.water/-1/2",
-		"river/tile.water/-2/-1",
-		"river/tile.water/-2/-2",
-		"river/tile.water/-2/0",
-		"river/tile.water/-2/1",
-		"river/tile.water/-2/2",
-		"river/tile.water/0/-2",
-		"river/tile.water/0/0",
-		"river/tile.water/0/2",
-		"river/tile.water/1/-2",
-		"river/tile.water/1/2",
-		"river/tile.water/2/-1",
-		"river/tile.water/2/-2",
-		"river/tile.water/2/0",
-		"river/tile.water/2/1",
-		"river/tile.water/2/2"
-	};
+	
+	// Removed riverBlocks array - now using RIVER_BLOCKS_SET for O(1) lookups
 
 
 	@Override
@@ -163,18 +162,9 @@ public class ThirstUtilInternal implements IThirstUtil
 		if(capability.isThirsty())
 		{
 			capability.addThirstLevel(thirst);
-			
-			//In TAN, any drink with a hydration higher than 0.5f will be more beneficial to you if you drink it when you're not as thirsty
-			
-			//In this mod, there's no saturation advantageous time to drink anything
-			
-			
 			capability.addThirstSaturation(saturation);
 			
-			//Old
-			//capability.addThirstSaturation(Math.min(1.0f, saturation) * thirst);
-			
-			//Test for dirtiness >> water
+			//Test for dirtiness >> water (0.75f = dirty water chance)
 			if(dirtyChance == 0.75f && player.world.rand.nextFloat() < dirtyChance)
 			{
 				//Test for parasites
@@ -184,16 +174,15 @@ public class ThirstUtilInternal implements IThirstUtil
 				}
 			}
 
-			//Test for dirtiness >> salt water
-			if(dirtyChance == 1.0f) {
-				player.world.rand.nextFloat();
+			//Test for dirtiness >> salt water (1.0f = salt water)
+			if(dirtyChance == 1.0f)
+			{
 				player.addPotionEffect(new PotionEffect(SDPotions.thirsty, 600));
 			}
 		}
 		else
 		{
 			//Player isn't thirsty, so check if the saturation of the drink itself is more, and set to that
-			
 			if(capability.getThirstSaturation() < saturation)
 				capability.setThirstSaturation(saturation);
 		}
