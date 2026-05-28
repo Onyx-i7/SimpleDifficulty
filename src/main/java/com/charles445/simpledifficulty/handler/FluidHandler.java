@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FluidHandler {
@@ -79,15 +80,34 @@ public class FluidHandler {
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            for (int i = scheduledMixtures.size() - 1; i >= 0; i--)
+            // Use iterator to safely remove entries and prevent memory leaks
+            Iterator<Entry> iterator = scheduledMixtures.iterator();
+            while (iterator.hasNext())
             {
-                Entry entry = scheduledMixtures.get(i);
+                Entry entry = iterator.next();
                 entry.ticksExisted++;
-                if (entry.ticksExisted - i * MIX_TIME >= MIX_TIME + i * MIX_TIME)
+                
+                // Check if the world is still valid and loaded
+                if (entry.world == null || entry.pos == null)
+                {
+                    iterator.remove();
+                    continue;
+                }
+                
+                // Calculate threshold based on entry index to stagger processing
+                int threshold = MIX_TIME + scheduledMixtures.indexOf(entry) * MIX_TIME;
+                if (entry.ticksExisted >= threshold)
                 {
                     checkAndMixBlock(entry.pos, entry.world);
-                    scheduledMixtures.remove(i);
+                    iterator.remove();
                 }
+            }
+            
+            // Safety cleanup: remove old entries that have been in the list too long
+            // This prevents memory leaks if entries somehow don't get processed
+            if (scheduledMixtures.size() > 1000)
+            {
+                scheduledMixtures.subList(0, Math.min(100, scheduledMixtures.size() - 1000)).clear();
             }
         }
     }
