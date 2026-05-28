@@ -5,10 +5,10 @@
   "description": "Mod that adds temperature and thirst mechanics based on Tough As Nails",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://github.com/Onyx-i7/SimpleDifficulty",
   "updateUrl": "",
-  "authorList": ["Charles445"],
-  "credits": "",
+  "authorList": ["Charles445", "juraj-hrivnak", "Onyx-i7"],
+  "credits": "Original mod by Charles445. Underdog version by juraj-hrivnak. Optimization and maintenance by Onyx-i7.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
