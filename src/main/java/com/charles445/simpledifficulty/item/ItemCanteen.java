@@ -33,14 +33,21 @@ import java.util.List;
 
 public class ItemCanteen extends ItemDrinkBase implements IItemCanteen
 {
-	//TODO This code is terrible and can't be interfaced with
-	
 	public static final String CANTEENTYPE = "CanteenType";
 	public static final String DOSES = "Doses";
 	
+	// Cached NBTTagInt instances for common values to reduce object creation
+	private static final NBTTagInt[] CACHED_TYPE_TAGS = new NBTTagInt[ThirstEnum.values().length];
+	static
+	{
+		for(int i = 0; i < ThirstEnum.values().length; i++)
+		{
+			CACHED_TYPE_TAGS[i] = new NBTTagInt(i);
+		}
+	}
+	
 	public ItemCanteen()
 	{
-		//Doesn't super the constructor
 		setMaxStackSize(1);
 	}
 	
@@ -89,11 +96,12 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen
 		ItemStack stack = player.getHeldItem(hand);
 		
 		//Initializes if it hasn't been initialized already
-		int typetag = getTypeTag(stack).getInt();
+		// Cache the type tag to avoid multiple NBT reads
+		NBTTagInt typeTag = getTypeTag(stack);
+		int typetag = typeTag.getInt();
 		
 		//Only attempt refill if item isn't full or if it isn't normal water
 		//This prevents full purified canteens from getting overridden and removing purified water from the ground mistakenly
-		//TODO not this weird implementation that doesn't make much sense
 		if(!isCanteenFull(stack) || typetag==ThirstEnum.NORMAL.ordinal())
 		{
 			ThirstEnumBlockPos traceBlockPos = ThirstUtil.traceWater(player);
@@ -122,11 +130,9 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen
 			if(capability.isThirsty() || !QuickConfig.isThirstEnabled())
 			{
 				player.setActiveHand(hand);
-				//DebugUtil.messageAll("itemdamage is not maxdamage ActionResult SUCCESS");
 				return new ActionResult(EnumActionResult.SUCCESS, stack);
 			}
 		}
-		//DebugUtil.messageAll("ActionResult FAIL");
 		return new ActionResult(EnumActionResult.FAIL, stack);
 	}
 	
@@ -253,7 +259,15 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen
 	
 	protected void setTypeTag(ItemStack stack, int tag)
 	{
-		stack.setTagInfo(CANTEENTYPE, new NBTTagInt(tag));
+		// Use cached tag if available to reduce object creation
+		if(tag >= 0 && tag < CACHED_TYPE_TAGS.length)
+		{
+			stack.setTagInfo(CANTEENTYPE, CACHED_TYPE_TAGS[tag]);
+		}
+		else
+		{
+			stack.setTagInfo(CANTEENTYPE, new NBTTagInt(tag));
+		}
 	}
 	
 	protected void createTypeTag(ItemStack stack)
