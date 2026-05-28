@@ -41,9 +41,8 @@ import java.util.List;
 
 public class ThirstHandler
 {
-	//
-	// Drink Attempt Events
-	//
+	// Cached registry name strings to avoid repeated allocations
+	private static final String MC_DOMAIN = "minecraft";
 	
 	private final boolean harvestcraftLoaded = Loader.isModLoaded(ModNames.HARVESTCRAFT);
 	
@@ -89,8 +88,8 @@ public class ThirstHandler
 				{
 					String modDomain = potionType.getRegistryName().getNamespace();
 					
-					//Vanilla potions
-					if(modDomain.equals("minecraft"))
+					//Vanilla potions - use cached MC_DOMAIN string
+					if(modDomain.equals(MC_DOMAIN))
 					{
 						if(potionType.equals(PotionTypes.WATER) || potionType.equals(PotionTypes.AWKWARD) || potionType.equals(PotionTypes.MUNDANE) || potionType.equals(PotionTypes.THICK))
 						{
