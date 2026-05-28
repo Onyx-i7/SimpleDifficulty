@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -185,32 +186,35 @@ public class TemperatureCapability implements ITemperatureCapability
 			}
 		}
 
-		//I hope this isn't an expensive or leaky operation
-		//There's probably a better way to do this, but I'm worried about concurrency, as always
-		Map<String, TemporaryModifier> tweaks = new HashMap<String, TemporaryModifier>();
-
-		int modifierSize = temporaryModifiers.size();
-
-		for(Map.Entry<String, TemporaryModifier> entry : temporaryModifiers.entrySet())
+		//Process temporary modifiers with reduced allocation
+		//Decrement duration and remove expired modifiers
+		int activeModifierCount = 0;
+		
+		// Use iterator to avoid ConcurrentModificationException when removing
+		Iterator<Map.Entry<String, TemporaryModifier>> iterator = temporaryModifiers.entrySet().iterator();
+		while(iterator.hasNext())
 		{
+			Map.Entry<String, TemporaryModifier> entry = iterator.next();
 			TemporaryModifier tm = entry.getValue();
-
+			
 			if(tm.duration > 0)
 			{
-				tweaks.put(entry.getKey(), new TemporaryModifier(tm.temperature, tm.duration - 1));
+				tm.duration--;
+				activeModifierCount++;
+			}
+			else
+			{
+				// Remove expired modifier
+				iterator.remove();
 			}
 		}
-
-		temporaryModifiers.clear();
-		temporaryModifiers.putAll(tweaks);
-		tweaks.clear();
-
-		if(oldmodifiersize != temporaryModifiers.size())
+		
+		if(oldmodifiersize != activeModifierCount)
 		{
 			this.manualDirty = true;
 		}
-
-		oldmodifiersize = temporaryModifiers.size();
+		
+		oldmodifiersize = activeModifierCount;
 	}
 
 	private void debugRoutine(EntityPlayer player, World world)
