@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.12.2-green.svg)](https://minecraft.net)
 [![Forge Version](https://img.shields.io/badge/Forge-14.23.5.2847-red.svg)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.7.1-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Version](https://img.shields.io/badge/Version-0.7.2-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 
 This is a fork of SimpleDifficulty for Underdog. You can find the SimpleDifficulty for Underdog at this link: https://github.com/juraj-hrivnak/SimpleDifficulty
 
@@ -12,6 +12,19 @@ This is a fork of SimpleDifficulty for Underdog. You can find the SimpleDifficul
 The SimpleDifficulty mod adds a **temperature and thirst system to Minecraft**. This system is like the one in the Tough as Nails mod. This version of SimpleDifficulty is still being worked on. Has some new features. It also works better with mods and runs more smoothly.
 
 > Note: Some of the pictures in the game may not be final. We want you to test the game and give us your thoughts. If you have ideas for the API we would love to hear them.
+
+---
+
+## What is New (v0.7.2)
+
+### Bug Fixes
+* **Canteen System**: Fixed issues from previous forks where canteens had inconsistent durability and thirst replenishment. Purified water now correctly consumes the source block and provides the right hydration levels.
+* **Bottle Interactions**: Empty bottles now correctly detect the specific water type (Salt, Normal, or Spring) instead of defaulting to vanilla water.
+* **Smelting Logic**: Fixed a bug where spring water bottles would downgrade to normal water when smelted.
+* **Recipe Cleanup**: Removed confusing or broken shapeless recipes for canteens and filters that produced incorrect results.
+
+### New Features
+* **The Betweenlands Compatibility**: Full integration with The Betweenlands mod. Includes support for Clean Water (new thirst type), Swamp Water (with 85% dirty chance), and dimension-specific temperature modifiers (-3).
 
 ---
 
@@ -84,6 +97,7 @@ This mod works with these mods:
 - Streams
 - Greenery
 - Dynamic Trees
+- **The Betweenlands** (Added in 0.7.2)
 
 ### Additional Compatibility
 - Cave Generator
