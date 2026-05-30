@@ -35,6 +35,7 @@ public class CompatController
 		Object auwDynamicModifier = newCompatObject(ModNames.AUW, compatMod + "AUWDynamicModifier");
 		Object auwModifier = newCompatObject(ModNames.AUW, compatMod + "AUWModifier");
 		Object baublesModifier = newCompatObject(ModNames.BAUBLES, compatMod + "BaublesModifier");
+		Object betweenlandsHandler = newCompatObject(ModNames.BETWEENLANDS, compatMod + "BetweenlandsHandler");
 		Object firstAidCompat = newCompatObject(ModNames.FIRSTAID, compatMod + "FirstAidCompat");
 		Object harvestFestivalModifier = newCompatObject(ModNames.HARVESTFESTIVAL, compatMod + "HarvestFestivalModifier");
 		Object inspirationsHandler = newCompatObject(ModNames.INSPIRATIONS, compatMod + "InspirationsHandler");
@@ -53,6 +54,11 @@ public class CompatController
 		{
 			SimpleDifficulty.logger.info("Baubles Modifier Enabled");
 			TemperatureRegistry.registerModifier((ITemperatureModifier)baublesModifier);
+		}
+		
+		if(betweenlandsHandler != null)
+		{
+			SimpleDifficulty.logger.info("The Betweenlands Handler Enabled");
 		}
 		
 		if(harvestFestivalModifier instanceof ITemperatureModifier)

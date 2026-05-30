@@ -14,6 +14,10 @@ public class ConfigServerCompatibility
 	@Config.Name("Armor Underwear")
 	public final ConfigArmorUnderwear auw = new ConfigArmorUnderwear();
 	
+	@Config.Comment("Betweenlands Configurations")
+	@Config.Name("The Betweenlands")
+	public final ConfigBetweenlands betweenlands = new ConfigBetweenlands();
+	
 	@Config.Comment("Harvest Festival Configurations")
 	@Config.Name("Harvest Festival")
 	public final ConfigHarvestFestival harvestfestival = new ConfigHarvestFestival();
@@ -31,6 +35,10 @@ public class ConfigServerCompatibility
 		@Config.Comment("Enable Baubles - Built-In Compatibility")
 		@Config.Name("EnableBaubles")
 		public boolean baubles = true;
+		
+		@Config.Comment("Enable The Betweenlands - Built-In Compatibility")
+		@Config.Name("EnableBetweenlands")
+		public boolean betweenlands = true;
 		
 		@Config.Comment("Enable Harvest Festival - Built-In Compatibility")
 		@Config.Name("EnableHarvestFestival")
@@ -164,5 +172,24 @@ public class ConfigServerCompatibility
 		@Config.Name("SeasonLateAutumn")
 		@Config.RangeInt
 		public int seasonLateAutumn = -3;
+	}
+	
+	public class ConfigBetweenlands
+	{
+		//The Betweenlands
+		
+		@Config.Comment("Dimension Temperature - Temperature modifier for The Betweenlands dimension (negative = cooler)")
+		@Config.Name("DimensionTemperature")
+		@Config.RangeInt
+		public int dimensionTemperature = -3;
+		
+		@Config.Comment("Enable Clean Water - Allow Clean Water from Betweenlands to be drinkable")
+		@Config.Name("EnableCleanWater")
+		public boolean enableCleanWater = true;
+		
+		@Config.Comment("Swamp Water Dirty Chance - Chance that drinking swamp water will make you thirsty (0.0-1.0)")
+		@Config.Name("SwampWaterDirtyChance")
+		@Config.RangeDouble(min=0.0, max=1.0)
+		public double swampWaterDirtyChance = 0.85;
 	}
 }

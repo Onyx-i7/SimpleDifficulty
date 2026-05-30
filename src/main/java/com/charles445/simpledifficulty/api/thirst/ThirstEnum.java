@@ -6,7 +6,8 @@ public enum ThirstEnum
 	SALT	("salt",		-1,	-0.3f, 	1.00f),
 	RAIN	("rain",		1,	0.05f,	0.0f),
 	POTION	("potion",		2,	0.2f,	0.0f),
-	PURIFIED("purified",	3,	0.3f,	0.75f);
+	PURIFIED("purified",	3,	0.3f,	0.75f),
+	CLEAN	("clean",		4,	0.4f,	0.0f);
 	
 	private final String name;
 	private final int thirst;

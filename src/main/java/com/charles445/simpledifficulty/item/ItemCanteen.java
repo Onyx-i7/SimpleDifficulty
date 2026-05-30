@@ -100,28 +100,80 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen
 		NBTTagInt typeTag = getTypeTag(stack);
 		int typetag = typeTag.getInt();
 		
-		//Only attempt refill if item isn't full or if it isn't normal water
-		//This prevents full purified canteens from getting overridden and removing purified water from the ground mistakenly
+		//Only attempt refill if item isn't full or if it isn't normal/purified/salt water
+		//This prevents full canteens from getting overridden incorrectly
 		if(!isCanteenFull(stack) || typetag==ThirstEnum.NORMAL.ordinal())
 		{
 			ThirstEnumBlockPos traceBlockPos = ThirstUtil.traceWater(player);
 			if(traceBlockPos != null)
 			{
 				ThirstEnum trace = traceBlockPos.thirstEnum;
-				//Clear out any purified block that got found
+				
+				//Handle different water types correctly
 				if(trace==ThirstEnum.PURIFIED)
-					player.world.setBlockToAir(traceBlockPos.pos);
-				
-				//Convert Rain to Normal
-				if(trace==ThirstEnum.RAIN)
-					trace = ThirstEnum.NORMAL;
-				
-				tryAddDose(stack,trace);
-				SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
-				player.setActiveHand(hand);
-				player.swingArm(hand);
-				player.stopActiveHand();
-				return new ActionResult(EnumActionResult.SUCCESS, stack);
+				{
+					//Purified water: consume block, add 1 dose, don't give thirst effect
+					if(ServerConfig.instance.getBoolean(ServerOptions.INFINITE_PURIFIED_WATER) || player.world.setBlockToAir(traceBlockPos.pos))
+					{
+						tryAddDose(stack, ThirstEnum.PURIFIED);
+						SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
+						player.setActiveHand(hand);
+						player.swingArm(hand);
+						player.stopActiveHand();
+						return new ActionResult(EnumActionResult.SUCCESS, stack);
+					}
+				}
+				else if(trace==ThirstEnum.SALT)
+				{
+					//Salt water: don't consume block, add 1 dose, will give thirst effect when drunk
+					tryAddDose(stack, ThirstEnum.SALT);
+					SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
+					player.setActiveHand(hand);
+					player.swingArm(hand);
+					player.stopActiveHand();
+					return new ActionResult(EnumActionResult.SUCCESS, stack);
+				}
+				else if(trace==ThirstEnum.NORMAL)
+				{
+					//Normal water: don't consume block, add only 1 dose (not fill completely), no thirst effect
+					if(ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
+					{
+						//Add only 1 dose instead of filling completely
+						if(!isCanteenFull(stack))
+						{
+							formatCanteen(stack, ThirstEnum.NORMAL);
+							setDosesInternal(stack, Math.min(getDoses(stack) + 1, getMaxDoses(stack)));
+							SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
+							player.setActiveHand(hand);
+							player.swingArm(hand);
+							player.stopActiveHand();
+							return new ActionResult(EnumActionResult.SUCCESS, stack);
+						}
+					}
+				}
+				else if(trace==ThirstEnum.RAIN)
+				{
+					//Rain: convert to normal, add 1 dose
+					if(ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_RAIN))
+					{
+						tryAddDose(stack, ThirstEnum.NORMAL);
+						SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
+						player.setActiveHand(hand);
+						player.swingArm(hand);
+						player.stopActiveHand();
+						return new ActionResult(EnumActionResult.SUCCESS, stack);
+					}
+				}
+				else if(trace==ThirstEnum.CLEAN)
+				{
+					//Clean water (Betweenlands): don't consume block, add 1 dose, no thirst effect
+					tryAddDose(stack, ThirstEnum.CLEAN);
+					SoundUtil.commonPlayPlayerSound(player, SoundEvents.ITEM_BUCKET_FILL);
+					player.setActiveHand(hand);
+					player.swingArm(hand);
+					player.stopActiveHand();
+					return new ActionResult(EnumActionResult.SUCCESS, stack);
+				}
 			}
 		}
 		if(!isCanteenEmpty(stack))
