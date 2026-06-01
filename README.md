@@ -2,102 +2,78 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.12.2-green.svg)](https://minecraft.net)
-[![Forge Version](https://img.shields.io/badge/Forge-14.23.5.2847-red.svg)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.7.2-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Forge Version](https://img.shields.io/badge/Forge-14.23.5.2838-red.svg)](https://files.minecraftforge.net/)
+[![Version](https://img.shields.io/badge/Version-0.7.3-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 
-This is a fork of SimpleDifficulty for Underdog. You can find the SimpleDifficulty for Underdog at this link: https://github.com/juraj-hrivnak/SimpleDifficulty
+This is a performance-focused fork of SimpleDifficulty for Underdog. You can find the original Underdog fork here: https://github.com/juraj-hrivnak/SimpleDifficulty
 
 ## Overview
 
-The SimpleDifficulty mod adds a **temperature and thirst system to Minecraft**. This system is like the one in the Tough as Nails mod. This version of SimpleDifficulty is still being worked on. Has some new features. It also works better with mods and runs more smoothly.
+The SimpleDifficulty mod introduces a **temperature and thirst system to Minecraft 1.12.2**, building upon the core mechanics of legacy survival mods. This maintained fork focuses on bug fixes, expanding mod compatibility, and applying technical optimizations to ensure smooth gameplay in large modpacks.
 
-> Note: Some of the pictures in the game may not be final. We want you to test the game and give us your thoughts. If you have ideas for the API we would love to hear them.
+> **Note**: Feedback and technical suggestions are always welcome. If you have feature requests or ideas for the API, please open an issue in the repository tracking system.
 
 ---
 
-## What is New (v0.7.2)
+## What Is New (v0.7.3)
 
-### Bug Fixes
-* **Canteen System**: Fixed issues from previous forks where canteens had inconsistent durability and thirst replenishment. Purified water now correctly consumes the source block and provides the right hydration levels.
-* **Bottle Interactions**: Empty bottles now correctly detect the specific water type (Salt, Normal, or Spring) instead of defaulting to vanilla water.
-* **Smelting Logic**: Fixed a bug where spring water bottles would downgrade to normal water when smelted.
-* **Recipe Cleanup**: Removed confusing or broken shapeless recipes for canteens and filters that produced incorrect results.
+This minor update introduces official Spanish localization and improves compatibility with environmental weather modification mods.
 
-### New Features
-* **The Betweenlands Compatibility**: Full integration with The Betweenlands mod. Includes support for Clean Water (new thirst type), Swamp Water (with 85% dirty chance), and dimension-specific temperature modifiers (-3).
+### Added
+* **Localization Support**: Added full translation files for **Spanish (Spain) [`es_es`]** and **Spanish (Mexico) [`es_mx`]**
+
+### Fixed
+* **Rain Collector Compatibility**: Fixed an issue where Rain Collectors would fail to gather water during storms when running weather mods like *Weather2 Remastered*.
+  * *Technical Change*: Updated the environmental check from `isRainingAt(pos.up())` to `isRaining() && canSeeSky(pos.up())` to properly account for modified or custom storm behaviors that bypass standard biome rain checks.
+
 
 ---
 
 ## Features
 
-### Core Mechanics by [juraj-hrivnak](https://github.com/juraj-hrivnak)
-- The thirst system forces players to drink water to survive
-- The temperature system affects players' mood and health
-- There are different types of water:
-  * Regular water is like the water in the standard Minecraft game
-  * Saltwater increases players' thirst
-  * Purified water is clean and safe to drink
+### Core Mechanics
+* **Thirst System**: Requires players to manage hydration levels to avoid negative status effects.
+* **Temperature Dynamics**: Environmental biomes, blocks, and armor affect the player's temperature.
+* **Water Variants**: 
+  * *Regular Water*: Standard hydration source.
+  * *Saltwater*: Increases dehydration rates if consumed.
+  * *Purified Water*: Safe, clean hydration with optimal saturation values.
 
-### Improved Water System by [juraj-hrivnak](https://github.com/juraj-hrivnak)
-- Saltwater and normal water have been added
-- The appearance of water varies depending on the different areas of the game
-- Players can adjust the brightness or darkness of the water
-- The fog over the water looks nicer and varies in each area
-- The game manages the mix of saltwater and freshwater more intelligently
-- Ice blocks have been added that players can melt or freeze
-- The game can generate ice formations in the world
-- The game is compatible with the Serene Seasons mod for ice
-- It is also compatible with the Dynamic Trees mod for water blocks
-- It is compatible with the Fluidlogged API
+### Refined Water & Item Systems
+* **Canteen Overhaul**: Corrected durability logic and thirst replenishment scaling. Purified water consumption accurately updates items and sources.
+* **Bottle Interactions**: Empty bottles dynamically detect specific environmental fluid types (Salt, Normal, or Spring water) rather than defaulting exclusively to vanilla water blocks.
+* **Consistent Smelting**: Corrected cooking logic to prevent special fluid containers (like spring water bottles) from downgrading back to standard variants during processing.
+* **Recipe Sanitization**: Removed redundant or broken shapeless recipes for canteens and filters to prevent crafting conflicts.
+* **Visual Adjustments**: Fluid color rendering adapts organically based on biome locations, featuring customized depth fog settings.
+* **Ice Mechanics**: Generates natural ice structures in applicable environments. Fully compatible with freeze/melt block states.
 
 ---
 
-## Performance Optimizations
-This version of SimpleDifficulty has some big improvements:
+## Technical Optimizations
 
-### Memory Leak Fixes
-- An issue that was consuming a lot of memory has been resolved
-- I've optimized the temperature system so it uses less memory
+Designed specifically to reduce server overhead and client-side stuttering:
 
-### Lag Reduction
-- The game has been optimized to run faster when players drink from a canteen
-- The game has been optimized to run faster when searching for water blocks
-- The game has been optimized to run faster when calculating thirst
-- Some debug code that was slowing down the game has been removed
+### Memory Management
+* **Leak Resolution**: Identified and closed outstanding memory leaks related to positional world tracking.
+* **Data Footprint**: Streamlined internal telemetry storage inside the core temperature subsystem to lower global memory usage.
 
-### General Improvements
-- The load on the garbage collector has been reduced
-- The game now exits before certain loops to save time
-- Some data has been stored in a way that makes it easier to access
+### Processing Efficiency
+* **Execution Gates**: Implemented early-exit logic across major processing loops, reducing unnecessary tick evaluations when specific tracking systems are inactive.
+* **Subsystem Tuning**: Optimized calculations for environmental water-block scanning, canteen consumption actions, and tick-by-tick thirst calculations.
+* **Garbage Collection**: Lowered raw object instantiation rates during standard gameplay loops to reduce overhead on the Java Garbage Collector.
 
 ---
 
-## Compatibility
+## Mod Integrations
 
-This mod works with these mods:
+This fork includes dedicated integration logic for various prominent mods:
 
-### Supported
-- Animania
-- Armor Underwear
-- Biomes O' Plenty
-- DynamicSurroundings
-- EnhancedVisuals
-- First Aid
-- Harvest Festival Legacy
-- Lycanites Mobs
-- Ore Excavation
-- Pams HarvestCraft
-- Potion Core
-- Pyrotech
-- Realistic Torches
-- Rustic
-- Serene Seasons
-- Simple Camp Fire
-- Tinkers Construct
-- Streams
-- Greenery
-- Dynamic Trees
-- **The Betweenlands** (Added in 0.7.2)
+* **The Betweenlands**: Full environmental support including dedicated *Clean Water* hydration tracking, *Swamp Water* processing (featuring a default 85% contamination probability), and dimension-specific temperature baselines (-3 modifier).
+* **Serene Seasons**: Natural progression of seasons directly dictates seasonal ice generation and ambient temperature curves.
+* **Fluidlogged API & Dynamic Trees**: Proper handling of fluid logging variables and custom environmental water blocks.
+
+### Fully Supported Mods List
+* Animania, Armor Underwear, Baubles, Biomes O' Plenty, Cave Generator, DynamicSurroundings, EnhancedVisuals, First Aid, Fluidlogged API, Greenery, Harvest Festival Legacy, Inspirations, Lycanites Mobs, Ore Excavation, Pams HarvestCraft, Potion Core, Pyrotech, Realistic Torches, Rustic, Serene Seasons, Simple Camp Fire, Streams, Tinkers Construct, The Betweenlands
 
 ### Additional Compatibility
 - Cave Generator
@@ -109,21 +85,11 @@ This mod works with these mods:
 
 ---
 
-## Configuration
-Players can change things in the game:
-- How fast players get thirsty
-- What players can drink
-- How temperature affects players
-- How mods work together
-- How water behaves
-
----
-
 ## Installation
-1. Get Minecraft 1.12.2 and Forge 14.23.5.2847 or higher
-2. Download the SimpleDifficulty jar file
-3. Put the jar in your mods folder
-4. Start the game. Have fun
+
+1. Ensure your instance is running **Minecraft 1.12.2** with **Forge 14.23.5.2838** or higher
+2. Drop the downloaded `SimpleDifficulty` `.jar` file into your local `mods` folder
+3. Launch the application to generate standard configuration templates
 
 ---
 
@@ -157,22 +123,12 @@ The built jars will be in the build/libs folder.
 
 ---
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
----
-
-## Credits
-
-### Authors
-- Charles445 created the original version of SimpleDifficulty
-- juraj-hrivnak created the Underdog fork
-- I created this fork and improved its performance
-
-### Contributors (Original version of SimpleDifficulty)
-- CreativeMD and fonnymunkey contributed to EnhancedVisuals
-- ichttt contributed to First Aid
+## License & Credits
+### License: Distributed under the permissive MIT License.
+### Authors:
+- Charles445: Created the original version of SimpleDifficulty
+- juraj-hrivnak: Created the Underdog fork
+- Onyx_i7: Maintained current development branch, optimizations, and modern fork compatibility
 
 ---
 
