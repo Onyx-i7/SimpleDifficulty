@@ -26,7 +26,7 @@ public class SimpleDifficulty
 {
 	public static final String MODID = "simpledifficulty";
 	public static final String NAME = "SimpleDifficulty";
-	public static final String VERSION = "0.7.2";
+	public static final String VERSION = "0.7.3";
 	
 	@Mod.Instance(SimpleDifficulty.MODID)
 	public static SimpleDifficulty instance;

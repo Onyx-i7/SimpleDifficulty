@@ -10,7 +10,7 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 
 
-version = "1.12.2-0.7.2"
+version = "1.12.2-0.7.3"
 group = "com.charles445.simpledifficulty" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SimpleDifficulty"
 

@@ -2,6 +2,7 @@
 .gradle/*
 .settings/*
 .idea/*
+.vscode/*
 bin/*
 build/*
 eclipse/*
