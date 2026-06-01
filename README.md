@@ -17,14 +17,8 @@ The SimpleDifficulty mod introduces a **temperature and thirst system to Minecra
 
 ## What Is New (v0.7.3)
 
-This minor update introduces official Spanish localization and improves compatibility with environmental weather modification mods.
-
-### Added
-* **Localization Support**: Added full translation files for **Spanish (Spain) [`es_es`]** and **Spanish (Mexico) [`es_mx`]**
-
-### Fixed
-* **Rain Collector Compatibility**: Fixed an issue where Rain Collectors would fail to gather water during storms when running weather mods like *Weather2 Remastered*.
-  * *Technical Change*: Updated the environmental check from `isRainingAt(pos.up())` to `isRaining() && canSeeSky(pos.up())` to properly account for modified or custom storm behaviors that bypass standard biome rain checks.
+* **Localization**: Full support for Spanish (Spain) and Spanish (Mexico).
+* **Weather2 Remastered Integration**: Re-engineered Rain Collectors using `isRaining() && canSeeSky(pos.up())` to ensure proper water collection during custom storm states, resolving legacy bugs from the original mod.
 
 
 ---
