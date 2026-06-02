@@ -69,6 +69,9 @@ This fork includes dedicated integration logic for various prominent mods:
 ### Fully Supported Mods List
 * Animania, Armor Underwear, Baubles, Biomes O' Plenty, Cave Generator, DynamicSurroundings, EnhancedVisuals, First Aid, Fluidlogged API, Greenery, Harvest Festival Legacy, Inspirations, Lycanites Mobs, Ore Excavation, Pams HarvestCraft, Potion Core, Pyrotech, Realistic Torches, Rustic, Serene Seasons, Simple Camp Fire, Streams, Tinkers Construct, The Betweenlands
 
+### Partial Compatibility Mods List
+* WeatherMod, Weather2 Remastered
+
 ### Additional Compatibility
 - Cave Generator
 - Fluidlogged API
