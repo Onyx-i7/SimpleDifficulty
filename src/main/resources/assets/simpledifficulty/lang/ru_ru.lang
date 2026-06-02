@@ -1,84 +1,107 @@
 death.attack.dehydration=%1$s умер от обезвоживания
 death.attack.hyperthermia=%1$s умер от перегрева
-death.attack.hypothermia=%1$s умер от обморожения
+death.attack.hypothermia=%1$s умер от переохлаждения
 death.attack.parasites=%1$s умер от паразитов
 
-effect.cold_resist=Сопротивление холоду
-effect.heat_resist=Сопротивление теплу
-effect.hyperthermia=Перегрев
-effect.hypothermia=Обморожение
+effect.cold_resist=Устойчивость к холоду
+effect.heat_resist=Устойчивость к жаре
+effect.hyperthermia=Гипертермия
+effect.hypothermia=Гипотермия
 effect.parasites=Паразиты
 effect.thirsty=Жажда
 
 enchantment.chilling=Охлаждение
-enchantment.heating=Утепление
+enchantment.heating=Нагрев
 
 enchantment.simpledifficulty.chilling.desc=Снижает температуру игрока при ношении
 enchantment.simpledifficulty.heating.desc=Повышает температуру игрока при ношении
 
-fluid.purifiedwater=Очищенная вода
+fluid.purifiedwater=Обычная вода
+fluid.saltwater=Соленая вода
 
 itemGroup.tabSimpleDifficulty=SimpleDifficulty
 
-item.simpledifficulty:canteen_broken.name=Сломанный бурдюк
-item.simpledifficulty:canteen_empty.name=Пустой бурдюк
-item.simpledifficulty:canteen_normal.name=Бурдюк с водой
-item.simpledifficulty:canteen_purified.name=Бурдюк с очищенной водой
+item.simpledifficulty:canteen_broken.name=Сломанная фляга
+item.simpledifficulty:canteen_empty.name=Пустая фляга
+item.simpledifficulty:canteen_normal.name=Фляга с родниковой водой
+item.simpledifficulty:canteen_purified.name=Фляга с обычной водой
+item.simpledifficulty:canteen_salt.name=Фляга с соленой водой
 
 item.simpledifficulty:charcoal_filter.name=Угольный фильтр
 
-item.simpledifficulty:ice_chunk.name=Ледяной осколок
+item.simpledifficulty:ice_chunk.name=Кусок льда
 
 item.simpledifficulty:ice_helmet.name=Ледяной шлем
 item.simpledifficulty:ice_chestplate.name=Ледяной нагрудник
 item.simpledifficulty:ice_leggings.name=Ледяные поножи
-item.simpledifficulty:ice_boots.name=Ледяные ботинки
+item.simpledifficulty:ice_boots.name=Ледяные сапоги
 
 item.simpledifficulty:juice_apple.name=Яблочный сок
 item.simpledifficulty:juice_beetroot.name=Свекольный сок
-item.simpledifficulty:juice_cactus.name=Кактусовый сок
+item.simpledifficulty:juice_cactus.name=Сок кактуса
 item.simpledifficulty:juice_carrot.name=Морковный сок
-item.simpledifficulty:juice_chorus_fruit.name=Сок коруса
-item.simpledifficulty:juice_golden_melon.name=Сок сверкающего арбуза
-item.simpledifficulty:juice_golden_apple.name=Сок золотого яблока
-item.simpledifficulty:juice_golden_carrot.name=Сок золотой моркови
-item.simpledifficulty:juice_melon.name=Арбузный сок
-item.simpledifficulty:juice_pumpkin.name=Тыквенный сок
+item.simpledifficulty:juice_chorus_fruit.name=Сок из плодов хоруса
+item.simpledifficulty:juice_golden_melon.name=Сок из золотистой дыни
+item.simpledifficulty:juice_golden_apple.name=Сок из золотистого яблока
+item.simpledifficulty:juice_golden_carrot.name=Сок из золотистой моркови
+item.simpledifficulty:juice_melon.name=Сок дыни
+item.simpledifficulty:juice_pumpkin.name=Сок тыквы
 
-item.simpledifficulty:magma_chunk.name=Огненный осколок
+item.simpledifficulty:magma_chunk.name=Кусок магмы
 
-item.simpledifficulty:purified_water_bottle.name=Бутылка очищенной воды
+item.simpledifficulty:purified_water_bottle.name=Бутылка с обычной водой
+item.simpledifficulty:salt_water_bottle.name=Бутылка с соленой водой
 
 item.simpledifficulty:thermometer.name=Термометр
 
-item.simpledifficulty:wool_helmet.name=Шерстяная шапка
-item.simpledifficulty:wool_chestplate.name=Шерстяная шуба
-item.simpledifficulty:wool_leggings.name=Шерстяные штаны
-item.simpledifficulty:wool_boots.name=Шерстяные сапоги
+item.simpledifficulty:wool_helmet.name=Тканевый капюшон
+item.simpledifficulty:wool_chestplate.name=Тканевая куртка
+item.simpledifficulty:wool_leggings.name=Тканевые штаны
+item.simpledifficulty:wool_boots.name=Тканевая обувь
 
-lingering_potion.effect.cold_resist_type=Затяжное зелье сопротивления холоду
-lingering_potion.effect.long_cold_resist_type=Затяжное зелье сопротивления холоду
-lingering_potion.effect.heat_resist_type=Затяжное зелье сопротивления теплу
-lingering_potion.effect.long_heat_resist_type=Затяжное зелье сопротивления теплу
+lingering_potion.effect.cold_resist_type=Действующее зелье сопротивления холоду
+lingering_potion.effect.long_cold_resist_type=Действующее зелье сопротивления холоду
+lingering_potion.effect.heat_resist_type=Действующее зелье сопротивления жаре
+lingering_potion.effect. long_heat_resist_type=Действующее зелье сопротивления жаре
 
 potion.effect.cold_resist_type=Зелье сопротивления холоду
 potion.effect.long_cold_resist_type=Зелье сопротивления холоду
-potion.effect.heat_resist_type=Зелье сопротивления теплу
-potion.effect.long_heat_resist_type=Зелье сопротивления теплу
+potion.effect.heat_resist_type=Зелье сопротивления жаре
+potion.effect.long_heat_resist_type=Зелье сопротивления жаре
 
-splash_potion.effect.cold_resist_type=Взрывное зелье сопротивления холоду
-splash_potion.effect.long_cold_resist_type=Взрывное зелье сопротивления холоду
-splash_potion.effect.heat_resist_type=Взрывное зелье сопротивления теплу
-splash_potion.effect.long_heat_resist_type=Взрывное зелье сопротивления теплу
+splash_potion.effect.cold_resist_type=Зелье с брызгами, дающее сопротивление холоду
+splash_potion.effect.long_cold_resist_type=Зелье с брызгами, дающее длительное сопротивление холоду
+splash_potion.effect.heat_resist_type=Зелье с брызгами, дающее сопротивление жаре
+splash_potion.effect.long_heat_resist_type=Зелье с брызгами, дающее длительное сопротивление жаре
 
 tile.simpledifficulty:campfire.name=Костёр
 tile.simpledifficulty:chiller.name=Охладитель
-tile.simpledifficulty:heater.name=Нагреватель
-tile.simpledifficulty:purifiedwater.name=Очищенная вода
-tile.simpledifficulty:rain_collector.name=Сборщик дождя
-tile.simpledifficulty:spit.name=Шомпол для костра
+tile.simpledifficulty:heater.name=Обогреватель
+tile.simpledifficulty:rain_collector.name=Водосборник
+tile.simpledifficulty:spit.name=Вертел
+tile.simpledifficulty:purifiedwater.name=Обычная вода
+tile.simpledifficulty:saltwater.name=Соленая вода
+tile.simpledifficulty:purifiedwater_ice.name=Лед из обычной воды
+tile.simpledifficulty:saltwater_ice.name=Лед из соленой воды
 
-tipped_arrow.effect.cold_resist_type=Стрела сопротивления холоду
-tipped_arrow.effect.long_cold_resist_type=Стрела сопротивления холоду
-tipped_arrow.effect.heat_resist_type=Стрела сопротивления теплу
-tipped_arrow.effect.long_heat_resist_type=Стрела сопротивления теплу
+tipped_arrow.effect.cold_resist_type=Стрела с сопротивлением холоду
+tipped_arrow.effect.long_cold_resist_type=Стрела с длительным сопротивлением холоду
+tipped_arrow.effect.heat_resist_type=Стрела с сопротивлением жаре
+tipped_arrow.effect.long_heat_resist_type=Стрела с длительным сопротивлением жаре
+
+item.simpledifficulty:frost_rod.name=Жезл мороза
+item.simpledifficulty:frost_powder.name=Порошок мороза
+
+item.simpledifficulty:iron_canteen_broken.name=Сломанная железная фляга
+item.simpledifficulty:iron_canteen_empty.name=Пустая железная фляга
+item.simpledifficulty:iron_canteen_normal.name=Железная фляга с родниковой водой
+item.simpledifficulty:iron_canteen_purified.name=Железная фляга с обычной водой
+item.simpledifficulty:iron_canteen_salt.name=Железная фляга с соленой водой
+
+item.simpledifficulty:dragon_canteen_broken.name=Сломанная фляга дракона
+item.simpledifficulty:dragon_canteen_empty.name=Пустая фляга дракона
+item.simpledifficulty:dragon_canteen_normal.name=Фляга дракона с родниковой водой
+item.simpledifficulty:dragon_canteen_purified.name=Фляга дракона с обычной водой
+item.simpledifficulty:dragon_canteen_salt.name=Фляга дракона с соленой водой
+
+death.attack.inspirationscauldronburn=%1$s погиб, выпив кипяток 
