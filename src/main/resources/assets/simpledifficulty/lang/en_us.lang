@@ -18,6 +18,8 @@ enchantment.simpledifficulty.heating.desc=Increases player temperature when worn
 
 fluid.purifiedwater=Regular Water
 fluid.saltwater=Salt Water
+item.fluid.purifiedwater.bucket=Regular Water Bucket
+item.fluid.saltwater.bucket=Salt Water Bucket
 
 itemGroup.tabSimpleDifficulty=SimpleDifficulty
 
