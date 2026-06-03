@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.12.2-green.svg)](https://minecraft.net)
 [![Forge Version](https://img.shields.io/badge/Forge-14.23.5.2838-red.svg)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.7.3-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Version](https://img.shields.io/badge/Version-0.7.4-orange.svg)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 
 This is a performance-focused fork of SimpleDifficulty for Underdog. You can find the original Underdog fork here: https://github.com/juraj-hrivnak/SimpleDifficulty
 
@@ -12,6 +12,16 @@ This is a performance-focused fork of SimpleDifficulty for Underdog. You can fin
 The SimpleDifficulty mod introduces a **temperature and thirst system to Minecraft 1.12.2**, building upon the core mechanics of legacy survival mods. This maintained fork focuses on bug fixes, expanding mod compatibility, and applying technical optimizations to ensure smooth gameplay in large modpacks.
 
 > **Note**: Feedback and technical suggestions are always welcome. If you have feature requests or ideas for the API, please open an issue in the repository tracking system.
+
+---
+## **What's New (v0.7.4)**
+
+**Features implemented**:
+- Added bucket localization entries to en_us.lang and other language files to fix incorrect translation display
+- Updated FluidBasic.java to include comments explaining bucket localization handling in lang files
+- Modified FixedBrewingOreRecipe.java to properly handle NBT data for correct JEI recipe detection
+- Included changelog.md creation and version update to 0.7.4
+- Added missing Russian translations for salt water bucket in ru_ru.lang
 
 ---
 
@@ -60,9 +70,6 @@ This fork includes dedicated integration logic for various prominent mods:
 
 ### Fully Supported Mods List
 * Animania, Armor Underwear, Baubles, Biomes O' Plenty, Cave Generator, DynamicSurroundings, EnhancedVisuals, First Aid, Fluidlogged API, Greenery, Harvest Festival Legacy, Inspirations, Lycanites Mobs, Ore Excavation, Pams HarvestCraft, Potion Core, Pyrotech, Realistic Torches, Rustic, Serene Seasons, Simple Camp Fire, Streams, Tinkers Construct, The Betweenlands
-
-### Partial Compatibility Mods List
-* WeatherMod, Weather2 Remastered
 
 ### Additional Compatibility
 - Cave Generator
