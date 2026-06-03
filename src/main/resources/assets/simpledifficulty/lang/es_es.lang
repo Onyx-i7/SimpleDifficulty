@@ -19,6 +19,9 @@ enchantment.simpledifficulty.heating.desc=Aumenta la temperatura del jugador cua
 fluid.purifiedwater=Agua normal
 fluid.saltwater=Agua salada
 
+item.fluid.purifiedwater.bucket=Cubo de agua normal
+item.fluid.saltwater.bucket=Cubo de agua salada
+
 itemGroup.tabSimpleDifficulty=SimpleDifficulty
 
 item.simpledifficulty:canteen_broken.name=Cantimplora rota
