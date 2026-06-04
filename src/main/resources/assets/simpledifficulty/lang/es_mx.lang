@@ -1,6 +1,6 @@
-death.attack.dehydration=%1$s murió por deshidratación
-death.attack.hyperthermia=%1$s murió por hipertermia
-death.attack.hypothermia=%1$s murió por hipotermia
+death.attack.dehydration=%1$s murió de deshidratación
+death.attack.hyperthermia=%1$s murió de hipertermia
+death.attack.hypothermia=%1$s murió de hipotermia
 death.attack.parasites=%1$s murió por parásitos
 
 effect.cold_resist=Resistencia al frío
@@ -8,18 +8,18 @@ effect.heat_resist=Resistencia al calor
 effect.hyperthermia=Hipertermia
 effect.hypothermia=Hipotermia
 effect.parasites=Parásitos
-effect.thirsty=Sed
+effect.thirsty=Sediento
 
 enchantment.chilling=Enfriamiento
 enchantment.heating=Calentamiento
 
-enchantment.simpledifficulty.chilling.desc=Reduce la temperatura del jugador cuando se lleva puesto
-enchantment.simpledifficulty.heating.desc=Aumenta la temperatura del jugador cuando se lleva puesto
+enchantment.simpledifficulty.chilling.desc=Reduce la temperatura del jugador al llevarla puesta
+enchantment.simpledifficulty.heating.desc=Aumenta la temperatura del jugador al llevarla puesta
 
-fluid.purifiedwater=Agua normal
+fluid.purifiedwater=Agua purificada
 fluid.saltwater=Agua salada
 
-item.fluid.purifiedwater.bucket=Cubo de agua normal
+item.fluid.purifiedwater.bucket=Cubo de agua purificada
 item.fluid.saltwater.bucket=Cubo de agua salada
 
 itemGroup.tabSimpleDifficulty=SimpleDifficulty
@@ -27,84 +27,84 @@ itemGroup.tabSimpleDifficulty=SimpleDifficulty
 item.simpledifficulty:canteen_broken.name=Cantimplora rota
 item.simpledifficulty:canteen_empty.name=Cantimplora vacía
 item.simpledifficulty:canteen_normal.name=Cantimplora de agua de manantial
-item.simpledifficulty:canteen_purified.name=Cantimplora de agua normal
+item.simpledifficulty:canteen_purified.name=Cantimplora de agua purificada
 item.simpledifficulty:canteen_salt.name=Cantimplora de agua salada
 
 item.simpledifficulty:charcoal_filter.name=Filtro de carbón
 
-item.simpledifficulty:ice_chunk.name=Trozos de hielo
+item.simpledifficulty:ice_chunk.name=Trozo de hielo
 
 item.simpledifficulty:ice_helmet.name=Casco de hielo
-item.simpledifficulty:ice_chestplate.name=Coraza de hielo
-item.simpledifficulty:ice_leggings.name=Polainas de hielo
+item.simpledifficulty:ice_chestplate.name=Peto de hielo
+item.simpledifficulty:ice_leggings.name=Grebas de hielo
 item.simpledifficulty:ice_boots.name=Botas de hielo
 
-item.simpledifficulty:juice_apple.name=Zumo de manzana
-item.simpledifficulty:juice_beetroot.name=Zumo de remolacha
-item.simpledifficulty:juice_cactus.name=Zumo de cactus
-item.simpledifficulty:juice_carrot.name=Zumo de zanahoria
-item.simpledifficulty:juice_chorus_fruit.name=Zumo de fruta del coro
-item.simpledifficulty:juice_golden_melon.name=Zumo de melón dorado
-item.simpledifficulty:juice_golden_apple.name=Zumo de manzana dorada
-item.simpledifficulty:juice_golden_carrot.name=Zumo de zanahoria dorada
-item.simpledifficulty:juice_melon.name=Zumo de melón
-item.simpledifficulty:juice_pumpkin.name=Zumo de calabaza
+item.simpledifficulty:juice_apple.name=Jugo de manzana
+item.simpledifficulty:juice_beetroot.name=Jugo de remolacha
+item.simpledifficulty:juice_cactus.name=Jugo de cactus
+item.simpledifficulty:juice_carrot.name=Jugo de zanahoria
+item.simpledifficulty:juice_chorus_fruit.name=Jugo de fruta del chorus
+item.simpledifficulty:juice_golden_melon.name=Jugo de sandía reluciente
+item.simpledifficulty:juice_golden_apple.name=Jugo de manzana dorada
+item.simpledifficulty:juice_golden_carrot.name=Jugo de zanahoria dorada
+item.simpledifficulty:juice_melon.name=Jugo de sandía
+item.simpledifficulty:juice_pumpkin.name=Jugo de calabaza
 
-item.simpledifficulty:magma_chunk.name=Trozos de magma
+item.simpledifficulty:magma_chunk.name=Trozo de magma
 
-item.simpledifficulty:purified_water_bottle.name=Botella de agua normal
+item.simpledifficulty:purified_water_bottle.name=Botella de agua purificada
 item.simpledifficulty:salt_water_bottle.name=Botella de agua salada
 
 item.simpledifficulty:thermometer.name=Termómetro
 
-item.simpledifficulty:wool_helmet.name=Capucha de tela
-item.simpledifficulty:wool_chestplate.name=Chaleco de tela
-item.simpledifficulty:wool_leggings.name=Pantalones de tela
-item.simpledifficulty:wool_boots.name=Zapatos de tela
+item.simpledifficulty:wool_helmet.name=Capucha de lana
+item.simpledifficulty:wool_chestplate.name=Chaqueta de lana
+item.simpledifficulty:wool_leggings.name=Pantalones de lana
+item.simpledifficulty:wool_boots.name=Zapatos de lana
 
 lingering_potion.effect.cold_resist_type=Poción persistente de resistencia al frío
 lingering_potion.effect.long_cold_resist_type=Poción persistente de resistencia al frío
 lingering_potion.effect.heat_resist_type=Poción persistente de resistencia al calor
-lingering_potion.effect. long_heat_resist_type=Poción persistente de resistencia al calor
+lingering_potion.effect.long_heat_resist_type=Poción persistente de resistencia al calor
 
 potion.effect.cold_resist_type=Poción de resistencia al frío
 potion.effect.long_cold_resist_type=Poción de resistencia al frío
 potion.effect.heat_resist_type=Poción de resistencia al calor
 potion.effect.long_heat_resist_type=Poción de resistencia al calor
 
-splash_potion.effect.cold_resist_type=Poción de resistencia al frío de efecto instantáneo
-splash_potion.effect.long_cold_resist_type=Poción de resistencia al frío de efecto prolongado
-splash_potion.effect.heat_resist_type=Poción de resistencia al calor de efecto instantáneo
-splash_potion.effect.long_heat_resist_type=Poción de resistencia al calor de efecto prolongado
+splash_potion.effect.cold_resist_type=Poción arrojadiza de resistencia al frío
+splash_potion.effect.long_cold_resist_type=Poción arrojadiza de resistencia al frío
+splash_potion.effect.heat_resist_type=Poción arrojadiza de resistencia al calor
+splash_potion.effect.long_heat_resist_type=Poción arrojadiza de resistencia al calor
 
 tile.simpledifficulty:campfire.name=Hoguera
 tile.simpledifficulty:chiller.name=Enfriador
 tile.simpledifficulty:heater.name=Calentador
-tile.simpledifficulty:rain_collector.name=Colector de lluvia
+tile.simpledifficulty:rain_collector.name=Recolector de lluvia
 tile.simpledifficulty:spit.name=Asador de hoguera
-tile.simpledifficulty:purifiedwater.name=Agua normal
+tile.simpledifficulty:purifiedwater.name=Agua purificada
 tile.simpledifficulty:saltwater.name=Agua salada
-tile.simpledifficulty:purifiedwater_ice.name=Hielo de agua normal
+tile.simpledifficulty:purifiedwater_ice.name=Hielo de agua purificada
 tile.simpledifficulty:saltwater_ice.name=Hielo de agua salada
 
-tipped_arrow.effect.cold_resist_type=Flecha de resistencia al frío
-tipped_arrow.effect.long_cold_resist_type=Flecha de resistencia al frío
-tipped_arrow.effect.heat_resist_type=Flecha de resistencia al calor
-tipped_arrow.effect.long_heat_resist_type=Flecha de resistencia al calor
+tipped_arrow.effect.cold_resist_type=Flecha con efecto de resistencia al frío
+tipped_arrow.effect.long_cold_resist_type=Flecha con efecto de resistencia al frío
+tipped_arrow.effect.heat_resist_type=Flecha con efecto de resistencia al calor
+tipped_arrow.effect.long_heat_resist_type=Flecha con efecto de resistencia al calor
 
 item.simpledifficulty:frost_rod.name=Vara de escarcha
 item.simpledifficulty:frost_powder.name=Polvo de escarcha
 
 item.simpledifficulty:iron_canteen_broken.name=Cantimplora de hierro rota
 item.simpledifficulty:iron_canteen_empty.name=Cantimplora de hierro vacía
-item.simpledifficulty:iron_canteen_normal.name=Cantimplora de hierro con agua de manantial
-item.simpledifficulty:iron_canteen_purified.name=Cantimplora de hierro con agua normal
-item.simpledifficulty:iron_canteen_salt.name=Cantimplora de hierro con agua salada
+item.simpledifficulty:iron_canteen_normal.name=Cantimplora de hierro de agua de manantial
+item.simpledifficulty:iron_canteen_purified.name=Cantimplora de hierro de agua purificada
+item.simpledifficulty:iron_canteen_salt.name=Cantimplora de hierro de agua salada
 
 item.simpledifficulty:dragon_canteen_broken.name=Cantimplora de dragón rota
 item.simpledifficulty:dragon_canteen_empty.name=Cantimplora de dragón vacía
-item.simpledifficulty:dragon_canteen_normal.name=Cantimplora de dragón con agua de manantial
-item.simpledifficulty:dragon_canteen_purified.name=Cantimplora de dragón con agua normal
-item.simpledifficulty:dragon_canteen_salt.name=Cantimplora de dragón con agua salada
+item.simpledifficulty:dragon_canteen_normal.name=Cantimplora de dragón de agua de manantial
+item.simpledifficulty:dragon_canteen_purified.name=Cantimplora de dragón de agua purificada
+item.simpledifficulty:dragon_canteen_salt.name=Cantimplora de dragón de agua salada
 
 death.attack.inspirationscauldronburn=%1$s murió por beber agua hirviendo

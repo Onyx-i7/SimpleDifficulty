@@ -29,9 +29,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Random;
 
 public class BlockRainCollector extends Block
@@ -46,6 +49,58 @@ public class BlockRainCollector extends Block
 	//BlockCauldron.LEVEL
 	public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 3);
 	
+	private static Method weather2IsRainingMethod = null;
+	private static Object weather2ManagerInstance = null;
+	
+	static {
+		try {
+			if (Loader.isModLoaded("weather2")) {
+				String[] classNames = {
+					"corosus.weather2.weathersystem.WeatherManager",
+					"corosus.weather2.weathersystem.WeatherManagerBase",
+					"corosus.weather2.util.WorldHelper",
+					"corosus.weather2.util.WeatherUtil",
+					"corosus.weather2.WorldHelper"
+				};
+				
+				for (String className : classNames) {
+					try {
+						Class<?> clazz = Class.forName(className);
+						
+						if (weather2ManagerInstance == null) {
+							for (Field f : clazz.getFields()) {
+								if (f.getName().equalsIgnoreCase("instance") || f.getName().equalsIgnoreCase("INSTANCE")) {
+									weather2ManagerInstance = f.get(null);
+									break;
+								}
+							}
+						}
+						
+						for (Method m : clazz.getMethods()) {
+							String name = m.getName().toLowerCase();
+							if ((name.contains("rain") || name.contains("precip") || name.contains("weather")) && m.getReturnType() == boolean.class) {
+								Class<?>[] params = m.getParameterTypes();
+								if (params.length == 1 && params[0] == BlockPos.class) {
+									weather2IsRainingMethod = m;
+									break;
+								} else if (params.length == 2 && params[0] == World.class && params[1] == BlockPos.class) {
+									weather2IsRainingMethod = m;
+									break;
+								}
+							}
+						}
+						
+						if (weather2IsRainingMethod != null) {
+							break;
+						}
+					} catch (ClassNotFoundException ignored) {}
+				}
+			}
+		} catch (Exception e) {
+			// Failed to initialize Weather2 compatibility
+		}
+	}
+	
 	//BlockCauldron()
 	public BlockRainCollector()
 	{
@@ -58,11 +113,31 @@ public class BlockRainCollector extends Block
 		setTickRandomly(true);
 	}
 		
-	//Serene Seasons Compatibility
+	//Serene Seasons and Weather2 Remastered Compatibility
 	@Override
 	public void randomTick(World world, BlockPos pos, IBlockState state, Random random)
 	{
-		if (world.rand.nextInt(Math.max(1, ModConfig.server.miscellaneous.rainCollectorFillChance)) == 0 && world.isRaining() && world.canSeeSky(pos.up()))
+		boolean isRaining = false;
+		if (weather2IsRainingMethod != null) {
+			try {
+				Object target = java.lang.reflect.Modifier.isStatic(weather2IsRainingMethod.getModifiers()) ? null : weather2ManagerInstance;
+				if (target != null || java.lang.reflect.Modifier.isStatic(weather2IsRainingMethod.getModifiers())) {
+					if (weather2IsRainingMethod.getParameterTypes().length == 1) {
+						isRaining = (Boolean) weather2IsRainingMethod.invoke(target, pos.up());
+					} else {
+						isRaining = (Boolean) weather2IsRainingMethod.invoke(target, world, pos.up());
+					}
+				} else {
+					isRaining = world.isRaining();
+				}
+			} catch (Exception e) {
+				isRaining = world.isRaining();
+			}
+		} else {
+			isRaining = world.isRaining();
+		}
+
+		if (world.rand.nextInt(Math.max(1, ModConfig.server.miscellaneous.rainCollectorFillChance)) == 0 && isRaining && world.canSeeSky(pos.up()))
 		{
 			float f = world.getBiome(pos).getTemperature(pos);
 

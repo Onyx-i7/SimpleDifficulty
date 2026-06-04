@@ -6,7 +6,7 @@
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://github.com/Onyx-i7/SimpleDifficulty",
-  "updateUrl": "",
+  "updateUrl": "https://raw.githubusercontent.com/Onyx-i7/SimpleDifficulty/refs/heads/master/modupdatechecker.json",
   "authorList": ["Charles445", "juraj-hrivnak", "Onyx-i7"],
   "credits": "Original mod by Charles445. Underdog version by juraj-hrivnak. Optimization and maintenance by Onyx-i7.",
   "logoFile": "",

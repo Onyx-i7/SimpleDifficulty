@@ -1,14 +1,18 @@
 {
     "type": "forge:ore_shapeless",
-    "ingredients":[
-    {
-        "item": "minecraft:potion"
-    },
-    {
-        "item": "#CHARCOAL_FILTER"
-    }],
-    "result":
-    {
-        "item": "simpledifficulty:purified_water_bottle"
+    "ingredients": [
+        {
+            "item": "minecraft:potion",
+            "data": 0,
+            "nbt": "{Potion:\"minecraft:water\"}"
+        },
+        {
+            "type": "forge:ore_dict",
+            "ore": "CHARCOAL_FILTER"
+        }
+    ],
+    "result": {
+        "item": "simpledifficulty:purified_water_bottle",
+        "count": 1
     }
 }

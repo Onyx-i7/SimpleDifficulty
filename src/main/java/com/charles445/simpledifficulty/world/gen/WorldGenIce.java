@@ -1,5 +1,6 @@
 package com.charles445.simpledifficulty.world.gen;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -22,25 +23,34 @@ public class WorldGenIce implements IWorldGenerator
     {
         if (world.provider.getDimension() == 0)
         {
+            int chunkBaseX = chunkX << 4;
+            int chunkBaseZ = chunkZ << 4;
+            
             for (int x = 0; x < 16; x++)
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    int xoff = chunkX * 16 + 8 + x;
-                    int zoff = chunkZ * 16 + 8 + z;
-                    BlockPos pos = new BlockPos(xoff, 0, zoff);
-                    pos = pos.up(world.getPrecipitationHeight(pos).getY());
-
-                    BlockPos posDown = pos.down();
-                    IBlockState stateAt = world.getBlockState(posDown);
-                    if (blockSaltWater.canFreeze(world, posDown) || stateAt.getBlock() == Blocks.ICE)
+                    int worldX = chunkBaseX + x;
+                    int worldZ = chunkBaseZ + z;
+                    
+                    BlockPos topPos = world.getPrecipitationHeight(new BlockPos(worldX, 0, worldZ));
+                    
+                    if (topPos.getY() <= 0)
                     {
-                        world.setBlockState(posDown, iceSaltWater.getDefaultState());
+                        continue;
                     }
-
-                    if (blockPurifiedWater.canFreeze(world, posDown) || stateAt.getBlock() == Blocks.ICE)
+                    
+                    BlockPos posDown = topPos.down();
+                    IBlockState stateAt = world.getBlockState(posDown);
+                    Block blockAt = stateAt.getBlock();
+                    
+                    if (blockSaltWater.canFreeze(world, posDown))
                     {
-                        world.setBlockState(posDown, icePurifiedWater.getDefaultState());
+                        world.setBlockState(posDown, iceSaltWater.getDefaultState(), 2);
+                    }
+                    else if (blockPurifiedWater.canFreeze(world, posDown) || blockAt == Blocks.ICE)
+                    {
+                        world.setBlockState(posDown, icePurifiedWater.getDefaultState(), 2);
                     }
                 }
             }
