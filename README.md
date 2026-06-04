@@ -85,7 +85,32 @@ This fork includes dedicated integration logic for various prominent mods:
 * **Fluidlogged API & Dynamic Trees**: Proper handling of fluid logging variables and custom environmental water blocks.
 
 ### Fully Supported Mods List
-* Animania, Armor Underwear, Baubles, Biomes O' Plenty, Cave Generator, DynamicSurroundings, EnhancedVisuals, First Aid, Fluidlogged API, Greenery, Harvest Festival Legacy, Inspirations, Lycanites Mobs, Ore Excavation, Pams HarvestCraft, Potion Core, Pyrotech, Realistic Torches, Rustic, Serene Seasons, Simple Camp Fire, Streams, Tinkers Construct, The Betweenlands, Weather2 Remastered
+* Animania 
+* Armor Underwear 
+* Baubles
+* Biomes O' Plenty
+* Cave Generator
+* DynamicSurroundings
+* EnhancedVisuals
+* First Aid
+* Fluidlogged API
+* Greenery
+* Harvest Festival Legacy
+* Inspirations
+* Lycanites Mobs
+* Ore Excavation
+* Pams HarvestCraft
+* Potion Core
+* Pyrotech
+* Realistic Torches
+* Rustic
+* Serene Seasons
+* Simple Camp Fire
+* Streams
+* Tinkers Construct
+* The Betweenlands
+* SurvivalTools
+* Weather2 Remastered **(Currently under development because it does not have access to the API and the source code hosted on the mod's GitHub is very old from version 2.7)**
 
 ### Additional Compatibility
 - Cave Generator
