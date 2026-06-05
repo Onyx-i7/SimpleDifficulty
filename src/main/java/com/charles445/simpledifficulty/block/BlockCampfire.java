@@ -26,10 +26,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Random;
 
 public class BlockCampfire extends Block implements IBlockStateIgnore
@@ -37,7 +40,9 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     private static final int AGE_MIN = 0;
     private static final int AGE_MAX = 7;
     private static final int LOG_REFUEL = 3;
-    private static final int TICK_RATE = 10;
+    // RAIN CHECK RATE: 20 ticks = 1 second. Fast enough for responsive rain detection
+    // without overloading the server. Only used for weather checking, not decay.
+    private static final int RAIN_CHECK_RATE = 20;
     
     public static final PropertyInteger AGE = PropertyInteger.create("age", AGE_MIN, AGE_MAX);
     public static final PropertyBool BURNING = PropertyBool.create("burning");
@@ -45,13 +50,117 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     private static final IProperty[] ignoredProperties = new IProperty[]{BURNING};
     private static final AxisAlignedBB HITBOX = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.4D, 1.0D);
     
+    // Weather2 Remastered Compatibility - Static cached reflection to avoid repeated lookups
+    private static Method weather2IsRainingMethod = null;
+    private static Object weather2ManagerInstance = null;
+    
+    static {
+        try {
+            if (Loader.isModLoaded("weather2")) {
+                String[] classNames = {
+                    "corosus.weather2.weathersystem.WeatherManager",
+                    "corosus.weather2.weathersystem.WeatherManagerBase",
+                    "corosus.weather2.util.WorldHelper",
+                    "corosus.weather2.util.WeatherUtil",
+                    "corosus.weather2.WorldHelper"
+                };
+                
+                for (String className : classNames) {
+                    try {
+                        Class<?> clazz = Class.forName(className);
+                        
+                        if (weather2ManagerInstance == null) {
+                            for (Field f : clazz.getFields()) {
+                                if (f.getName().equalsIgnoreCase("instance") || f.getName().equalsIgnoreCase("INSTANCE")) {
+                                    weather2ManagerInstance = f.get(null);
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        for (Method m : clazz.getMethods()) {
+                            String name = m.getName().toLowerCase();
+                            if ((name.contains("rain") || name.contains("precip") || name.contains("weather")) && m.getReturnType() == boolean.class) {
+                                Class<?>[] params = m.getParameterTypes();
+                                if (params.length == 1 && params[0] == BlockPos.class) {
+                                    weather2IsRainingMethod = m;
+                                    break;
+                                } else if (params.length == 2 && params[0] == World.class && params[1] == BlockPos.class) {
+                                    weather2IsRainingMethod = m;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (weather2IsRainingMethod != null) {
+                            break;
+                        }
+                    } catch (ClassNotFoundException ignored) {}
+                }
+            }
+        } catch (Exception e) {
+            // Failed to initialize Weather2 compatibility - will fall back to vanilla behavior
+        }
+    }
+    
+    /**
+     * Unified weather detection method that checks Weather2 first, then falls back to vanilla
+     * This ensures compatibility with custom weather systems
+     */
+    private boolean isRainingAt(World world, BlockPos pos)
+    {
+        BlockPos checkPos = pos.up();
+        
+        if (!world.canSeeSky(checkPos)) {
+            return false;
+        }
+        
+        if (weather2IsRainingMethod != null) {
+            try {
+                Object target = java.lang.reflect.Modifier.isStatic(weather2IsRainingMethod.getModifiers()) ? null : weather2ManagerInstance;
+                if (target != null || java.lang.reflect.Modifier.isStatic(weather2IsRainingMethod.getModifiers())) {
+                    if (weather2IsRainingMethod.getParameterTypes().length == 1) {
+                        return (Boolean) weather2IsRainingMethod.invoke(target, checkPos);
+                    } else {
+                        return (Boolean) weather2IsRainingMethod.invoke(target, world, checkPos);
+                    }
+                }
+            } catch (Exception e) {
+                // Reflection failed - fall back to vanilla
+            }
+        }
+        
+        return world.isRaining();
+    }
+    
+    /**
+     * Schedules the next rain check update for this campfire.
+     * Only called when the fire is burning to detect rain quickly.
+     */
+    private void scheduleRainCheck(World world, BlockPos pos)
+    {
+        world.scheduleUpdate(pos, this, RAIN_CHECK_RATE);
+    }
+    
     public BlockCampfire()
     {
         super(Material.CIRCUITS, MapColor.WOOD);
         setDefaultState(blockState.getBaseState().withProperty(AGE, AGE_MIN).withProperty(BURNING, false));
         setHardness(0.5f);
         setSoundType(SoundType.WOOD);
+        // RANDOM TICKS ENABLED: Used for decay (age progression) - infrequent and random
         setTickRandomly(true);
+    }
+    
+    // BLOCK LIFECYCLE - SCHEDULE INITIAL RAIN CHECK WHEN PLACED
+    
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+    {
+        // Start the rain check loop if the fire is burning when placed
+        if (!world.isRemote && state.getValue(BURNING)) {
+            scheduleRainCheck(world, pos);
+        }
     }
     
     // INTERACT
@@ -69,9 +178,8 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         if(Block.getBlockFromItem(heldItem).equals(SDBlocks.spit))
             return false;
         
-        // FIX: Replaced world.isRainingAt(pos.up()) to prevent incompatibilities with custom weather managers (e.g., Weather2).
-        // This unifies weather detection across all systems by evaluating global rain and sky visibility.
-        boolean isRainingAtPos = world.isRaining() && world.canSeeSky(pos.up());
+        // Use unified weather detection for compatibility with Weather2 and other weather mods
+        boolean isRainingAtPos = isRainingAt(world, pos);
         
         if(world.isRemote)
         {
@@ -104,12 +212,19 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
                 // OPTIMIZATION: Using flag 3 (1 | 2) instead of 2. This forces a client rerender AND notifies 
                 // neighboring blocks. Crucial for updating light grids instantly and avoiding ghost light artifacts.
                 world.setBlockState(pos, state.withProperty(AGE, Math.max(AGE_MIN, age - refuelAmount)), 3);
+                
+                // Restart rain check loop when refueling an extinguished fire
+                if (burning) {
+                    scheduleRainCheck(world, pos);
+                }
             }
             
             return true;
         }
         else if(!burning && age < AGE_MAX && !isRainingAtPos)
         {
+            boolean ignited = false;
+            
             if(OreDictUtil.isOre(OreDictUtil.stick, heldItemStack) || heldItem == Items.STICK)
             {
                 if(!player.capabilities.isCreativeMode)
@@ -117,62 +232,44 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
                 if(world.rand.nextInt(ModConfig.server.miscellaneous.campfireStickIgniteChance) == 0)
                 {
                     world.setBlockState(pos, state.withProperty(BURNING, true), 3);
+                    ignited = true;
                 }
-                
-                return true;
             }
             else if(heldItem == Items.FLINT_AND_STEEL)
             {
                 world.setBlockState(pos, state.withProperty(BURNING, true), 3);
                 heldItemStack.damageItem(1, player);
-                return true;
+                ignited = true;
             }
+            
+            // Kickstart the rain check loop the moment the fire is lit
+            if (ignited) {
+                scheduleRainCheck(world, pos);
+            }
+            
+            return true;
         }
         
         return true;
     }
     
-    // INTERCEPT IMMEDIATE NEIGHBOR CHANGES (WEATHER UPDATES)
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
-    {
-        if (!world.isRemote && state.getValue(BURNING))
-        {
-            // If it starts raining and the fire is exposed, extinguish immediately without waiting for a random tick
-            if (world.isRaining() && world.canSeeSky(pos.up()))
-            {
-                world.setBlockState(pos, state.withProperty(BURNING, false), 3);
-                effectExtinguish(world, pos);
-            }
-        }
-    }
-
-    // UPDATE
+    // RANDOM TICK - DECAY (ORIGINAL BEHAVIOR)
     
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    public void randomTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
-        if(world.isRemote)
-            return;
+        if (world.isRemote) return;
         
         int age = state.getValue(AGE);
         boolean burning = state.getValue(BURNING);
         
-        if(burning)
+        if (burning)
         {
-            // FIX: This now executes instantly thanks to the scheduled update triggered by the client side weather check
-            if(world.isRaining() && world.canSeeSky(pos.up()))
-            {
-                world.setBlockState(pos, state.withProperty(BURNING, false), 3);
-                effectExtinguish(world,pos);
-                return; // Stop further processing since the fire is gone
-            }
-            
-            // Random decay keeps working normally if it's not raining
-            if(rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance)==0)
+            // Random decay - same frequency as original (infrequent, random)
+            if (rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance) == 0)
             {
                 age++;
-                if(age>=AGE_MAX)
+                if (age >= AGE_MAX)
                 {
                     world.setBlockState(pos, state.withProperty(AGE, AGE_MAX).withProperty(BURNING, false), 3);
                     effectExtinguish(world, pos);
@@ -185,10 +282,53 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         }
     }
     
+    // INTERCEPT IMMEDIATE NEIGHBOR CHANGES (WEATHER UPDATES)
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        if (!world.isRemote && state.getValue(BURNING))
+        {
+            // If it starts raining and the fire is exposed, extinguish immediately without waiting for a tick
+            if (isRainingAt(world, pos))
+            {
+                world.setBlockState(pos, state.withProperty(BURNING, false), 3);
+                effectExtinguish(world, pos);
+            }
+        }
+    }
+
+    // SCHEDULED UPDATE - RAIN DETECTION ONLY
+    
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+    {
+        if (world.isRemote) return;
+        
+        boolean burning = state.getValue(BURNING);
+        
+        if (!burning)
+        {
+            // Fire is not burning - no need to keep the rain check loop running
+            return;
+        }
+        
+        // Rain detection - this runs every RAIN_CHECK_RATE ticks (1 second)
+        if (isRainingAt(world, pos))
+        {
+            world.setBlockState(pos, state.withProperty(BURNING, false), 3);
+            effectExtinguish(world, pos);
+            // Do NOT reschedule - fire is out
+            return;
+        }
+        
+        // Reschedule for next rain check
+        scheduleRainCheck(world, pos);
+    }
+    
     @Override
     public int tickRate(World world)
     {
-        return TICK_RATE;
+        return RAIN_CHECK_RATE;
     }
     
     // STATE
@@ -231,7 +371,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     @Override
     public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity)
     {
-        if(!world.isRemote && state.getValue(BURNING) && entity instanceof EntityLivingBase)
+        if (!world.isRemote && state.getValue(BURNING) && entity instanceof EntityLivingBase)
         {
             entity.setFire(1);
         }
@@ -248,7 +388,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-        if(state.getValue(BURNING))
+        if (state.getValue(BURNING))
         {
             return 15;
         }
@@ -274,27 +414,21 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     {
         super.randomDisplayTick(state, world, pos, rand);
         
-        if(state.getValue(BURNING))
+        if (state.getValue(BURNING))
         {
-            // FIX: Instantly notify the server to check weather if the client detects rain hitting the campfire
-            if (world.isRaining() && world.canSeeSky(pos.up()))
-            {
-                // Forces a block update directly in the world geometry loop
-                world.scheduleUpdate(pos, this, 1);
-            }
             int age = state.getValue(AGE);
             float strength = 1.0f - ((float)age / (float)(AGE_MAX - AGE_MIN));
             
-            if(rand.nextFloat() < strength)
+            if (rand.nextFloat() < strength)
             {
                 int loop = rand.nextInt(6) + 1;
-                for(int i = 0; i < loop; i++)
+                for (int i = 0; i < loop; i++)
                 {
                     createFlameParticle(world, pos, rand);
                 }
             }
             
-            if(rand.nextInt(30) == 0)
+            if (rand.nextInt(30) == 0)
             {
                 world.playSound(0.5d + pos.getX(), 0.5d + pos.getY(), 0.5d + pos.getZ(), SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 0.5f, 1.0f, false);
             }
@@ -305,10 +439,21 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     {
         SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH);
         
-        // OPTIMIZATION: Removed server-side spawnParticle loop overhead. 
-        // Utilizing playEvent (2001) leverages native particle rendering based on block state,
-        // saving server-to-client network packet congestion during tick updates.
-        world.playEvent(2001, pos, Block.getStateId(this.getDefaultState()));
+        // Spawn smoke particles manually to ensure they appear immediately and are visible even if the block state changes (since the fire is now out)
+        if (!world.isRemote)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                double xOffset = pos.getX() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.4;
+                double yOffset = pos.getY() + 0.4 + world.rand.nextDouble() * 0.3;
+                double zOffset = pos.getZ() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.4;
+                
+                // Large smoke particles for visible effect
+                world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, xOffset, yOffset, zOffset, 0.0, 0.05, 0.0);
+                // Normal smoke particles for density
+                world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, xOffset, yOffset, zOffset, 0.0, 0.03, 0.0);
+            }
+        }
     }
     
     private void createFlameParticle(World world, BlockPos pos, Random rand)
