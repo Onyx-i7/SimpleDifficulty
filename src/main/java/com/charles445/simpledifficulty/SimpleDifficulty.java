@@ -47,6 +47,7 @@ public class SimpleDifficulty
 		PacketHandler.init();
 		proxy.preInit();
 		
+		com.charles445.simpledifficulty.compat.mod.Weather2Compat.init();
 	}
 	
 	@Mod.EventHandler

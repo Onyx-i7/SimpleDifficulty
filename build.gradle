@@ -9,9 +9,17 @@ buildscript {
 }
 apply plugin: "net.minecraftforge.gradle.forge"
 
+//String baseVersion = "1.12.2-0.7.6"
+
+// For test versions, you can use the build number of github actions, or if it is not defined, put local.
+//if (System.getenv("GITHUB_RUN_NUMBER") != null) {
+//    version = "${baseVersion}-build${System.getenv("GITHUB_RUN_NUMBER")}"
+//} else {
+//    version = "${baseVersion}-local"
+//}
 
 version = "1.12.2-0.7.6"
-group = "com.charles445.simpledifficulty" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "com.charles445.simpledifficulty"
 archivesBaseName = "SimpleDifficulty"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.

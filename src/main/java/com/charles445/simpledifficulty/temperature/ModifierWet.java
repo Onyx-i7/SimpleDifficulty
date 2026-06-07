@@ -13,62 +13,42 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 public class ModifierWet extends ModifierBase
 {
-	public ModifierWet()
-	{
-		super("Wet");
-	}
-	
-	/*
-	@Override
-	public float getPlayerInfluence(EntityPlayer player)
-	{
-		if(player.isWet())
-			return ModConfig.server.temperature.wetValue;
-		else
-			return 0.0f;
-	}
-	*/
-	
-	@Override
-	public float getWorldInfluence(World world, BlockPos pos)
-	{
-		//TODO isRainingAt is currently tricked by trap doors and doors
-		
-		//Optifine + Serene Seasons = misleading particle effects
-		//Nothing I can do about that...
-		
-		IBlockState state = world.getBlockState(pos);
-		Block block = state.getBlock();
-		
-		if(block instanceof IFluidBlock)
-		{
-			//Modded fluid
-			Fluid fluid = ((IFluidBlock)block).getFluid();
-			if(fluid != null)
-			{
-				JsonTemperature tempInfo = JsonConfig.fluidTemperatures.get(fluid.getName());
-				if(tempInfo!=null)
-				{
-					//Overridden mod fluid
-					return tempInfo.temperature;
-				}
-			}
-		}
-		
-		//Vanilla fluid, or modded fluid with no override, or no fluid at all
-		
-		if(state.getMaterial() == Material.WATER)
-		{
-			return ModConfig.server.temperature.wetValue;
-		}
-		else if(world.isRainingAt(pos))
-		{
-			//Rain
-			return ModConfig.server.temperature.wetValue;
-		}
-		else
-		{
-			return 0.0f;
-		}
-	}
+    public ModifierWet()
+    {
+        super("Wet");
+    }
+    
+    @Override
+    public float getWorldInfluence(World world, BlockPos pos)
+    {
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+        
+        if(block instanceof IFluidBlock)
+        {
+            Fluid fluid = ((IFluidBlock)block).getFluid();
+            if(fluid != null)
+            {
+                JsonTemperature tempInfo = JsonConfig.fluidTemperatures.get(fluid.getName());
+                if(tempInfo!=null)
+                {
+                    return tempInfo.temperature;
+                }
+            }
+        }
+        
+        if(state.getMaterial() == Material.WATER)
+        {
+            return ModConfig.server.temperature.wetValue;
+        }
+        // Intercepted via the safe abstraction bridge to capture Weather2 dynamic storm regions
+        else if(com.charles445.simpledifficulty.compat.mod.Weather2Compat.isRainingAt(world, pos))
+        {
+            return ModConfig.server.temperature.wetValue;
+        }
+        else
+        {
+            return 0.0f;
+        }
+    }
 }
