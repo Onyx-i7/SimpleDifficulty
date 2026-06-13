@@ -75,7 +75,7 @@ public class BlockIceBasic extends BlockIce
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        if (worldIn.isRemote) return; // Seguridad extra en hilos del cliente
+        if (worldIn.isRemote) return; // Extra security on client threads
 
         Biome biome = worldIn.getBiome(pos);
         float f = biome.getTemperature(pos);
