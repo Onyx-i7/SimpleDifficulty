@@ -3,7 +3,6 @@ package com.charles445.simpledifficulty.network;
 import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.config.ModConfig;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -11,82 +10,51 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+public class MessageConfigLAN implements IMessage {
 
-public class MessageConfigLAN implements IMessage
-{
-	//Side SERVER
+    // Side SERVER
 
-	public MessageConfigLAN()
-	{
-		
-	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf)
-	{
-		//No data is shared
-	}
+    public MessageConfigLAN() {
+        // Necessary for Forge packet instantiation via reflection
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        // No data is shared in the buffer
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) 
-	{
-		//No data is shared
-	}
-	
-	public static class Handler implements IMessageHandler<MessageConfigLAN, IMessage>
-	{
-		//TODO reconsider
-		//It could just routinely check config changes
-		//Or it could check the sender's privileges as well
-		
-		@Override
-		public IMessage onMessage(MessageConfigLAN message, MessageContext ctx) 
-		{
-			if(ctx.side == Side.SERVER)
-			{
-				EntityPlayerMP sender = ctx.getServerHandler().player;
-				if(sender!=null)
-				{
-					//DebugUtil.messageAll("Server received MessageConfigLAN");
-					//DebugUtil.messageAll("Operating on logical side: "+ FMLCommonHandler.instance().getEffectiveSide());
-					//DebugUtil.messageAll("Operating on physical side: "+ FMLCommonHandler.instance().getSide());
-					if(FMLCommonHandler.instance().getSide().isClient())
-					{
-						//Physical Client, Logical Server
-						
-						//TODO somehow avoid this next part...
-						
-						// * * *
-						// NOTE: This is retrieving EntityPlayerSP with the logical server thread!
-						// Be wary of possible concurrency issues!
-						// * * *
-						
-						EntityPlayer receiver = SimpleDifficulty.proxy.getClientMinecraftPlayer();
-						if(receiver==null)
-						{
-							SimpleDifficulty.logger.error("Client's player was null on physical client side!");
-							return null;
-						}
-						//Compare the sender and receiver
-						
-						//TODO Proper verification that both players are the same person
-						//If there's going to be some weird security loophole, it's going to be right here
-						//Although the only result of any loophole is the server sending packets to players more than it should
-						//The horror!
-						
-						if(sender.getUniqueID().equals(receiver.getUniqueID()))
-						{
-							//Send new config to all players
-							sender.getServerWorld().addScheduledTask(() ->
-							{
-								ModConfig.sendServerConfigToAllPlayers();
-							});
-						}
-					}
-				}
-			}
-				
-			return null;
-		}
-	}
+    @Override
+    public void toBytes(ByteBuf buf) {
+        // No data is shared in the buffer
+    }
+    
+    public static class Handler implements IMessageHandler<MessageConfigLAN, IMessage> {
+        
+        @Override
+        public IMessage onMessage(MessageConfigLAN message, MessageContext ctx) {
+            if (ctx.side == Side.SERVER) {
+                EntityPlayerMP sender = ctx.getServerHandler().player;
+                
+                if (sender != null) {
+                    // Safely delegate all processing to the main server thread
+                    sender.getServerWorld().addScheduledTask(() -> {
+                        // Check if operating on a physical client (Integrated Server / LAN host)
+                        if (FMLCommonHandler.instance().getSide().isClient()) {
+                            
+                            // Security check: Verify the sender is actually the local LAN host owner
+                            boolean isHost = FMLCommonHandler.instance().getMinecraftServerInstance().isSinglePlayer() 
+                                    && FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equals(sender.getName());
+                            
+                            if (isHost || sender.getPermissionLevel() >= 2) {
+                                ModConfig.sendServerConfigToAllPlayers();
+                            } else {
+                                SimpleDifficulty.logger.warn("Player {} attempted to force a LAN config update without proper permissions.", sender.getName());
+                            }
+                        }
+                    });
+                }
+            }
+            return null;
+        }
+    }
 }
