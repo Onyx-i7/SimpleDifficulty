@@ -34,60 +34,72 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
-public class BlockRainCollector extends Block
-{
+public class BlockRainCollector extends Block {
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 3);
+    private static final int TICK_RATE = 100; // Check every 5 seconds to accurately catch fast-moving Weather2 storms
     
-    public BlockRainCollector()
-    {
+    public BlockRainCollector() {
         super(Material.IRON, MapColor.STONE);
         setDefaultState(blockState.getBaseState().withProperty(LEVEL, 0));
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setTickRandomly(true);
     }
+
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        if (!world.isRemote) {
+            world.scheduleUpdate(pos, this, TICK_RATE);
+        }
+    }
         
     @Override
-    public void randomTick(World world, BlockPos pos, IBlockState state, Random random)
-    {
-        if (world.isRemote) return;
+    public void randomTick(World world, BlockPos pos, IBlockState state, Random random) {
+        if (world.isRemote) {
+            return;
+        }
         tryFillFromWeather(world, pos, state);
+        // Safety fallback: restart scheduled update loop if it was lost during chunk unloads
+        world.scheduleUpdate(pos, this, TICK_RATE);
+    }
+
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+        if (world.isRemote) {
+            return;
+        }
+        tryFillFromWeather(world, pos, state);
+        // Maintain continuous scheduled checking loop
+        world.scheduleUpdate(pos, this, TICK_RATE);
     }
 
     /**
-     * Attempts to fill the collector instantly if weather requirements are satisfied.
-     * Rewritten to ensure water values clamp correctly at max capacity instead of cycling back to zero.
+     * Evaluates weather compatibility channels and updates water level.
+     * Checks if the position has direct exposure to the sky and queries the custom Weather2 compat bridge.
      */
-    public void tryFillFromWeather(World world, BlockPos pos, IBlockState state)
-    {
-        if (com.charles445.simpledifficulty.compat.mod.Weather2Compat.isRainingAt(world, pos.up()))
-        {
+    public void tryFillFromWeather(World world, BlockPos pos, IBlockState state) {
+        BlockPos checkPos = pos.up();
+        
+        if (world.canSeeSky(checkPos) && com.charles445.simpledifficulty.compat.mod.Weather2Compat.isRainingAt(world, checkPos)) {
             int currentLevel = state.getValue(LEVEL);
-            if (currentLevel < 3)
-            {
-                // Force increment level safely without resetting the block state to 0
+            if (currentLevel < 3) {
                 world.setBlockState(pos, state.withProperty(LEVEL, currentLevel + 1), 3);
                 world.updateComparatorOutputLevel(pos, this);
             }
         }
     }
     
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemstack = player.getHeldItem(hand);
 
-        if (itemstack.isEmpty())
-        {
-            if(player.isSneaking())
-            {
+        if (itemstack.isEmpty()) {
+            if (player.isSneaking()) {
                 int amount = state.getValue(LEVEL);
-                if(amount > 0)
-                {
-                    if(SDCapabilities.getThirstData(player).isThirsty())
-                    {
+                if (amount > 0) {
+                    if (SDCapabilities.getThirstData(player).isThirsty()) {
                         SoundUtil.commonPlayPlayerSound(player, SoundEvents.ENTITY_GENERIC_DRINK);
-                        if(!world.isRemote)
-                        {
+                        if (!world.isRemote) {
                             this.setWaterLevel(world, pos, state, player.capabilities.isCreativeMode ? amount : amount - 1);
                             ThirstUtil.takeDrink(player, ThirstEnum.NORMAL);
                         }
@@ -95,18 +107,13 @@ public class BlockRainCollector extends Block
                 }
             }
             return true;
-        }
-        else
-        {
+        } else {
             int amount = state.getValue(LEVEL);
             Item item = itemstack.getItem();
             
-            if (item == Items.BUCKET)
-            {
-                if (amount > 0 && !world.isRemote)
-                {
-                    if (!player.capabilities.isCreativeMode)
-                    {
+            if (item == Items.BUCKET) {
+                if (amount > 0 && !world.isRemote) {
+                    if (!player.capabilities.isCreativeMode) {
                         itemstack.shrink(1);
                         if (itemstack.isEmpty()) {
                             player.setHeldItem(hand, ThirstUtil.createNormalWaterBucket());
@@ -118,12 +125,9 @@ public class BlockRainCollector extends Block
                     SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ITEM_BUCKET_FILL);
                 }
                 return true;
-            }
-            else if (item == Items.GLASS_BOTTLE)
-            {
-                if(amount > 0 && !world.isRemote)
-                {
-                    if(!player.capabilities.isCreativeMode) {
+            } else if (item == Items.GLASS_BOTTLE) {
+                if (amount > 0 && !world.isRemote) {
+                    if (!player.capabilities.isCreativeMode) {
                         itemstack.shrink(1);
                     }
                     
@@ -141,61 +145,68 @@ public class BlockRainCollector extends Block
                     SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ITEM_BOTTLE_FILL);
                 }
                 return true;
-            }
-            else if (item == SDItems.canteen)
-            {
-                if(amount > 0 && !world.isRemote)
-                {
+            } else if (item == SDItems.canteen) {
+                if (amount > 0 && !world.isRemote) {
                     IItemCanteen canteen = (IItemCanteen)item;
                     if (player.capabilities.isCreativeMode) {
                         canteen.tryAddDose(itemstack, ThirstEnum.NORMAL);
                     } else {
-                        if(canteen.tryAddDose(itemstack, ThirstEnum.NORMAL)) {
+                        if (canteen.tryAddDose(itemstack, ThirstEnum.NORMAL)) {
                             this.setWaterLevel(world, pos, state, amount - 1);
                         }
                     }
                     SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ITEM_BUCKET_FILL);
                 }
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     }
     
-    public void setWaterLevel(World world, BlockPos pos, IBlockState state, int level)
-    {
+    public void setWaterLevel(World world, BlockPos pos, IBlockState state, int level) {
         world.setBlockState(pos, state.withProperty(LEVEL, MathHelper.clamp(level, 0, 3)), 3);
         world.updateComparatorOutputLevel(pos, this);
     }
     
     @Override
-    public boolean hasComparatorInputOverride(IBlockState state) { return true; }
+    public boolean hasComparatorInputOverride(IBlockState state) { 
+        return true; 
+    }
 
     @Override
-    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
-    {
+    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
         return blockState.getValue(LEVEL);
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) { return getDefaultState().withProperty(LEVEL, meta); }
+    public IBlockState getStateFromMeta(int meta) { 
+        return getDefaultState().withProperty(LEVEL, meta); 
+    }
 
     @Override
-    public int getMetaFromState(IBlockState state) { return state.getValue(LEVEL); }
+    public int getMetaFromState(IBlockState state) { 
+        return state.getValue(LEVEL); 
+    }
 
     @Override
-    protected BlockStateContainer createBlockState() { return new BlockStateContainer(this, new IProperty[] {LEVEL}); }
+    protected BlockStateContainer createBlockState() { 
+        return new BlockStateContainer(this, new IProperty[] {LEVEL}); 
+    }
     
     @Override
-    public boolean isOpaqueCube(IBlockState state) { return false; }
+    public boolean isOpaqueCube(IBlockState state) { 
+        return false; 
+    }
 
     @Override
-    public boolean isFullCube(IBlockState state) { return false; }
+    public boolean isFullCube(IBlockState state) { 
+        return false; 
+    }
     
     @SideOnly(Side.CLIENT)
     @Override
-    public BlockRenderLayer getRenderLayer() { return BlockRenderLayer.CUTOUT; }
+    public BlockRenderLayer getRenderLayer() { 
+        return BlockRenderLayer.CUTOUT; 
+    }
 }
