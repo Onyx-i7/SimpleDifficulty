@@ -155,7 +155,7 @@ public class CommandSimpleDifficulty extends CommandBase {
                 if (capability != null) {
                     capability.setThirstLevel(parseInt(args[1]));
                     if (args.length >= 3) {
-                        capability.setThirstSaturation(parseFloat(args[2]));
+                        capability.setThirstSaturation((float) parseDouble(args[2]));
                     }
                     message(sender, "Thirst updated successfully.");
                 }
@@ -228,7 +228,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             }
             
             try {
-                float temperature = parseFloat(args[1]);
+                float temperature = (float) parseDouble(args[1]);
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 ItemStack stack = player.getHeldItemMainhand();
                 
@@ -286,7 +286,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             }
             
             try {
-                float temperature = parseFloat(args[1]);
+                float temperature = (float) parseDouble(args[1]);
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 World world = player.world;
                 
@@ -311,7 +311,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             }
             
             try {
-                float temperature = parseFloat(args[1]);
+                float temperature = (float) parseDouble(args[1]);
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 ItemStack stack = player.getHeldItemMainhand();
                 
@@ -344,8 +344,8 @@ public class CommandSimpleDifficulty extends CommandBase {
             
             try {
                 int amount = parseInt(args[1]);
-                float saturation = parseFloat(args[2]);
-                float thirstyChance = parseFloat(args[3]);
+                float saturation = (float) parseDouble(args[2]);
+                float thirstyChance = (float) parseDouble(args[3]);
                 
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 ItemStack stack = player.getHeldItemMainhand();
@@ -383,7 +383,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             }
             
             try {
-                float temperature = parseFloat(args[1]);
+                float temperature = (float) parseDouble(args[1]);
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 ItemStack stack = player.getHeldItemMainhand();
                 
@@ -421,7 +421,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             
             try {
                 String group = args[1].replaceAll("\"", "");
-                float temperature = parseFloat(args[2]);
+                float temperature = (float) parseDouble(args[2]);
                 int duration = parseInt(args[3]);
                 
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
@@ -460,7 +460,7 @@ public class CommandSimpleDifficulty extends CommandBase {
             }
             
             try {
-                float temperature = parseFloat(args[1]);
+                float temperature = (float) parseDouble(args[1]);
                 EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
                 ItemStack stack = player.getHeldItemMainhand();
                 
