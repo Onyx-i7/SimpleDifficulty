@@ -45,7 +45,8 @@ public class MessageConfigLAN implements IMessage {
                             boolean isHost = FMLCommonHandler.instance().getMinecraftServerInstance().isSinglePlayer() 
                                     && FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equals(sender.getName());
                             
-                            if (isHost || sender.getPermissionLevel() >= 2) {
+                            // Fix: Replaced nonexistent getPermissionLevel() with vanilla OP check
+                            if (isHost || sender.getServer().getPlayerList().canSendCommands(sender.getGameProfile())) {
                                 ModConfig.sendServerConfigToAllPlayers();
                             } else {
                                 SimpleDifficulty.logger.warn("Player {} attempted to force a LAN config update without proper permissions.", sender.getName());
