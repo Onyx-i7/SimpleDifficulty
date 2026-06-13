@@ -14,60 +14,51 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class MessageUpdateTemperature implements IMessage
-{
-	//Side CLIENT
-	
-	private NBTTagCompound nbt;
-	
-	public MessageUpdateTemperature()
-	{
-		//Necessary to avoid crash
-	}
-	
-	public MessageUpdateTemperature(NBTBase nbt)
-	{
-		this.nbt = (NBTTagCompound)nbt;
-	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf)
-	{
-		this.nbt = ByteBufUtils.readTag(buf);
-	}
+public class MessageUpdateTemperature implements IMessage {
 
-	@Override
-	public void toBytes(ByteBuf buf) 
-	{
-		ByteBufUtils.writeTag(buf, this.nbt);
-	}
-	
-	public NBTTagCompound getNBT()
-	{
-		return this.nbt;
-	}
-	
-	public static class Handler implements IMessageHandler<MessageUpdateTemperature, IMessage>
-	{
-		@Override
-		public IMessage onMessage(MessageUpdateTemperature message, MessageContext ctx) 
-		{
-			if(ctx.side == Side.CLIENT)
-			{
-				EntityPlayerSP player = Minecraft.getMinecraft().player;
-				if(player!=null)
-				{
-					Minecraft.getMinecraft().addScheduledTask(() -> 
-					{
-						Capability<ITemperatureCapability> capability = SDCapabilities.TEMPERATURE;
-						capability.getStorage().readNBT(capability, player.getCapability(capability, null), null, message.getNBT());
-						//player.sendMessage(new TextComponentString("Received MessageUpdateThirst message"));
-					});
-				}
-			}
-			return null;
-		}
-	}
-	
+    private NBTTagCompound nbt;
+    
+    public MessageUpdateTemperature() {
+        // Necessary to avoid crashes in Forge's reflection instantiation
+    }
+    
+    public MessageUpdateTemperature(NBTBase nbt) {
+        this.nbt = (NBTTagCompound) nbt;
+    }
+    
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.nbt = ByteBufUtils.readTag(buf);
+    }
 
+    @Override
+    public void toBytes(ByteBuf buf) {
+        ByteBufUtils.writeTag(buf, this.nbt);
+    }
+    
+    public NBTTagCompound getNBT() {
+        return this.nbt;
+    }
+    
+    public static class Handler implements IMessageHandler<MessageUpdateTemperature, IMessage> {
+        
+        @Override
+        public IMessage onMessage(MessageUpdateTemperature message, MessageContext ctx) {
+            if (ctx.side == Side.CLIENT) {
+                // Securely move all customer interaction to the main thread
+                Minecraft.getMinecraft().addScheduledTask(() -> {
+                    EntityPlayerSP player = Minecraft.getMinecraft().player;
+                    if (player != null) {
+                        Capability<ITemperatureCapability> capability = SDCapabilities.TEMPERATURE;
+                        ITemperatureCapability tempCap = player.getCapability(capability, null);
+                        
+                        if (tempCap != null && message.getNBT() != null) {
+                            capability.getStorage().readNBT(capability, tempCap, null, message.getNBT());
+                        }
+                    }
+                });
+            }
+            return null;
+        }
+    }
 }
