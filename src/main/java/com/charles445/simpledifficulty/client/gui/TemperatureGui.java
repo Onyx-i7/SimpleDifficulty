@@ -15,6 +15,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -318,8 +319,8 @@ public class TemperatureGui {
                         if (ModConfig.client.thermometer.hudThermometer && ModConfig.client.thermometer.enableThermometer) {
                             worldThermometerTemperature = TemperatureUtil.clampTemperature((int) WorldUtil.calculateClientWorldEntityTemperature(world, player));
                             
-                            // Optimized: Using hasItem instead of generating an unneeded ItemStack comparison layout
-                            hasThermometer = player.inventory.hasItem(SDItems.thermometer);
+                            // Fix: Replaced nonexistent hasItem with vanilla inventory scan via itemstack
+                            hasThermometer = player.inventory.hasItemStack(new ItemStack(SDItems.thermometer));
                         }
                     }
                 }
