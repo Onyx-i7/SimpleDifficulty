@@ -14,47 +14,49 @@ import java.util.Random;
 import static com.charles445.simpledifficulty.handler.FluidHandler.canMix;
 import static com.charles445.simpledifficulty.handler.FluidHandler.scheduleMixing;
 
-public class BlockFluidBasicMixable extends BlockFluidBasic
-{
-	public BlockFluidBasicMixable(Fluid fluid, Material material, String iceBlock)
-	{
-		super(fluid, material, iceBlock);
-	}
+public class BlockFluidBasicMixable extends BlockFluidBasic {
+    public BlockFluidBasicMixable(Fluid fluid, Material material, String iceBlock) {
+        super(fluid, material, iceBlock);
+    }
 
     @Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random random)
-	{
-		super.updateTick(world, pos, state, random);
-		if (canMix(pos, world))
-		{
-			scheduleMixing(world, pos);
-		}
-	}
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
+        super.updateTick(world, pos, state, random);
+        
+        if (world.isRemote) return;
 
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighbourPos)
-	{
-		world.scheduleUpdate(pos, this, tickRate);
-		if (!world.isBlockLoaded(pos)) return;
-		if (canMix(pos, world))
-		{
-			scheduleMixing(world, pos);
-		}
-	}
+        if (canMix(pos, world)) {
+            scheduleMixing(world, pos);
+        }
+    }
 
-	@Override
-	public void onBlockAdded(World world, BlockPos pos, IBlockState state)
-	{
-		world.scheduleUpdate(pos, this, tickRate);
-		if (canMix(pos, world))
-		{
-			scheduleMixing(world, pos);
-		}
-	}
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighbourPos) {
+        if (world.isRemote) return; // Only process physical mixtures on the server
+        
+        // Check if the chunk is ready to prevent chunk load leaks
+        if (!world.isBlockLoaded(pos)) return;
+        
+        world.scheduleUpdate(pos, this, tickRate);
+        
+        if (canMix(pos, world)) {
+            scheduleMixing(world, pos);
+        }
+    }
 
-	@Override
-	public int getLightOpacity(IBlockState state)
-	{
-		return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
-	}
+    @Override
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        if (world.isRemote) return; // Only process on the server
+
+        world.scheduleUpdate(pos, this, tickRate);
+        
+        if (canMix(pos, world)) {
+            scheduleMixing(world, pos);
+        }
+    }
+
+    @Override
+    public int getLightOpacity(IBlockState state) {
+        return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
+    }
 }
