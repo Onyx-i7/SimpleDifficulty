@@ -10,51 +10,44 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class MessageUpdateConfig implements IMessage
-{
-	//Side CLIENT
-	
-	private NBTTagCompound nbt;
-	
-	public MessageUpdateConfig()
-	{
-		//Necessary to avoid crash
-	}
-	
-	public MessageUpdateConfig(NBTTagCompound compound)
-	{
-		nbt = compound;
-	}
+public class MessageUpdateConfig implements IMessage {
 
-	@Override
-	public void fromBytes(ByteBuf buf)
-	{
-		nbt = ByteBufUtils.readTag(buf);
-	}
-	
-	@Override
-	public void toBytes(ByteBuf buf)
-	{
-		ByteBufUtils.writeTag(buf, nbt);
-	}
-	
-	
-	public static class Handler implements IMessageHandler<MessageUpdateConfig, IMessage>
-	{
-		@Override
-		public IMessage onMessage(MessageUpdateConfig message, MessageContext ctx) 
-		{
-			if(ctx.side == Side.CLIENT)
-			{
-				Minecraft.getMinecraft().addScheduledTask(() -> 
-				{
-					ServerConfig.instance.updateValues(message.nbt);
-				});
-			}
-			return null;
-		}
-	}
+    // CLIENT side
+    
+    private NBTTagCompound nbt;
+    
+    public MessageUpdateConfig() {
+        // Necessary to avoid crashes in Forge's reflection instantiation
+    }
+    
+    public MessageUpdateConfig(NBTTagCompound compound) {
+        this.nbt = compound;
+    }
 
-
-	
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.nbt = ByteBufUtils.readTag(buf);
+    }
+    
+    @Override
+    public void toBytes(ByteBuf buf) {
+        ByteBufUtils.writeTag(buf, this.nbt);
+    }
+    
+    public static class Handler implements IMessageHandler<MessageUpdateConfig, IMessage> {
+        
+        @Override
+        public IMessage onMessage(MessageUpdateConfig message, MessageContext ctx) {
+            if (ctx.side == Side.CLIENT) {
+                // Synchronization delegated to the main rendering thread
+                Minecraft.getMinecraft().addScheduledTask(() -> {
+                    // Security filter: Prevents crashes if the configuration package arrives corrupted
+                    if (message.nbt != null) {
+                        ServerConfig.instance.updateValues(message.nbt);
+                    }
+                });
+            }
+            return null;
+        }
+    }
 }
