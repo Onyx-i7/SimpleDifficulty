@@ -80,6 +80,7 @@ Designed specifically to reduce server overhead and client-side stuttering:
 * The Betweenlands
 * SurvivalTools
 * Weather2 Remastered
+* Traveler's Backpacks (It has been implemented and is being tested for the next version 0.8.0, for now, it is working well)
 
 ### Additional Compatibility
 - Cave Generator
