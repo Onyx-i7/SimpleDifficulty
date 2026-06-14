@@ -49,10 +49,19 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     private boolean isRainingAt(World world, BlockPos pos)
     {
         BlockPos checkPos = pos.up();
-        if (!world.canSeeSky(checkPos)) {
+        boolean canSeeSky = world.canSeeSky(checkPos);
+        
+        // Si no ve el cielo, no puede lloverle
+        if (!canSeeSky) {
             return false;
         }
-        return Weather2Compat.isRainingAt(world, checkPos);
+        
+        boolean isRaining = Weather2Compat.isRainingAt(world, checkPos);
+        
+        // LOG DE DIAGNÓSTICO
+        System.out.println("[CampfireDebug] ¿Está lloviendo en " + checkPos + "? Respuesta: " + isRaining + " (Vanilla Raining: " + world.isRaining() + ")");
+        
+        return isRaining;
     }
     
     private void scheduleRainCheck(World world, BlockPos pos)
@@ -144,6 +153,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
             }
             
             if (ignited) {
+                System.out.println("[CampfireDebug] Fogata encendida exitosamente en " + pos);
                 scheduleRainCheck(world, pos);
             }
             return true;
@@ -161,9 +171,9 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         
         if (burning)
         {
-            // Extra fallback rain check inside random ticks
             if (isRainingAt(world, pos))
             {
+                System.out.println("[CampfireDebug] Apagada por lluvia en randomTick.");
                 extinguishCampfire(world, pos, state);
                 return;
             }
@@ -173,6 +183,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
                 age++;
                 if (age >= AGE_MAX)
                 {
+                    System.out.println("[CampfireDebug] Fogata consumida por completo (Age max alcanzada).");
                     world.setBlockState(pos, state.withProperty(AGE, AGE_MAX).withProperty(BURNING, false), 3);
                     effectExtinguish(world, pos);
                 }
@@ -191,6 +202,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         {
             if (isRainingAt(world, pos))
             {
+                System.out.println("[CampfireDebug] Apagada por lluvia en neighborChanged.");
                 extinguishCampfire(world, pos, state);
             }
         }
@@ -200,11 +212,13 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
         if (world.isRemote) return;
-        
         if (!state.getValue(BURNING)) return;
+        
+        System.out.println("[CampfireDebug] Ejecutando updateTick de rutina en " + pos);
         
         if (isRainingAt(world, pos))
         {
+            System.out.println("[CampfireDebug] Apagada por lluvia en updateTick.");
             extinguishCampfire(world, pos, state);
             return;
         }
@@ -212,23 +226,22 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         scheduleRainCheck(world, pos);
     }
     
-    /**
-     * Public thread-safe method to safely extinguish the fire from event managers
-     */
-    public void extinguishCampfire(World world, BlockPos pos, IBlockState state)
-    {
-        if (state.getValue(BURNING))
-        {
+    public void extinguishCampfire(World world, BlockPos pos, IBlockState state) {
+        if (state.getValue(BURNING)) {
+            // Fix v0.7.9: If an external event tries to turn it off, check if it's really raining
+            // If it is NOT raining, ignore the external order and keep the fire going
+            if (!isRainingAt(world, pos)) {
+                return; 
+            }
+
+            // If it is indeed raining, proceed to turn it off as usual
             world.setBlockState(pos, state.withProperty(BURNING, false), 3);
             effectExtinguish(world, pos);
         }
     }
     
     @Override
-    public int tickRate(World world)
-    {
-        return RAIN_CHECK_RATE;
-    }
+    public int tickRate(World world) { return RAIN_CHECK_RATE; }
     
     @Override
     public IBlockState getStateFromMeta(int meta)
@@ -245,71 +258,40 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     }
 
     @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, new IProperty[] {AGE, BURNING});
-    }   
-    
+    protected BlockStateContainer createBlockState() { return new BlockStateContainer(this, new IProperty[] {AGE, BURNING}); }   
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        return HITBOX;
-    }
-    
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) { return HITBOX; }
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess world, BlockPos pos)
-    {
-        return Block.NULL_AABB;
-    }
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess world, BlockPos pos) { return Block.NULL_AABB; }
     
     @Override
     public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity)
     {
-        if (!world.isRemote && state.getValue(BURNING) && entity instanceof EntityLivingBase)
-        {
-            entity.setFire(1);
-        }
+        if (!world.isRemote && state.getValue(BURNING) && entity instanceof EntityLivingBase) { entity.setFire(1); }
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face)
-    {
-        return BlockFaceShape.UNDEFINED;
-    }
-    
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) { return BlockFaceShape.UNDEFINED; }
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        return state.getValue(BURNING) ? 15 : 0;
-    }
-    
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) { return state.getValue(BURNING) ? 15 : 0; }
     @Override
-    public int quantityDropped(IBlockState state, int fortune, Random random)
-    { 
-        return 0;
-    }
+    public int quantityDropped(IBlockState state, int fortune, Random random) { return 0; }
     
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand)
     {
         super.randomDisplayTick(state, world, pos, rand);
-        
         if (state.getValue(BURNING))
         {
             int age = state.getValue(AGE);
             float strength = 1.0f - ((float)age / (float)(AGE_MAX - AGE_MIN));
-            
             if (rand.nextFloat() < strength)
             {
                 int loop = rand.nextInt(6) + 1;
-                for (int i = 0; i < loop; i++)
-                {
-                    createFlameParticle(world, pos, rand);
-                }
+                for (int i = 0; i < loop; i++) { createFlameParticle(world, pos, rand); }
             }
-            
             if (rand.nextInt(30) == 0)
             {
                 world.playSound(0.5d + pos.getX(), 0.5d + pos.getY(), 0.5d + pos.getZ(), SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 0.5f, 1.0f, false);
@@ -317,13 +299,10 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         }
     }
     
-    private void effectExtinguish(World world, BlockPos pos)
-    {
+    private void effectExtinguish(World world, BlockPos pos) {
         SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH);
-        if (!world.isRemote)
-        {
-            for (int i = 0; i < 4; i++)
-            {
+        if (!world.isRemote) {
+            for (int i = 0; i < 4; i++) {
                 double xOffset = pos.getX() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.4;
                 double yOffset = pos.getY() + 0.4 + world.rand.nextDouble() * 0.3;
                 double zOffset = pos.getZ() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.4;
@@ -331,7 +310,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
                 world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, xOffset, yOffset, zOffset, 0.0, 0.03, 0.0);
             }
         }
-    }
+    }  
     
     private void createFlameParticle(World world, BlockPos pos, Random rand)
     {
@@ -346,11 +325,9 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     public boolean isFullCube(IBlockState state) { return false; }
     @Override
     public boolean isOpaqueCube(IBlockState state) { return false; }
-    
     @SideOnly(Side.CLIENT)
     @Override
     public BlockRenderLayer getRenderLayer() { return BlockRenderLayer.CUTOUT; }
-
     @Override
     public IProperty[] getIgnoredProperties() { return ignoredProperties; }
 }
