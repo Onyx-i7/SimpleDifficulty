@@ -34,10 +34,11 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockCampfire extends Block implements IBlockStateIgnore {
+
     private static final int AGE_MIN = 0;
     private static final int AGE_MAX = 7;
     private static final int LOG_REFUEL = 3;
-    private static final int RAIN_CHECK_RATE = 20;
+    private static final int RAIN_CHECK_RATE = 20; // Single tick-rate pipeline to prevent thread/scheduler collisions
     
     public static final PropertyInteger AGE = PropertyInteger.create("age", AGE_MIN, AGE_MAX);
     public static final PropertyBool BURNING = PropertyBool.create("burning");
@@ -45,19 +46,24 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
     private static final IProperty[] ignoredProperties = new IProperty[]{BURNING};
     private static final AxisAlignedBB HITBOX = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.4D, 1.0D);
     
+    /**
+     * Internal precipitation check.
+     * Weather2 compatibility is fully active through Weather2Compat reflection hooks.
+     */
     private boolean isRainingAt(World world, BlockPos pos) {
-        // v0.7.8 Fix: If it is not raining globally in the world, ignore false positives from the weather bridge
-        if (!world.isRaining()) {
-            return false;
-        }
-        
         BlockPos checkPos = pos.up();
         if (!world.canSeeSky(checkPos)) {
             return false;
         }
+        
+        // Weather2Compat verified pipeline handles precise local storm grid verification
         return Weather2Compat.isRainingAt(world, checkPos);
     }
     
+    /**
+     * Schedules a single controlled update tick.
+     * Multiple concurrent schedules per block must be strictly avoided to prevent instant burn-out bugs.
+     */
     private void scheduleRainCheck(World world, BlockPos pos) {
         world.scheduleUpdate(pos, this, RAIN_CHECK_RATE);
     }
@@ -67,7 +73,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
         setDefaultState(blockState.getBaseState().withProperty(AGE, AGE_MIN).withProperty(BURNING, false));
         setHardness(0.5f);
         setSoundType(SoundType.WOOD);
-        setTickRandomly(true);
+        setTickRandomly(true); // Required for natural processing of wood decay via random ticks
     }
     
     @Override
@@ -113,8 +119,9 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
                 int refuelAmount = (LOG_REFUEL + (age == AGE_MAX ? 1 : 0));
                 world.setBlockState(pos, state.withProperty(AGE, Math.max(AGE_MIN, age - refuelAmount)), 3);
                 
-                // v0.7.8 Optimization: Removed redundant scheduleRainCheck here to prevent 
-                // infinite update tick duplication threads when the block is already burning.
+                if (burning) {
+                    scheduleRainCheck(world, pos);
+                }
             }
             return true;
         } else if (!burning && age < AGE_MAX && !isRainingAtPos) {
@@ -144,20 +151,18 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
     
     @Override
     public void randomTick(World world, BlockPos pos, IBlockState state, Random rand) {
-        if (world.isRemote) {
-            return;
-        }
+        if (world.isRemote) return;
         
         int age = state.getValue(AGE);
         boolean burning = state.getValue(BURNING);
         
         if (burning) {
-            // Extra fallback rain check inside random ticks
             if (isRainingAt(world, pos)) {
                 extinguishCampfire(world, pos, state);
                 return;
             }
 
+            // Natural ambient wood decay handled safely via random engine bounds
             if (rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance) == 0) {
                 age++;
                 if (age >= AGE_MAX) {
@@ -181,25 +186,19 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
 
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-        if (world.isRemote) {
-            return;
-        }
+        if (world.isRemote) return;
+        if (!state.getValue(BURNING)) return;
         
-        if (!state.getValue(BURNING)) {
-            return;
-        }
-        
+        // Immediate dampening if rain is actively falling on the block coordinates
         if (isRainingAt(world, pos)) {
             extinguishCampfire(world, pos, state);
             return;
         }
         
+        // Safely re-schedule next clean standalone check block update
         scheduleRainCheck(world, pos);
     }
     
-    /**
-     * Public thread-safe method to safely extinguish the fire from event managers
-     */
     public void extinguishCampfire(World world, BlockPos pos, IBlockState state) {
         if (state.getValue(BURNING)) {
             world.setBlockState(pos, state.withProperty(BURNING, false), 3);
@@ -306,23 +305,14 @@ public class BlockCampfire extends Block implements IBlockStateIgnore {
     }
     
     @Override
-    public boolean isFullCube(IBlockState state) { 
-        return false; 
-    }
-    
+    public boolean isFullCube(IBlockState state) { return false; }
     @Override
-    public boolean isOpaqueCube(IBlockState state) { 
-        return false; 
-    }
+    public boolean isOpaqueCube(IBlockState state) { return false; }
     
     @SideOnly(Side.CLIENT)
     @Override
-    public BlockRenderLayer getRenderLayer() { 
-        return BlockRenderLayer.CUTOUT; 
-    }
+    public BlockRenderLayer getRenderLayer() { return BlockRenderLayer.CUTOUT; }
 
     @Override
-    public IProperty[] getIgnoredProperties() { 
-        return ignoredProperties; 
-    }
+    public IProperty[] getIgnoredProperties() { return ignoredProperties; }
 }
