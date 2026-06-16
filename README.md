@@ -1,5 +1,8 @@
+<div align="center">
+
 # SimpleDifficulty
 
+</div>
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
