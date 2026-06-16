@@ -201,7 +201,7 @@ public void onThirstChange(ThirstChangeEvent event) {
 }
 ```
 
-For complete API documentation, see the api in the source code.
+For complete API documentation, see the [api](https://github.com/Onyx-i7/SimpleDifficulty/tree/master/src/main/java/com/charles445/simpledifficulty/api) in the source code.
 
 ## Building From Source
 
@@ -251,7 +251,6 @@ This project is distributed under the MIT License
 - juraj-hrivnak: Created the Underdog fork
 - Onyx_i7: Maintained current development branch, optimizations, and modern fork compatibility
 
-## Support & Contact
+## Support
 - Bug Reports: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
 - Feature Requests: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
-- Discord: edward.v902
