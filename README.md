@@ -1,8 +1,5 @@
-<div align="center">
+<h1 align="center">SimpleDifficulty</h1>
 
-# SimpleDifficulty
-
-</div>
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
