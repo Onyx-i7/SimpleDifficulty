@@ -4,25 +4,16 @@ buildscript {
         maven { url = "https://maven.minecraftforge.net" }
     }
     dependencies {
-        classpath "com.anatawa12.forge:ForgeGradle:2.3-1.0.7"
+        classpath "com.anatawa12.forge:ForgeGradle:2.3-1.0.8"
     }
 }
 apply plugin: "net.minecraftforge.gradle.forge"
 
-//String baseVersion = "1.12.2-0.7.6"
-
-// For test versions, you can use the build number of github actions, or if it is not defined, put local.
-//if (System.getenv("GITHUB_RUN_NUMBER") != null) {
-//    version = "${baseVersion}-build${System.getenv("GITHUB_RUN_NUMBER")}"
-//} else {
-//    version = "${baseVersion}-local"
-//}
-
-version = "1.12.2-0.7.8"
+version = "1.12.2-0.8.0"
 group = "com.charles445.simpledifficulty"
 archivesBaseName = "SimpleDifficulty"
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
@@ -31,7 +22,6 @@ minecraft {
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
     mappings = "stable_39"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 repositories {
@@ -59,15 +49,17 @@ dependencies {
 
     // Fluidlogged API
     deobfCompile 'com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT'
+
+    // Traveler's Backpack
+    deobfCompile "curse.maven:travelers-backpack-321117:3150850"
 }
 
-processResources{
+processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
     
@@ -76,22 +68,20 @@ processResources{
     }
 }
 
-task apiJar(type: Jar){
-	from(sourceSets.main.allJava){
-		include 'com/charles445/simpledifficulty/api/**'
-	}
-	
-	classifier = 'api'
+task apiJar(type: Jar) {
+    from(sourceSets.main.allJava) {
+        include 'com/charles445/simpledifficulty/api/**'
+    }
+    classifier = 'api'
 }
 
 artifacts {
-	archives apiJar
+    archives apiJar
 }
 
 jar {
-    manifest 
-	{
+    manifest {
         attributes "FMLCorePlugin": "com.charles445.simpledifficulty.asm.CoreLoader"
-		attributes "FMLCorePluginContainsFMLMod": "com.charles445.simpledifficulty.SimpleDifficulty"
+        attributes "FMLCorePluginContainsFMLMod": "com.charles445.simpledifficulty.SimpleDifficulty"
     }
 }
