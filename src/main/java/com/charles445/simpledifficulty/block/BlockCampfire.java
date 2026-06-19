@@ -51,16 +51,12 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         BlockPos checkPos = pos.up();
         boolean canSeeSky = world.canSeeSky(checkPos);
         
-        // Si no ve el cielo, no puede lloverle
+        // If you don't see the sky, it can't rain on you.
         if (!canSeeSky) {
             return false;
         }
         
         boolean isRaining = Weather2Compat.isRainingAt(world, checkPos);
-        
-        // LOG DE DIAGNÓSTICO
-        System.out.println("[CampfireDebug] ¿Está lloviendo en " + checkPos + "? Respuesta: " + isRaining + " (Vanilla Raining: " + world.isRaining() + ")");
-        
         return isRaining;
     }
     
@@ -153,7 +149,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
             }
             
             if (ignited) {
-                System.out.println("[CampfireDebug] Fogata encendida exitosamente en " + pos);
+                // FORCE RESCHEDULE: Ensure the update loop handles raining instantly when lit manually
                 scheduleRainCheck(world, pos);
             }
             return true;
@@ -162,33 +158,25 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     }
     
     @Override
-    public void randomTick(World world, BlockPos pos, IBlockState state, Random rand)
-    {
+    public void randomTick(World world, BlockPos pos, IBlockState state, Random rand) {
         if (world.isRemote) return;
         
         int age = state.getValue(AGE);
         boolean burning = state.getValue(BURNING);
         
-        if (burning)
-        {
-            if (isRainingAt(world, pos))
-            {
-                System.out.println("[CampfireDebug] Apagada por lluvia en randomTick.");
+        if (burning) {
+            if (isRainingAt(world, pos)) {
                 extinguishCampfire(world, pos, state);
                 return;
             }
 
-            if (rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance) == 0)
-            {
+            if (rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance) == 0) {
                 age++;
-                if (age >= AGE_MAX)
-                {
-                    System.out.println("[CampfireDebug] Fogata consumida por completo (Age max alcanzada).");
+                if (age >= AGE_MAX) {
                     world.setBlockState(pos, state.withProperty(AGE, AGE_MAX).withProperty(BURNING, false), 3);
                     effectExtinguish(world, pos);
                 }
-                else
-                {
+                else {
                     world.setBlockState(pos, state.withProperty(AGE, age), 3);
                 }
             }
@@ -196,29 +184,20 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     }
     
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
-    {
-        if (!world.isRemote && state.getValue(BURNING))
-        {
-            if (isRainingAt(world, pos))
-            {
-                System.out.println("[CampfireDebug] Apagada por lluvia en neighborChanged.");
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (!world.isRemote && state.getValue(BURNING)) {
+            if (isRainingAt(world, pos)) {
                 extinguishCampfire(world, pos, state);
             }
         }
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
-    {
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         if (world.isRemote) return;
         if (!state.getValue(BURNING)) return;
         
-        System.out.println("[CampfireDebug] Ejecutando updateTick de rutina en " + pos);
-        
-        if (isRainingAt(world, pos))
-        {
-            System.out.println("[CampfireDebug] Apagada por lluvia en updateTick.");
+        if (isRainingAt(world, pos)) {
             extinguishCampfire(world, pos, state);
             return;
         }
@@ -228,13 +207,11 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
     
     public void extinguishCampfire(World world, BlockPos pos, IBlockState state) {
         if (state.getValue(BURNING)) {
-            // Fix v0.7.9: If an external event tries to turn it off, check if it's really raining
-            // If it is NOT raining, ignore the external order and keep the fire going
-            if (!isRainingAt(world, pos)) {
+            if (!isRainingAt(world, pos)) 
+            {
                 return; 
             }
 
-            // If it is indeed raining, proceed to turn it off as usual
             world.setBlockState(pos, state.withProperty(BURNING, false), 3);
             effectExtinguish(world, pos);
         }
