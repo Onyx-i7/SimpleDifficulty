@@ -154,8 +154,6 @@ These mods work without dedicated integration but have been tested:
 
 SimpleDifficulty provides a complete API for other mods to integrate with the thirst and temperature systems.
 
-> **NOTE**:  This API may change due to code modifications to modernize it and make it more optimized, but it is in my plans
-
 ### Basic Example
 
 ```java
