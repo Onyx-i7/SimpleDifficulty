@@ -16,7 +16,7 @@ public class Weather2Compat {
     private static java.lang.reflect.Constructor<?> vec3Constructor;
     
     // Advanced reflection variables to inspect storms based on WeatherEnum
-    private static Method methodGetStormType; // Method in WeatherObject that returns the Type enum
+    private static Method methodGetStormType; 
     private static Field fieldStormStage;
     private static Object enumTypeSandstorm;
     private static Object enumTypeBlizzard;
@@ -34,7 +34,6 @@ public class Weather2Compat {
                 Class<?> clazzVec3 = Class.forName("net.mrbt0907.weather2.util.Maths.Vec3");
                 vec3Constructor = clazzVec3.getConstructor(double.class, double.class, double.class);
 
-                // Map storm finder method
                 Class<?> clazzWeatherEnumTypeArray = Class.forName("[Lnet.mrbt0907.weather2.api.weather.WeatherEnum$Type;");
                 methodGetClosestWeather = clazzWeatherAPI.getMethod("getClosestWeather", 
                     int.class, clazzVec3, double.class, int.class, int.class, clazzWeatherEnumTypeArray);
@@ -42,14 +41,11 @@ public class Weather2Compat {
                 Class<?> clazzWindReader = Class.forName("net.mrbt0907.weather2.api.WindReader");
                 methodGetWindSpeed = clazzWindReader.getMethod("getWindSpeed", World.class, clazzVec3);
 
-                // Access WeatherObject and its properties
                 Class<?> clazzWeatherObject = Class.forName("net.mrbt0907.weather2.weather.storm.WeatherObject");
                 
-                // Try to find the method that returns the storm type (usually getType() or similar)
                 try {
                     methodGetStormType = clazzWeatherObject.getMethod("getType");
                 } catch (NoSuchMethodException e) {
-                    // Fallback in case it's exposed as a direct public field
                     methodGetStormType = null;
                 }
 
@@ -59,7 +55,6 @@ public class Weather2Compat {
                     fieldStormStage = null;
                 }
 
-                // Retrieve the actual runtime instances of the WeatherEnum.Type values
                 Class<?> clazzWeatherEnumType = Class.forName("net.mrbt0907.weather2.api.weather.WeatherEnum$Type");
                 for (Object enumConstant : clazzWeatherEnumType.getEnumConstants()) {
                     String name = enumConstant.toString();
@@ -81,16 +76,27 @@ public class Weather2Compat {
         return isWeather2Loaded;
     }
 
+    /**
+     * Checks if it's currently raining or precipitating at the given block position.
+     * Unifies Weather2 checks and Vanilla rain checks robustly.
+     */
     public static boolean isRainingAt(World world, BlockPos pos) {
         if (world == null || pos == null) return false;
+        
+        // Fix: Use the standard world.isRainingAt(pos) without over-restricting it 
+        // with world.isRaining(), as some mod states decouple the global rain boolean.
+        boolean vanillaRain = world.isRainingAt(pos);
+        
         if (isWeather2Loaded) {
             try {
-                return (boolean) methodIsPrecipitatingAt.invoke(null, world, pos);
+                // Check Weather2 API precipitation
+                boolean weather2Rain = (boolean) methodIsPrecipitatingAt.invoke(null, world, pos);
+                return weather2Rain || vanillaRain;
             } catch (Exception e) {
-                return world.isRaining() && world.isRainingAt(pos);
+                return vanillaRain;
             }
         }
-        return world.isRaining() && world.isRainingAt(pos);
+        return vanillaRain;
     }
 
     public static float getWindSpeedAt(World world, BlockPos pos) {
@@ -103,18 +109,12 @@ public class Weather2Compat {
         }
     }
 
-    /**
-     * Identifies the thermal intensity of the weather based strictly on WeatherEnum.Type.
-     * Returns positive values for heat, negative values for cold conditions.
-     */
     public static int getThermalIntensityAt(World world, BlockPos pos) {
         if (!isWeather2Loaded || world == null || pos == null) return 0;
 
         try {
             int dim = world.provider.getDimension();
             Object weatherVec3 = vec3Constructor.newInstance(pos.getX(), pos.getY(), pos.getZ());
-            
-            // Look for nearby weather systems within a standard radius of 250 blocks
             Object closestStorm = methodGetClosestWeather.invoke(null, dim, weatherVec3, 250.0D, 0, 10, null);
             
             if (closestStorm != null) {
@@ -123,29 +123,27 @@ public class Weather2Compat {
                 if (methodGetStormType != null) {
                     stormType = methodGetStormType.invoke(closestStorm);
                 } else {
-                    // Fallback to direct field access if the method is not present
                     try {
                         Field fieldType = closestStorm.getClass().getField("type");
                         stormType = fieldType.get(closestStorm);
-                    } catch (Exception ex) { /* Fallback */ }
+                    } catch (Exception ex) { }
                 }
 
                 if (stormType != null) {
                     int stage = (fieldStormStage != null) ? fieldStormStage.getInt(closestStorm) : 1;
                     int severity = Math.max(1, stage);
 
-                    // Strict comparison of mapped runtime Enums
                     if (stormType.equals(enumTypeSandstorm)) {
-                        return 2 * severity; // Scale heat up based on sandstorm severity stage
+                        return 2 * severity;
                     }
                     
                     if (stormType.equals(enumTypeBlizzard)) {
-                        return -2 * severity; // Scale cold down based on blizzard severity stage
+                        return -2 * severity;
                     }
                 }
             }
         } catch (Exception e) {
-            // Suppress runtime errors to maintain server stability
+            // Stability fallback
         }
         return 0;
     }
