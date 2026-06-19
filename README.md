@@ -87,7 +87,7 @@ Designed specifically to reduce server overhead and client-side stuttering in la
 
 ### Fully Supported Mods
 
-The following mods have dedicated integration code and full compatibility (except for Weather2 Remastered):
+The following mods have dedicated integration code and full compatibility:
 
 <details>
 <summary><b>Click to expand full list (24 mods)</b></summary>
