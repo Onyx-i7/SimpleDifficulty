@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
 [![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.7.9-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 [![Downloads](https://img.shields.io/github/downloads/onyx-i7/SimpleDifficulty/total.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 [![Issues](https://img.shields.io/github/issues/onyx-i7/SimpleDifficulty.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/issues)
 
@@ -90,7 +90,7 @@ Designed specifically to reduce server overhead and client-side stuttering in la
 The following mods have dedicated integration code and full compatibility (except for Weather2 Remastered):
 
 <details>
-<summary><b>Click to expand full list (26 mods)</b></summary>
+<summary><b>Click to expand full list (24 mods)</b></summary>
 
 - Animania
 - Armor Underwear
@@ -109,13 +109,13 @@ The following mods have dedicated integration code and full compatibility (excep
 - Realistic Torches
 - Rustic
 - Serene Seasons
+- SurvivalTools
 - Simple Camp Fire
 - Streams
+- Traveler's Backpacks
 - Tinkers' Construct
 - The Betweenlands
-- SurvivalTools
 - Weather2 Remastered
-- **Traveler's Backpacks** - *Implemented and tested for v0.8.0*
 
 </details>
 
