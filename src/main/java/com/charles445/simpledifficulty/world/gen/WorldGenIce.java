@@ -16,41 +16,40 @@ import static com.charles445.simpledifficulty.api.SDBlocks.iceSaltWater;
 import static com.charles445.simpledifficulty.api.SDFluids.blockPurifiedWater;
 import static com.charles445.simpledifficulty.api.SDFluids.blockSaltWater;
 
-public class WorldGenIce implements IWorldGenerator
-{
+// I don't know what the original purpose of this code was, but I imagine it was to generate saltwater or purified water
+
+public class WorldGenIce implements IWorldGenerator {
     @Override
-    public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
-    {
-        if (world.provider.getDimension() == 0)
-        {
+    public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
+        if (world.provider.getDimension() == 0) {
             int chunkBaseX = chunkX << 4;
             int chunkBaseZ = chunkZ << 4;
             
-            for (int x = 0; x < 16; x++)
-            {
-                for (int z = 0; z < 16; z++)
-                {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
                     int worldX = chunkBaseX + x;
                     int worldZ = chunkBaseZ + z;
                     
-                    BlockPos topPos = world.getPrecipitationHeight(new BlockPos(worldX, 0, worldZ));
+                    // Highest position exposed to the sky (usually AIR just above the water/blocks)
+                    BlockPos airPos = world.getPrecipitationHeight(new BlockPos(worldX, 0, worldZ));
+                    BlockPos waterPos = airPos.down();
                     
-                    if (topPos.getY() <= 0)
-                    {
+                    if (waterPos.getY() <= 0) {
                         continue;
                     }
                     
-                    BlockPos posDown = topPos.down();
-                    IBlockState stateAt = world.getBlockState(posDown);
-                    Block blockAt = stateAt.getBlock();
+                    IBlockState stateAtWater = world.getBlockState(waterPos);
+                    Block blockAtWater = stateAtWater.getBlock();
                     
-                    if (blockSaltWater.canFreeze(world, posDown))
-                    {
-                        world.setBlockState(posDown, iceSaltWater.getDefaultState(), 2);
-                    }
-                    else if (blockPurifiedWater.canFreeze(world, posDown) || blockAt == Blocks.ICE)
-                    {
-                        world.setBlockState(posDown, icePurifiedWater.getDefaultState(), 2);
+                    // Check for freezing by passing the AIR position (where the ice block will form if the water below is freezeable).
+                    if (blockSaltWater.canFreeze(world, airPos)) {
+                        world.setBlockState(waterPos, iceSaltWater.getDefaultState(), 2);
+                    } else if (blockPurifiedWater.canFreeze(world, airPos)) {
+                        world.setBlockState(waterPos, icePurifiedWater.getDefaultState(), 2);
+                    } else if (blockAtWater == Blocks.ICE) {
+                        // If the game has already generated regular Minecraft ice in the water, it replaces it
+                        // Note: Make sure to check if the original fluid below was purified
+                        world.setBlockState(waterPos, icePurifiedWater.getDefaultState(), 2);
                     }
                 }
             }
