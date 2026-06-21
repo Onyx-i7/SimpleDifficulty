@@ -1,87 +1,97 @@
 buildscript {
     repositories {
+        maven {
+            name = 'GTNH Maven'
+            url = 'https://nexus.gtnewhorizons.com/repository/public/'
+        }
         mavenCentral()
-        maven { url = "https://maven.minecraftforge.net" }
+        gradlePluginPortal()
     }
     dependencies {
-        classpath "com.anatawa12.forge:ForgeGradle:2.3-1.0.8"
+        classpath 'com.gtnewhorizons:retrofuturagradle:2.0.2'
     }
 }
-apply plugin: "net.minecraftforge.gradle.forge"
 
-version = "1.12.2-0.8.0"
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'com.gtnewhorizons.retrofuturagradle'
+
+version = "1.12.2-0.8.1"
 group = "com.charles445.simpledifficulty"
-archivesBaseName = "SimpleDifficulty"
 
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+// Gradle 9 syntax
+base {
+    archivesName = 'SimpleDifficulty'
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2847"
-    runDir = "run"
-    mappings = "stable_39"
+    mcVersion = '1.12.2'
+    username = 'Developer'
 }
 
 repositories {
     mavenCentral()
     maven {
-        name = "CurseForge"
-        url "https://www.cursemaven.com"
+        name = 'CurseForge'
+        url = 'https://www.cursemaven.com'
     }
     maven {
-        name = "Fluidlogged API"
-        url 'https://jitpack.io'
+        name = 'Fluidlogged API'
+        url = 'https://jitpack.io'
     }
 }
 
 dependencies {
     // Streams
-    deobfCompile "curse.maven:streams-229769:3109315"
-    deobfCompile "curse.maven:farseek-229708:3093852"
+    implementation rfg.deobf('curse.maven:streams-229769:3109315')
+    implementation rfg.deobf('curse.maven:farseek-229708:3093852')
 
     // Serene Seasons
-    compileOnly "curse.maven:sereneseasons-291874:2799213"
+    compileOnly rfg.deobf('curse.maven:sereneseasons-291874:2799213')
 
     // Dynamic Trees
-    compileOnly "curse.maven:DynamicTrees-252818:3812473"
+    compileOnly rfg.deobf('curse.maven:DynamicTrees-252818:3812473')
 
     // Fluidlogged API
-    deobfCompile 'com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT'
+    implementation rfg.deobf('com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT')
 
     // Traveler's Backpack
-    deobfCompile "curse.maven:travelers-backpack-321117:3150850"
+    implementation rfg.deobf('curse.maven:travelers-backpack-321117:3150850')
 }
 
-processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+        version: project.version,
+        mcversion: project.minecraft.mcVersion
+    ]
+    inputs.properties replaceProperties
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-    
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    filesMatching(['mcmod.info', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
 }
 
-task apiJar(type: Jar) {
+tasks.register('apiJar', Jar) {
+    archiveClassifier.set('api')
     from(sourceSets.main.allJava) {
         include 'com/charles445/simpledifficulty/api/**'
     }
-    classifier = 'api'
 }
 
 artifacts {
     archives apiJar
 }
 
-jar {
+tasks.named('jar', Jar).configure {
     manifest {
-        attributes "FMLCorePlugin": "com.charles445.simpledifficulty.asm.CoreLoader"
-        attributes "FMLCorePluginContainsFMLMod": "com.charles445.simpledifficulty.SimpleDifficulty"
+        attributes([
+            'FMLCorePlugin': 'com.charles445.simpledifficulty.asm.CoreLoader',
+            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty'
+        ])
     }
 }
