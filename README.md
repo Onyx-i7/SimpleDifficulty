@@ -6,8 +6,6 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
 [![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
 [![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
-[![Downloads](https://img.shields.io/github/downloads/onyx-i7/SimpleDifficulty/total.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
-[![Issues](https://img.shields.io/github/issues/onyx-i7/SimpleDifficulty.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/issues)
 
 **A performance-focused fork of [SimpleDifficulty for Underdog](https://github.com/juraj-hrivnak/SimpleDifficulty)**
 
