@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
 [![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Version](https://img.shields.io/badge/Version-0.8.1-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
 
 **A performance-focused fork of [SimpleDifficulty for Underdog](https://github.com/juraj-hrivnak/SimpleDifficulty)**
 
