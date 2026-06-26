@@ -112,7 +112,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         int age = state.getValue(AGE);
         boolean burning = state.getValue(BURNING);
         
-        if(OreDictUtil.isOre(OreDictUtil.logWood, heldItemStack))
+        if(OreDictUtil.isOre("logWood", heldItemStack))
         {
             if(age > AGE_MIN)
             {
@@ -131,7 +131,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
         {
             boolean ignited = false;
             
-            if(OreDictUtil.isOre(OreDictUtil.stick, heldItemStack) || heldItem == Items.STICK)
+            if(OreDictUtil.isOre("stickWood", heldItemStack) || heldItem == Items.STICK)
             {
                 if(!player.capabilities.isCreativeMode)
                     heldItemStack.shrink(1);

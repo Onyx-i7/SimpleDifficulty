@@ -35,8 +35,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Random;
 
 public class BlockRainCollector extends Block {
+
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 3);
-    private static final int TICK_RATE = 100; // Check every 5 seconds to accurately catch fast-moving Weather2 storms
+    private static final int BASE_TICK_RATE = 240; // 12 seconds baseline interval for slower collection
     
     public BlockRainCollector() {
         super(Material.IRON, MapColor.STONE);
@@ -46,10 +47,18 @@ public class BlockRainCollector extends Block {
         setTickRandomly(true);
     }
 
+    private void scheduleDynamicUpdate(World world, BlockPos pos) {
+        if (!world.isUpdateScheduled(pos, this)) {
+            // Generates a wide window between 12 to 16 seconds to slow down collection significantly
+            int dynamicRate = BASE_TICK_RATE + world.rand.nextInt(81);
+            world.scheduleUpdate(pos, this, dynamicRate);
+        }
+    }
+
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
-            world.scheduleUpdate(pos, this, TICK_RATE);
+            scheduleDynamicUpdate(world, pos);
         }
     }
         
@@ -58,9 +67,8 @@ public class BlockRainCollector extends Block {
         if (world.isRemote) {
             return;
         }
-        tryFillFromWeather(world, pos, state);
-        // Safety fallback: restart scheduled update loop if it was lost during chunk unloads
-        world.scheduleUpdate(pos, this, TICK_RATE);
+        tryFillFromWeather(world, pos, state, random);
+        scheduleDynamicUpdate(world, pos);
     }
 
     @Override
@@ -68,19 +76,24 @@ public class BlockRainCollector extends Block {
         if (world.isRemote) {
             return;
         }
-        tryFillFromWeather(world, pos, state);
-        // Maintain continuous scheduled checking loop
-        world.scheduleUpdate(pos, this, TICK_RATE);
+        tryFillFromWeather(world, pos, state, rand);
+        scheduleDynamicUpdate(world, pos);
     }
 
     /**
-     * Evaluates weather compatibility channels and updates water level.
-     * Checks if the position has direct exposure to the sky and queries the custom Weather2 compat bridge.
+     * Legacy 3-parameter endpoint wrapper to ensure total compatibility with external handlers (e.g., MiscHandler)
      */
     public void tryFillFromWeather(World world, BlockPos pos, IBlockState state) {
+        tryFillFromWeather(world, pos, state, world.rand);
+    }
+
+    /**
+     * Internal calibrated weather calculation channel utilizing a 25% chance gate per ticker cycle
+     */
+    public void tryFillFromWeather(World world, BlockPos pos, IBlockState state, Random rand) {
         BlockPos checkPos = pos.up();
         
-        if (world.canSeeSky(checkPos) && com.charles445.simpledifficulty.compat.mod.Weather2Compat.isRainingAt(world, checkPos)) {
+        if (rand.nextInt(4) == 0 && world.canSeeSky(checkPos) && com.charles445.simpledifficulty.compat.mod.Weather2Compat.isRainingAt(world, checkPos)) {
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel < 3) {
                 world.setBlockState(pos, state.withProperty(LEVEL, currentLevel + 1), 3);
@@ -138,7 +151,7 @@ public class BlockRainCollector extends Block {
                     } else if (!player.inventory.addItemStackToInventory(waterBottle)) {
                         player.dropItem(waterBottle, false);
                     } else if (player instanceof EntityPlayerMP) {
-                        ((EntityPlayerMP)player).sendContainerToPlayer(player.inventoryContainer);
+                        ((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
                     }
                     
                     this.setWaterLevel(world, pos, state, player.capabilities.isCreativeMode ? amount : amount - 1);
@@ -147,7 +160,7 @@ public class BlockRainCollector extends Block {
                 return true;
             } else if (item == SDItems.canteen) {
                 if (amount > 0 && !world.isRemote) {
-                    IItemCanteen canteen = (IItemCanteen)item;
+                    IItemCanteen canteen = (IItemCanteen) item;
                     if (player.capabilities.isCreativeMode) {
                         canteen.tryAddDose(itemstack, ThirstEnum.NORMAL);
                     } else {

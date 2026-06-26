@@ -20,90 +20,81 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class ClientProxy extends CommonProxy
-{
-	@Override
-	public void preInit() 
-	{
-		super.preInit();
-		MinecraftForge.EVENT_BUS.register(new TemperatureGui());
-		MinecraftForge.EVENT_BUS.register(new TemperatureInfoGui());
-		MinecraftForge.EVENT_BUS.register(new ThirstGui());
-		MinecraftForge.EVENT_BUS.register(new TooltipHandler());
-	}
-	
-	@Override
-	public void init()
-	{
-		super.init();
-		
-		//Register Client TE Renderers
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpit.class, new RenderSpit());
-	}
-	
-	@Override
-	public void postInit()
-	{
-		super.postInit();
-		
-		//Setup Mod Compatibility
-		CompatController.setupClient();
-		
-		//Commands
-		ClientCommandHandler.instance.registerCommand(new ClientCommandCopy());
-		ClientCommandHandler.instance.registerCommand(new ClientCommandIdentityCopy());
-	}
+public class ClientProxy extends CommonProxy {
+    @Override
+    public void preInit() {
+        super.preInit();
+        MinecraftForge.EVENT_BUS.register(new TemperatureGui());
+        MinecraftForge.EVENT_BUS.register(new TemperatureInfoGui());
+        MinecraftForge.EVENT_BUS.register(new ThirstGui());
+        MinecraftForge.EVENT_BUS.register(new TooltipHandler());
+    }
+    
+    @Override
+    public void init() {
+        super.init();
+        
+        // Register Client TE Renderers
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpit.class, new RenderSpit());
+    }
+    
+    @Override
+    public void postInit() {
+        super.postInit();
+        
+        // Setup Mod Compatibility
+        CompatController.setupClient();
+        
+        // Commands
+        ClientCommandHandler.instance.registerCommand(new ClientCommandCopy());
+        ClientCommandHandler.instance.registerCommand(new ClientCommandIdentityCopy());
+    }
 
-	@Override
-	public Side getSide()
-	{
-		return Side.CLIENT;	
-	}
+    @Override
+    public Side getSide() {
+        return Side.CLIENT;
+    }
 
-	@Override
-	/**
-	 * Try not to call this on logical server
-	 * Check world.isRemote if available
-	 */
-	public EntityPlayer getClientMinecraftPlayer()
-	{
-		return Minecraft.getMinecraft().player;
-	}
+    @Override
+    public EntityPlayer getClientMinecraftPlayer() {
+        // Try not to call this on logical server
+        // Check world.isRemote if available
+        return Minecraft.getMinecraft().player;
+    }
 
-	@Override
-	/**
-	 * Try not to call this on logical server
-	 * Check world.isRemote if available
-	 */
-	public Boolean isClientConnectedToServer()
-	{
-		return Minecraft.getMinecraft().getConnection().getNetworkManager().isChannelOpen();
-	}
-	
-	@Override
-	public void spawnClientParticle(World world, String type, double xPos, double yPos, double zPos, double motionX, double motionY, double motionZ)
-	{
-		if(!world.isRemote)
-			return;
-		
-		Particle particle = null;
-		
-		switch(type)
-		{
-			case "HEATER":
-				particle = new ParticleHeater(world, xPos, yPos, zPos, motionX, motionY, motionZ);
-				break;
-			case "CHILLER": 
-				particle = new ParticleChiller(world, xPos, yPos, zPos, motionX, motionY, motionZ);
-				break;
-			default:
-				
-				break;
-		}
-		
-		if(particle != null)
-		{
-			Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-		}
-	}
+    @Override
+    public Boolean isClientConnectedToServer() {
+        // Try not to call this on logical server
+        // Check world.isRemote if available
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.getConnection() == null || mc.getConnection().getNetworkManager() == null) {
+            return false;
+        }
+        return mc.getConnection().getNetworkManager().isChannelOpen();
+    }
+    
+    @Override
+    public void spawnClientParticle(World world, String type, double xPos, double yPos, double zPos, 
+                                    double motionX, double motionY, double motionZ) {
+        if (!world.isRemote) {
+            return;
+        }
+        
+        Particle particle = null;
+        
+        switch (type) {
+            case "HEATER":
+                particle = new ParticleHeater(world, xPos, yPos, zPos, motionX, motionY, motionZ);
+                break;
+            case "CHILLER":
+                particle = new ParticleChiller(world, xPos, yPos, zPos, motionX, motionY, motionZ);
+                break;
+            default:
+                break;
+        }
+        
+        if (particle != null) {
+            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+        }
+    }
 }

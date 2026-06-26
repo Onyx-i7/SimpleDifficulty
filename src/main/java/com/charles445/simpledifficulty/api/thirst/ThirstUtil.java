@@ -5,81 +5,90 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class ThirstUtil
-{
-	public static IThirstUtil internal;
-	
-	/**
-	 * Ray traces the block a player is looking at and returns it as a ThirstEnumBlockPos
-	 * <br>
-	 * Returns null if there is no trace result
-	 * @param player
-	 * @return ThirstEnumBlockPos trace result
-	 * 
-	 */
-	@Nullable
-	public static ThirstEnumBlockPos traceWater(EntityPlayer player)
-	{	
-		return internal.traceWater(player);
-	}
-	
-	/**
-	 * Player takes a drink with the specified values and a chance to make them thirsty
-	 * @param player
-	 * @param thirst
-	 * @param saturation
-	 * @param thirstyChance 0.0f - 1.0f
-	 */
-	public static void takeDrink(EntityPlayer player, int thirst, float saturation, float thirstyChance)
-	{
-		internal.takeDrink(player, thirst, saturation, thirstyChance);
-	}
-	
-	/**
-	 * Player takes a drink with the specified values and no chance to make them thirsty
-	 * @param player
-	 * @param thirst
-	 * @param saturation
-	 */
-	public static void takeDrink(EntityPlayer player, int thirst, float saturation)
-	{
-		internal.takeDrink(player, thirst, saturation);
-	}
-	
-	/**
-	 * Player takes a drink with the values of the ThirstEnum
-	 * @param player
-	 * @param thirstEnum
-	 */
-	public static void takeDrink(EntityPlayer player, ThirstEnum thirstEnum)
-	{
-		internal.takeDrink(player, thirstEnum);
-	}
-	
-	/**
-	 * Returns a new Purified Water Bucket item
-	 * @return ItemStack purified water bucket
-	 */
-	public static ItemStack createPurifiedWaterBucket()
-	{
-		return internal.createPurifiedWaterBucket();
-	}
+/**
+ * Utility class providing static methods for interacting with the thirst system.
+ * <p>
+ * This class acts as a wrapper around the internal {@link IThirstUtil} implementation,
+ * providing a convenient API for addon developers to simulate drinking, trace water sources,
+ * and create water buckets.
+ * </p>
+ *
+ * @author Onyx_i7
+ */
+public class ThirstUtil {
+    /**
+     * Internal implementation of the thirst utility. Initialized by SimpleDifficulty during mod loading.
+     */
+    public static IThirstUtil internal;
 
-	/**
-	 * Returns a new Salt Water Bucket item
-	 * @return ItemStack salt water bucket
-	 */
-	public static ItemStack createSaltWaterBucket()
-	{
-		return internal.createSaltWaterBucket();
-	}
+    /**
+     * Performs a ray trace from the player's eyes to find a drinkable water source block.
+     *
+     * @param player The player to trace from.
+     * @return A {@link ThirstEnumBlockPos} containing the water type and block position, or {@code null} if no valid water source is found within range.
+     */
+    @Nullable
+    public static ThirstEnumBlockPos traceWater(EntityPlayer player) {
+        return internal.traceWater(player);
+    }
 
-	/**
-	 * Returns a new Vanilla Water Bucket item
-	 * @return ItemStack vanilla water bucket
-	 */
-	public static ItemStack createNormalWaterBucket()
-	{
-		return internal.createNormalWaterBucket();
-	}
+    /**
+     * Makes the player take a drink with the specified thirst and saturation values, with a chance to cause parasites.
+     *
+     * @param player The player drinking.
+     * @param thirst The amount of thirst to restore.
+     * @param saturation The amount of saturation to restore.
+     * @param thirstyChance The probability (0.0f to 1.0f) of applying the "Thirsty" effect.
+     */
+    public static void takeDrink(EntityPlayer player, int thirst, float saturation, float thirstyChance) {
+        internal.takeDrink(player, thirst, saturation, thirstyChance);
+    }
+
+    /**
+     * Makes the player take a drink with the specified thirst and saturation values, with no chance to cause parasites.
+     *
+     * @param player The player drinking.
+     * @param thirst The amount of thirst to restore.
+     * @param saturation The amount of saturation to restore.
+     */
+    public static void takeDrink(EntityPlayer player, int thirst, float saturation) {
+        internal.takeDrink(player, thirst, saturation);
+    }
+
+    /**
+     * Makes the player take a drink using the predefined values from a {@link ThirstEnum} type.
+     *
+     * @param player The player drinking.
+     * @param thirstEnum The type of water being consumed.
+     */
+    public static void takeDrink(EntityPlayer player, ThirstEnum thirstEnum) {
+        internal.takeDrink(player, thirstEnum);
+    }
+
+    /**
+     * Creates a new {@link ItemStack} containing a Purified Water Bucket.
+     *
+     * @return A new ItemStack of purified water.
+     */
+    public static ItemStack createPurifiedWaterBucket() {
+        return internal.createPurifiedWaterBucket();
+    }
+
+    /**
+     * Creates a new {@link ItemStack} containing a Salt Water Bucket.
+     *
+     * @return A new ItemStack of salt water.
+     */
+    public static ItemStack createSaltWaterBucket() {
+        return internal.createSaltWaterBucket();
+    }
+
+    /**
+     * Creates a new {@link ItemStack} containing a Vanilla Water Bucket.
+     *
+     * @return A new ItemStack of normal water.
+     */
+    public static ItemStack createNormalWaterBucket() {
+        return internal.createNormalWaterBucket();
+    }
 }

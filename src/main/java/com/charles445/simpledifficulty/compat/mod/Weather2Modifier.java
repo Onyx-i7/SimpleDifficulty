@@ -14,7 +14,7 @@ public class Weather2Modifier implements ITemperatureDynamicModifier {
         return currentTemperature;
     }
     
-    // This is where modify the world temperature based on Weather2
+    // This is where we modify the world temperature based on Weather2
     @Override
     public float applyDynamicWorldInfluence(World world, BlockPos pos, float currentTemperature) {
         if (!Weather2Compat.isLoaded()) {

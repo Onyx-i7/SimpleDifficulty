@@ -5,8 +5,6 @@ import java.lang.reflect.Field;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-// To modify this file, consult the Weather2 API. At the time of writing this comment, it is used for this code: https://github.com/Mrbt0907/Weather2-Remastered/tree/1.12.2-2.9/src/main/java/net/mrbt0907/weather2/api
-
 public class Weather2Compat {
 
     private static boolean isWeather2Loaded = false;
