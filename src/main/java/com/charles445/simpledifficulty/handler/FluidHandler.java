@@ -9,41 +9,41 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FluidHandler {
-
     public static final int MIX_TIME = 1;
-    public static List<Entry> scheduledMixtures = new ArrayList<>();
+    
+    // Use ConcurrentLinkedQueue for thread safety and better performance
+    // Weak references to World are handled by checking world validity
+    public static final ConcurrentLinkedQueue<Entry> scheduledMixtures = new ConcurrentLinkedQueue<>();
 
-    public static void scheduleMixing(World world, BlockPos pos)
-    {
-        FluidHandler.scheduledMixtures.add(new Entry(world, pos));
+    public static void scheduleMixing(World world, BlockPos pos) {
+        if (world != null && pos != null) {
+            scheduledMixtures.add(new Entry(world, pos));
+        }
     }
 
-    public static boolean isBiomeValid(Biome biome)
-    {
+    public static boolean isBiomeValid(Biome biome) {
         return BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)
                 || BiomeDictionary.hasType(biome, BiomeDictionary.Type.BEACH)
                 || BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER);
     }
 
-    public static boolean canMix(BlockPos pos, World world)
-    {
+    public static boolean canMix(BlockPos pos, World world) {
         if (!world.isBlockLoaded(pos.north(32))
                 || !world.isBlockLoaded(pos.east(32))
                 || !world.isBlockLoaded(pos.south(32))
-                || !world.isBlockLoaded(pos.west(32))
-        ) return false;
+                || !world.isBlockLoaded(pos.west(32))) {
+            return false;
+        }
 
-        Block downBlock = (world.getBlockState(pos.down()).getBlock());
-        Block upBlock = (world.getBlockState(pos.up()).getBlock());
-        Block northBlock = (world.getBlockState(pos.north()).getBlock());
-        Block eastBlock = (world.getBlockState(pos.east()).getBlock());
-        Block southBlock = (world.getBlockState(pos.south()).getBlock());
-        Block westBlock = (world.getBlockState(pos.west()).getBlock());
+        Block downBlock = world.getBlockState(pos.down()).getBlock();
+        Block upBlock = world.getBlockState(pos.up()).getBlock();
+        Block northBlock = world.getBlockState(pos.north()).getBlock();
+        Block eastBlock = world.getBlockState(pos.east()).getBlock();
+        Block southBlock = world.getBlockState(pos.south()).getBlock();
+        Block westBlock = world.getBlockState(pos.west()).getBlock();
 
         int xChunkPos = world.getChunk(pos).x;
         int zChunkPos = world.getChunk(pos).z;
@@ -57,69 +57,67 @@ public class FluidHandler {
         return (isBiomeValid(biomeInNorthChunk)
                 || isBiomeValid(biomeInEastChunk)
                 || isBiomeValid(biomeInSouthChunk)
-                || isBiomeValid(biomeInWestChunk)
-        ) && (downBlock == SDFluids.blockSaltWater
+                || isBiomeValid(biomeInWestChunk))
+                && (downBlock == SDFluids.blockSaltWater
                 || upBlock == SDFluids.blockSaltWater
                 || northBlock == SDFluids.blockSaltWater
                 || eastBlock == SDFluids.blockSaltWater
                 || southBlock == SDFluids.blockSaltWater
-                || westBlock == SDFluids.blockSaltWater
-        );
+                || westBlock == SDFluids.blockSaltWater);
     }
 
-    public void checkAndMixBlock(BlockPos pos, World world)
-    {
-        if (canMix(pos, world) && world.isBlockLoaded(pos))
-        {
+    public void checkAndMixBlock(BlockPos pos, World world) {
+        if (canMix(pos, world) && world.isBlockLoaded(pos)) {
             world.setBlockState(pos, SDFluids.blockSaltWater.getDefaultState());
         }
     }
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.WorldTickEvent event)
-    {
-        if (event.phase == TickEvent.Phase.END)
-        {
-            // Use iterator to safely remove entries and prevent memory leaks
-            Iterator<Entry> iterator = scheduledMixtures.iterator();
-            while (iterator.hasNext())
-            {
-                Entry entry = iterator.next();
-                entry.ticksExisted++;
-                
-                // Check if the world is still valid and loaded
-                if (entry.world == null || entry.pos == null)
-                {
-                    iterator.remove();
-                    continue;
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && event.world.isRemote == false) {
+            // Process entries with O(n) complexity instead of O(n²)
+            int processedCount = 0;
+            int maxPerTick = 50; // Limit processing to prevent lag spikes
+            
+            while (processedCount < maxPerTick) {
+                Entry entry = scheduledMixtures.poll();
+                if (entry == null) {
+                    break; // Queue is empty
                 }
                 
-                // Calculate threshold based on entry index to stagger processing
-                int threshold = MIX_TIME + scheduledMixtures.indexOf(entry) * MIX_TIME;
-                if (entry.ticksExisted >= threshold)
-                {
+                // Check if the world is still valid
+                if (entry.world == null || entry.world.isRemote) {
+                    continue; // Skip invalid entries
+                }
+                
+                entry.ticksExisted++;
+                
+                if (entry.ticksExisted >= MIX_TIME) {
                     checkAndMixBlock(entry.pos, entry.world);
-                    iterator.remove();
+                    processedCount++;
+                } else {
+                    // Re-add to queue if not ready yet
+                    scheduledMixtures.add(entry);
                 }
             }
             
-            // Safety cleanup: remove old entries that have been in the list too long
-            // This prevents memory leaks if entries somehow don't get processed
-            if (scheduledMixtures.size() > 1000)
-            {
-                scheduledMixtures.subList(0, Math.min(100, scheduledMixtures.size() - 1000)).clear();
+            // Safety cleanup: prevent unbounded growth
+            if (scheduledMixtures.size() > 1000) {
+                // Remove oldest entries
+                int toRemove = Math.min(100, scheduledMixtures.size() - 500);
+                for (int i = 0; i < toRemove; i++) {
+                    scheduledMixtures.poll();
+                }
             }
         }
     }
 
-    public static class Entry
-    {
+    public static class Entry {
         public World world;
         public BlockPos pos;
         public int ticksExisted;
 
-        public Entry(World world, BlockPos pos)
-        {
+        public Entry(World world, BlockPos pos) {
             this.world = world;
             this.pos = pos;
         }

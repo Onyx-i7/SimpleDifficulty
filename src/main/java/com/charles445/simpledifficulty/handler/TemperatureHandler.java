@@ -8,39 +8,44 @@ import com.charles445.simpledifficulty.api.temperature.TemporaryModifierGroupEnu
 import com.charles445.simpledifficulty.config.ModConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
-public class TemperatureHandler
-{
+public class TemperatureHandler {
     @SubscribeEvent
-    public void onLivingEntityUseItemFinish(LivingEntityUseItemEvent.Finish event)
-    {
-        if(!QuickConfig.isTemperatureEnabled())
+    public void onLivingEntityUseItemFinish(LivingEntityUseItemEvent.Finish event) {
+        if (!QuickConfig.isTemperatureEnabled()) {
             return;
+        }
         
-        if(event.getEntityLiving() instanceof EntityPlayer)
-        {
-            EntityPlayer player = (EntityPlayer)event.getEntityLiving();
+        if (event.getEntityLiving() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             
-            if(player.world.isRemote)
+            if (player.world.isRemote) {
                 return;
+            }
             
             ItemStack stack = event.getItem();
-            List<JsonConsumableTemperature> consumableList = JsonConfig.consumableTemperature.get(stack.getItem().getRegistryName().toString());
+            ResourceLocation regName = stack.getItem().getRegistryName();
             
-            if(consumableList!=null)
-            {
-                for(JsonConsumableTemperature jct : consumableList)
-                {
-                    if(jct==null)
+            // Prevent NPE crash if registry name is null (unregistered items)
+            if (regName == null) {
+                return;
+            }
+            
+            List<JsonConsumableTemperature> consumableList = JsonConfig.consumableTemperature.get(regName.toString());
+            
+            if (consumableList != null) {
+                for (JsonConsumableTemperature jct : consumableList) {
+                    if (jct == null) {
                         continue;
+                    }
                     
-                    if(jct.matches(stack))
-                    {
+                    if (jct.matches(stack)) {
                         SDCapabilities.getTemperatureData(player).setTemporaryModifier(jct.group, jct.temperature, jct.duration);
                         break;
                     }
@@ -54,20 +59,19 @@ public class TemperatureHandler
      * Applies rapid hypothermia changes if the user gets hit by dynamic hail blocks.
      */
     @SubscribeEvent
-    public void onPlayerHurtByWeather(LivingHurtEvent event)
-    {
-        if (!QuickConfig.isTemperatureEnabled())
+    public void onPlayerHurtByWeather(LivingHurtEvent event) {
+        if (!QuickConfig.isTemperatureEnabled()) {
             return;
+        }
 
-        if (event.getEntityLiving() instanceof EntityPlayer)
-        {
+        if (event.getEntityLiving() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 
-            if (player.world.isRemote)
+            if (player.world.isRemote) {
                 return;
+            }
 
-            if ("hail".equals(event.getSource().getDamageType()))
-            {
+            if ("hail".equals(event.getSource().getDamageType())) {
                 SDCapabilities.getTemperatureData(player).setTemporaryModifier(
                     TemporaryModifierGroupEnum.DRINK.group(), 
                     ModConfig.server.temperature.wetValue, 
