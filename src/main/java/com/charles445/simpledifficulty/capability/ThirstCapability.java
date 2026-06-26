@@ -42,15 +42,15 @@ public class ThirstCapability implements IThirstCapability {
             positionInitialized = true;
         }
         
-        // Calculate movement distance using squared length to avoid sqrt
+        // Calculate movement distance
         double dx = player.posX - posX;
         double dy = player.posY - posY;
         double dz = player.posZ - posZ;
         double distanceSquared = dx * dx + dy * dy + dz * dz;
         
-        // Movement is sensitive to every hundredth of a block
-        // Multiply by 10000 (100^2) to work with squared distance
-        int moveDistance = (int) Math.round(distanceSquared * 10000);
+        // Use Math.sqrt() for accurate distance calculation (much faster than Vector3d allocation)
+        double distance = Math.sqrt(distanceSquared);
+        int moveDistance = (int) Math.round(distance * 100);
         
         // Update position
         posX = player.posX;
@@ -58,7 +58,7 @@ public class ThirstCapability implements IThirstCapability {
         posZ = player.posZ;
         
         // Avoid getting thirsty on teleport (if you can move 10 blocks in a tick, you win!)
-        if (moveDistance > 1000000) { // 1000^2
+        if (moveDistance > 1000) {
             moveDistance = 0;
         }
         
@@ -75,7 +75,6 @@ public class ThirstCapability implements IThirstCapability {
                 }
             }
             // Sensitive to every hundredth of a block, so multiply by 1/100
-            // DebugUtil.clientMessage(player, ""+(moveSensitivity*0.01f*moveDistance));
             this.addThirstExhaustion(moveSensitivity * 0.01f * moveDistance);
         }
         
