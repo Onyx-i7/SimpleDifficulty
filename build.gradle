@@ -17,7 +17,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'com.gtnewhorizons.retrofuturagradle'
 
-version = "1.12.2-0.8.3"
+version = "1.12.2-0.8.5"
 group = "com.charles445.simpledifficulty"
 
 // Gradle 9 syntax
