@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,15 +42,13 @@ public class SimpleDifficultyASM implements IClassTransformer {
             if (annotation != null && "Lcom/charles445/simpledifficulty/compat/HasShadows;".equals(annotation.desc)) {
                 LOGGER.info("Found class with shadows: {}", clazzNode.name);
                 
+                // Fix: Replace interfaces list entirely instead of modifying in place
                 if (clazzNode.interfaces != null) {
                     List<String> readdedInterfaces = new ArrayList<>();
-                    Iterator<String> it = clazzNode.interfaces.iterator();
-                    while (it.hasNext()) {
-                        readdedInterfaces.add(swapOwner(it.next()));
-                        it.remove();
+                    for (String iface : clazzNode.interfaces) {
+                        readdedInterfaces.add(swapOwner(iface));
                     }
-                    
-                    clazzNode.interfaces.addAll(readdedInterfaces);
+                    clazzNode.interfaces = readdedInterfaces;
                 }
                 
                 if (clazzNode.fields != null) {
@@ -103,6 +100,8 @@ public class SimpleDifficultyASM implements IClassTransformer {
         } else if (type == AbstractInsnNode.FRAME) {
             FrameNode frame = (FrameNode) anchor;
             
+            // Fix: Replace lists entirely instead of using clear() + addAll()
+            // This prevents UnsupportedOperationException on immutable lists
             if (frame.local != null) {
                 List<Object> replaceList = new ArrayList<>();
                 for (int i = 0; i < frame.local.size(); i++) {
@@ -113,8 +112,7 @@ public class SimpleDifficultyASM implements IClassTransformer {
                         replaceList.add(o);
                     }
                 }
-                frame.local.clear();
-                frame.local.addAll(replaceList);
+                frame.local = replaceList;
             }
             
             if (frame.stack != null) {
@@ -127,8 +125,7 @@ public class SimpleDifficultyASM implements IClassTransformer {
                         replaceList.add(o);
                     }
                 }
-                frame.stack.clear();
-                frame.stack.addAll(replaceList);
+                frame.stack = replaceList;
             }
         }
     }
