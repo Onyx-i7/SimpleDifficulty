@@ -12,8 +12,6 @@ run/*
 gradlew_build.bat
 gradlew_setupdecomp.bat
 
-
-
 # Compiled class file
 *.class
 

@@ -67,8 +67,10 @@ dependencies {
 tasks.named('processResources', ProcessResources).configure {
     def replaceProperties = [
         version: project.version.toString(),
-        mcversion: project.minecraft.mcVersion.toString(),
-        'project.version': project.version.toString() 
+        mcversion: project.extensions.findByName('minecraft').mcVersion.toString(),
+        
+        'project.version': project.version.toString(),
+        'project.minecraft.mcVersion': project.extensions.findByName('minecraft').mcVersion.toString()
     ]
     inputs.properties replaceProperties
 
@@ -76,6 +78,7 @@ tasks.named('processResources', ProcessResources).configure {
         expand(replaceProperties)
     }
 }
+
 
 tasks.register('apiJar', Jar) {
     archiveClassifier.set('api')
