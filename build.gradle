@@ -66,13 +66,14 @@ dependencies {
 
 tasks.named('processResources', ProcessResources).configure {
     def replaceProperties = [
-        version: project.version,
-        mcversion: project.minecraft.mcVersion
+        version: project.version.toString(),
+        mcversion: project.minecraft.mcVersion.toString(),
+        'project.version': project.version.toString() 
     ]
     inputs.properties replaceProperties
 
     filesMatching(['mcmod.info', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+        expand(replaceProperties)
     }
 }
 
