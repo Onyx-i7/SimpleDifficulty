@@ -1,13 +1,13 @@
-<h1 align="center">SimpleDifficulty</h1>
+<h1 align="center">SimpleDifficulty for Underdog</h1>
 
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
 [![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.8.5-orange.svg?style=flat-square)](https://github.com/onyx-i7/SimpleDifficulty/releases)
+[![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files)
 
-**A performance-focused fork of [SimpleDifficulty for Underdog](https://github.com/juraj-hrivnak/SimpleDifficulty)**
+**An improved [SimpleDifficulty](https://github.com/juraj-hrivnak/SimpleDifficulty) fork**
 
 [Installation](#installation) • [Features](#features) • [API](#api-usage) • [Compatibility](#mod-integrations)
 
@@ -23,8 +23,6 @@ SimpleDifficulty brings a **temperature and thirst system** to Minecraft 1.12.2,
 - **Expanded mod compatibility** for large modpacks
 - **Technical optimizations** for smooth gameplay
 - **Code modernization** and cleanup
-
-> **Recent Update (June 12)**: The mod has received a partial rewrite to modernize the codebase, optimize performance, and eliminate almost all memory leaks.
 
 ---
 
@@ -138,11 +136,10 @@ These mods work without dedicated integration but have been tested:
 
 ### Steps
 
-1. **Download** the latest release from [GitHub Releases](https://github.com/onyx-i7/SimpleDifficulty/releases)
+1. **Download** the latest release from [GitHub Releases](https://github.com/juraj-hrivnak/SimpleDifficulty/releases) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files)
 2. **Locate** your Minecraft `mods` folder:
    - **Windows**: `%appdata%\.minecraft\mods`
    - **Linux**: `~/.minecraft/mods`
-   - **Mac**: `~/Library/Application Support/minecraft/mods`
 3. **Copy** the `SimpleDifficulty-1.12.2-0.%.%.jar` file into the `mods` folder
 4. **Launch** Minecraft with the Forge profile
 
@@ -197,7 +194,7 @@ public void onThirstChange(ThirstChangeEvent event) {
 }
 ```
 
-For complete API documentation, see the [api](https://github.com/Onyx-i7/SimpleDifficulty/tree/master/src/main/java/com/charles445/simpledifficulty/api) in the source code.
+For complete API documentation, see the [api](https://github.com/juraj-hrivnak/SimpleDifficulty/tree/master/src/main/java/com/charles445/simpledifficulty/api) in the source code.
 
 ## Building From Source
 
@@ -208,7 +205,7 @@ For complete API documentation, see the [api](https://github.com/Onyx-i7/SimpleD
 ### Build Steps
 ```text
 # Clone the repository
-git clone https://github.com/Onyx-i7/SimpleDifficulty.git
+git clone https://github.com/juraj-hrivnak/SimpleDifficulty.git
 cd SimpleDifficulty
 
 # Build the mod
@@ -245,8 +242,8 @@ This project is distributed under the MIT License
 ### **Authors & Contributors**
 - Charles445: Created the original version
 - juraj-hrivnak: Created the Underdog fork
-- Onyx_i7: Maintained current development branch, optimizations, and modern fork compatibility
+- Onyx_i7: Optimizer & Contributor  
 
 ## Support
-- Bug Reports: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
-- Feature Requests: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
+- Bug Reports: [GitHub Issues](https://github.com/juraj-hrivnak/SimpleDifficulty/issues)
+- Feature Requests: [GitHub Issues](https://github.com/juraj-hrivnak/SimpleDifficulty/issues)
