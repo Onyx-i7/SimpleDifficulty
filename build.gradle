@@ -67,10 +67,7 @@ dependencies {
 tasks.named('processResources', ProcessResources).configure {
     def replaceProperties = [
         version: project.version.toString(),
-        mcversion: project.extensions.findByName('minecraft').mcVersion.toString(),
-        
-        'project.version': project.version.toString(),
-        'project.minecraft.mcVersion': project.extensions.findByName('minecraft').mcVersion.toString()
+        'project.version': project.version.toString()
     ]
     inputs.properties replaceProperties
 

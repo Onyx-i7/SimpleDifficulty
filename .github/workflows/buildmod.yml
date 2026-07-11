@@ -1,6 +1,3 @@
-# This workflow will build the Minecraft mod using Gradle on push, pull request, and manual events
-# It is designed for RetroFuturaGradle 2.0.2 with Java 21 for Gradle and Java 8 for compilation
-
 name: Build SimpleDifficulty Mod
 
 on:
@@ -10,10 +7,6 @@ on:
     branches: [ main, master, testing ]
   workflow_dispatch:
 
-# Permissions required for the bot to publish the Releases
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
 
-      # CRITICAL: Set up Java 25 for Gradle (required by RetroFuturaGradle 2.0.2)
       - name: Set up JDK 25 for Gradle
         uses: actions/setup-java@v5.4.0
         with:
@@ -43,14 +35,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Build the mod with RetroFuturaGradle
-      # RFG will automatically use Java 8 toolchain for compilation
+      # Build the mod
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
       
-      - name: Upload All Mod Jars
+      - name: Upload All
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: SimpleDifficulty Mod Jars
+          name: SimpleDifficulty
           path: build/libs/*.jar
           if-no-files-found: error
