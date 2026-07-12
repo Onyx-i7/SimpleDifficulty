@@ -34,9 +34,8 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighbourPos) {
-        if (world.isRemote) return; // Only process physical mixtures on the server
+        if (world.isRemote) return;
         
-        // Check if the chunk is ready to prevent chunk load leaks
         if (!world.isBlockLoaded(pos)) return;
         
         world.scheduleUpdate(pos, this, tickRate);
@@ -48,7 +47,7 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if (world.isRemote) return; // Only process on the server
+        if (world.isRemote) return;
 
         world.scheduleUpdate(pos, this, tickRate);
         
