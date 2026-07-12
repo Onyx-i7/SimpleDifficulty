@@ -140,7 +140,8 @@ public class ThirstHandler {
             */
         }
     }
-    
+
+    // TODO: This needs to be improved and corrected, it will be included in a future update, I'm not sure yet
     // Intercept bottle interactions with mod fluid blocks
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onRightClickBlockBottle(PlayerInteractEvent.RightClickBlock event) {
