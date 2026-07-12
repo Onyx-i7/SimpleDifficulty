@@ -16,8 +16,6 @@ import static com.charles445.simpledifficulty.api.SDBlocks.iceSaltWater;
 import static com.charles445.simpledifficulty.api.SDFluids.blockPurifiedWater;
 import static com.charles445.simpledifficulty.api.SDFluids.blockSaltWater;
 
-// I don't know what the original purpose of this code was, but I imagine it was to generate saltwater or purified water
-
 public class WorldGenIce implements IWorldGenerator {
     @Override
     public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
@@ -30,7 +28,6 @@ public class WorldGenIce implements IWorldGenerator {
                     int worldX = chunkBaseX + x;
                     int worldZ = chunkBaseZ + z;
                     
-                    // Highest position exposed to the sky (usually AIR just above the water/blocks)
                     BlockPos airPos = world.getPrecipitationHeight(new BlockPos(worldX, 0, worldZ));
                     BlockPos waterPos = airPos.down();
                     
@@ -41,16 +38,14 @@ public class WorldGenIce implements IWorldGenerator {
                     IBlockState stateAtWater = world.getBlockState(waterPos);
                     Block blockAtWater = stateAtWater.getBlock();
                     
-                    // Check for freezing by passing the AIR position (where the ice block will form if the water below is freezeable).
-                    if (blockSaltWater.canFreeze(world, airPos)) {
+                    // Only generate mod ice if the block below is the corresponding fluid
+                    // Pass waterPos (not airPos) to canFreeze() so it checks the actual fluid block
+                    if (blockAtWater == blockSaltWater && blockSaltWater.canFreeze(world, waterPos)) {
                         world.setBlockState(waterPos, iceSaltWater.getDefaultState(), 2);
-                    } else if (blockPurifiedWater.canFreeze(world, airPos)) {
-                        world.setBlockState(waterPos, icePurifiedWater.getDefaultState(), 2);
-                    } else if (blockAtWater == Blocks.ICE) {
-                        // If the game has already generated regular Minecraft ice in the water, it replaces it
-                        // Note: Make sure to check if the original fluid below was purified
+                    } else if (blockAtWater == blockPurifiedWater && blockPurifiedWater.canFreeze(world, waterPos)) {
                         world.setBlockState(waterPos, icePurifiedWater.getDefaultState(), 2);
                     }
+                    // Don't touch vanilla ice or vanilla water let Minecraft handle them naturally
                 }
             }
         }
