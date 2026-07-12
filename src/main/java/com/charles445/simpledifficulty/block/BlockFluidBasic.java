@@ -2,6 +2,7 @@ package com.charles445.simpledifficulty.block;
 
 import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.api.SDFluids;
+import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge;
@@ -13,7 +14,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -45,6 +53,42 @@ public class BlockFluidBasic extends BlockFluidClassic {
         displacements.putAll(customDisplacements);
 
         this.iceBlock = iceBlock;
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (worldIn.isRemote) {
+            return true;
+        }
+
+        ItemStack heldItem = playerIn.getHeldItem(hand);
+        
+        // Handle empty bottle interaction
+        if (heldItem.getItem() == Items.GLASS_BOTTLE) {
+            ItemStack resultBottle = getBottleResult();
+            
+            if (!resultBottle.isEmpty()) {
+                // Consume the empty bottle
+                heldItem.shrink(1);
+                
+                // Add the filled bottle to inventory or drop it
+                if (heldItem.isEmpty()) {
+                    playerIn.setHeldItem(hand, resultBottle);
+                } else if (!playerIn.inventory.addItemStackToInventory(resultBottle)) {
+                    playerIn.dropItem(resultBottle, false);
+                }
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    // Override this in subclasses to return the appropriate bottle
+    protected ItemStack getBottleResult() {
+        // Default: return vanilla water bottle (for normal water)
+        return PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER);
     }
 
     @Override
