@@ -3,8 +3,6 @@ name: Build SimpleDifficulty Mod
 on:
   push:
     branches: [ main, master, testing ]
-  pull_request:
-    branches: [ main, master, testing ]
   workflow_dispatch:
 
 jobs:
