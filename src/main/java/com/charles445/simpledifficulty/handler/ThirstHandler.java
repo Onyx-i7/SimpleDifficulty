@@ -1,6 +1,8 @@
 package com.charles445.simpledifficulty.handler;
 
 import com.charles445.simpledifficulty.api.SDCapabilities;
+import com.charles445.simpledifficulty.api.SDFluids;
+import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.SDPotions;
 import com.charles445.simpledifficulty.api.config.JsonConfig;
 import com.charles445.simpledifficulty.api.config.QuickConfig;
@@ -15,6 +17,7 @@ import com.charles445.simpledifficulty.network.MessageDrinkWater;
 import com.charles445.simpledifficulty.network.PacketHandler;
 import com.charles445.simpledifficulty.util.SoundUtil;
 import com.charles445.simpledifficulty.util.internal.ThirstUtilInternal;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +28,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +40,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
@@ -133,6 +138,52 @@ public class ThirstHandler {
                 }
             }
             */
+        }
+    }
+
+    // TODO: This needs to be improved and corrected, it will be included in a future update, I'm not sure yet
+    // Intercept bottle interactions with mod fluid blocks
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onRightClickBlockBottle(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getWorld().isRemote) {
+            return; // Only process on server
+        }
+        
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack heldItem = player.getHeldItem(event.getHand());
+        
+        // Only handle empty bottles
+        if (heldItem.isEmpty() || heldItem.getItem() != Items.GLASS_BOTTLE) {
+            return;
+        }
+        
+        BlockPos pos = event.getPos();
+        IBlockState state = event.getWorld().getBlockState(pos);
+        Block block = state.getBlock();
+        
+        // Check if clicking on mod fluid blocks
+        ItemStack resultBottle = null;
+        
+        if (block == SDFluids.blockPurifiedWater) {
+            resultBottle = new ItemStack(SDItems.purifiedWaterBottle);
+        } else if (block == SDFluids.blockSaltWater) {
+            resultBottle = new ItemStack(SDItems.saltWaterBottle);
+        }
+        
+        // If found a valid bottle result, handle it
+        if (resultBottle != null) {
+            // Cancel the vanilla interaction
+            event.setCanceled(true);
+            event.setCancellationResult(EnumActionResult.SUCCESS);
+            
+            // Give the player the bottle
+            heldItem.shrink(1);
+            
+            if (heldItem.isEmpty()) {
+                player.setHeldItem(event.getHand(), resultBottle);
+            } else if (!player.inventory.addItemStackToInventory(resultBottle)) {
+                player.dropItem(resultBottle, false);
+            }
         }
     }
     
