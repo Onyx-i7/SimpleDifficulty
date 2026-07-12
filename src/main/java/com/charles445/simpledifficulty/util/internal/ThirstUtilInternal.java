@@ -9,7 +9,6 @@ import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.api.thirst.*;
 import com.charles445.simpledifficulty.config.ModConfig;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -17,6 +16,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -135,12 +135,11 @@ public class ThirstUtilInternal implements IThirstUtil
 		
 		if(traceBlock == Blocks.WATER)
 		{
-			// Check if this is ocean water based on depth and surrounding water
-			// Ocean water is deep and has lots of water around it
-			if (isOceanWater(player, blockPos)) {
-				return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
+			// LOGIC: Default to Salt Water. Only Fresh Water if it's a River or a small enclosed lake.
+			if (isFreshWater(player, blockPos)) {
+				return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
 			}
-			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
+			return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
 		}
 		else if(traceBlock == SDFluids.blockPurifiedWater)
 		{
@@ -160,44 +159,54 @@ public class ThirstUtilInternal implements IThirstUtil
 		return null;
 	}
 	
-	// Helper method to determine if water is ocean water based on depth and surrounding area
-	private boolean isOceanWater(EntityPlayer player, BlockPos waterPos) {
-		// Check water depth (how many blocks of water below)
-		int depth = 0;
-		BlockPos checkPos = waterPos.down();
-		while (depth < 10 && player.getEntityWorld().getBlockState(checkPos).getBlock() == Blocks.WATER) {
-			depth++;
-			checkPos = checkPos.down();
-		}
-		
-		// If water is very shallow (less than 3 blocks deep), it's likely a lake/river
-		if (depth < 3) {
-			return false;
-		}
-		
-		// Check how much water is around at the same level
-		int waterCount = 0;
-		int radius = 8; // Larger radius for ocean detection
-		
-		for (int x = -radius; x <= radius; x++) {
-			for (int z = -radius; z <= radius; z++) {
-				BlockPos checkPos2 = waterPos.add(x, 0, z);
-				Block block = player.getEntityWorld().getBlockState(checkPos2).getBlock();
-				
-				if (block == Blocks.WATER) {
-					waterCount++;
-				}
+	// Determines if water is fresh (drinkable without filter)
+	private boolean isFreshWater(EntityPlayer player, BlockPos waterPos) {
+		// 1. Check if it's a River biome
+		Biome biome = player.getEntityWorld().getBiome(waterPos);
+		if (biome != null && biome.getRegistryName() != null) {
+			String name = biome.getRegistryName().toString();
+			if (name.contains("river")) {
+				return true;
 			}
 		}
 		
-		// If there's a lot of water around, it's ocean
-		// A 8-block radius gives us 17x17 = 289 possible positions
-		// If more than 80% is water, it's definitely ocean
-		int totalPositions = (radius * 2 + 1) * (radius * 2 + 1);
-		double waterPercentage = (double) waterCount / totalPositions;
-		
-		// Ocean water must be deep AND have lots of water around
-		return waterPercentage > 0.8 && depth >= 3;
+		// 2. Check if it's a small enclosed lake/pond
+		// If land is found within 4 blocks in ALL 4 cardinal directions, it's a small lake.
+		// If ANY direction is open water, it's part of a large body (ocean/coast) -> Salt.
+		return isEnclosedLake(player.getEntityWorld(), waterPos);
+	}
+	
+	// Checks if the water body is small and enclosed by land
+	private boolean isEnclosedLake(net.minecraft.world.World world, BlockPos pos) {
+		int maxDist = 4; // Check up to 4 blocks away
+		int[] dirsX = {1, -1, 0, 0};
+		int[] dirsZ = {0, 0, 1, -1};
+
+		for (int d = 0; d < 4; d++) {
+			boolean foundLand = false;
+			for (int i = 1; i <= maxDist; i++) {
+				BlockPos check = pos.add(dirsX[d] * i, 0, dirsZ[d] * i);
+				
+				// Prevent chunk loading
+				if (!world.isBlockLoaded(check)) {
+					foundLand = true;
+					break;
+				}
+				
+				Block b = world.getBlockState(check).getBlock();
+				// If it's not water, we hit land/edge
+				if (b != Blocks.WATER) {
+					foundLand = true;
+					break;
+				}
+			}
+			// If we didn't find land in this direction, it's open water (Ocean/Coast)
+			if (!foundLand) {
+				return false;
+			}
+		}
+		// All 4 directions hit land -> Small enclosed lake/pond
+		return true;
 	}
 	
 	// Removed riverBlocks array - now using RIVER_BLOCKS_SET for O(1) lookups
