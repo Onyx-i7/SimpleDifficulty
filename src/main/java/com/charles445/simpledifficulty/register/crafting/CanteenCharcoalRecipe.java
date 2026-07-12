@@ -30,7 +30,6 @@ public class CanteenCharcoalRecipe extends ShapelessOreRecipe
 	@Nonnull
 	public ItemStack getCraftingResult(@Nonnull InventoryCrafting invcraft)
 	{
-		//return output.copy();
 		ItemStack output = super.getCraftingResult(invcraft);
 		
 		if(!output.isEmpty())
@@ -41,14 +40,14 @@ public class CanteenCharcoalRecipe extends ShapelessOreRecipe
 				if(!ingredient.isEmpty() && (ingredient.getItem() == SDItems.canteen || ingredient.getItem() == SDItems.ironCanteen))
 				{
 					IItemCanteen canteen = (ItemCanteen)ingredient.getItem();
-					canteen.setDoses(output, ThirstEnum.NORMAL, canteen.getDoses(ingredient));
+					// Charcoal filter purifies water, so set to PURIFIED
+					canteen.setDoses(output, ThirstEnum.PURIFIED, canteen.getDoses(ingredient));
 					break;
 				}
 			}
 		}
 		
 		return output;
-		
 	}
 	 
 	public static class Factory implements IRecipeFactory

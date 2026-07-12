@@ -13,8 +13,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -128,27 +130,56 @@ public class ThirstUtilInternal implements IThirstUtil
 			return null;
 		
 		//Hit a block
-		Block traceBlock = player.getEntityWorld().getBlockState(trace.getBlockPos()).getBlock();
+		BlockPos blockPos = trace.getBlockPos();
+		Block traceBlock = player.getEntityWorld().getBlockState(blockPos).getBlock();
+		
 		if(traceBlock == Blocks.WATER)
 		{
-			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos());
+			// Check if the water is in an ocean biome - if so, it's salt water
+			Biome biome = player.getEntityWorld().getBiome(blockPos);
+			if (isOceanBiome(biome)) {
+				return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
+			}
+			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
 		}
 		else if(traceBlock == SDFluids.blockPurifiedWater)
 		{
-			return new ThirstEnumBlockPos(ThirstEnum.PURIFIED, trace.getBlockPos());
+			return new ThirstEnumBlockPos(ThirstEnum.PURIFIED, blockPos);
 		}
 		else if(traceBlock == SDFluids.blockSaltWater)
 		{
-			return new ThirstEnumBlockPos(ThirstEnum.SALT, trace.getBlockPos());
+			return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
 		}
 		// Optimized lookup using HashSet instead of array iteration
 		String blockRegistryName = traceBlock.getRegistryName().toString();
 		if(RIVER_BLOCKS_SET.contains(blockRegistryName))
 		{
-			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos());
+			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
 		}
 		
 		return null;
+	}
+	
+	// Helper method to check if a biome is an ocean biome
+	private boolean isOceanBiome(Biome biome) {
+		if (biome == null) {
+			return false;
+		}
+		
+		// Check biome category/name for ocean types
+		String biomeName = biome.getRegistryName() != null ? biome.getRegistryName().toString() : "";
+		
+		// Vanilla ocean biomes
+		return biomeName.contains("ocean") || 
+		       biomeName.equals("minecraft:frozen_ocean") ||
+		       biomeName.equals("minecraft:deep_ocean") ||
+		       biomeName.equals("minecraft:frozen_ocean") ||
+		       biomeName.equals("minecraft:cold_ocean") ||
+		       biomeName.equals("minecraft:deep_cold_ocean") ||
+		       biomeName.equals("minecraft:lukewarm_ocean") ||
+		       biomeName.equals("minecraft:deep_lukewarm_ocean") ||
+		       biomeName.equals("minecraft:warm_ocean") ||
+		       biomeName.equals("minecraft:deep_warm_ocean");
 	}
 	
 	// Removed riverBlocks array - now using RIVER_BLOCKS_SET for O(1) lookups

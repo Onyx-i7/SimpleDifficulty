@@ -333,7 +333,8 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
     
     protected boolean formatCanteen(ItemStack stack, ThirstEnum thirstEnum) {
         if (thirstEnum != getThirstEnum(stack)) {
-            // When changing water type, keep existing doses but change the type. This prevents losing all water when switching types
+            // When changing water type, keep existing doses but change the type
+            // This prevents losing all water when switching types
             int currentDoses = getDoses(stack);
             setTypeTag(stack, thirstEnum);
             setDosesInternal(stack, currentDoses);
