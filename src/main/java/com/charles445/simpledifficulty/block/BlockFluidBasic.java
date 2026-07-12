@@ -57,27 +57,23 @@ public class BlockFluidBasic extends BlockFluidClassic {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (worldIn.isRemote) {
-            return true;
-        }
-
         ItemStack heldItem = playerIn.getHeldItem(hand);
         
         // Handle empty bottle interaction
-        if (heldItem.getItem() == Items.GLASS_BOTTLE) {
+        if (!heldItem.isEmpty() && heldItem.getItem() == Items.GLASS_BOTTLE) {
             ItemStack resultBottle = getBottleResult();
             
             if (!resultBottle.isEmpty()) {
-                // Consume the empty bottle
-                heldItem.shrink(1);
-                
-                // Add the filled bottle to inventory or drop it
-                if (heldItem.isEmpty()) {
-                    playerIn.setHeldItem(hand, resultBottle);
-                } else if (!playerIn.inventory.addItemStackToInventory(resultBottle)) {
-                    playerIn.dropItem(resultBottle, false);
+                if (!worldIn.isRemote) {
+                    // Server side: consume bottle and give result
+                    heldItem.shrink(1);
+                    
+                    if (heldItem.isEmpty()) {
+                        playerIn.setHeldItem(hand, resultBottle);
+                    } else if (!playerIn.inventory.addItemStackToInventory(resultBottle)) {
+                        playerIn.dropItem(resultBottle, false);
+                    }
                 }
-                
                 return true;
             }
         }
