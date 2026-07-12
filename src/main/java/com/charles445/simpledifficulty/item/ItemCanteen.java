@@ -100,7 +100,11 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
                 boolean success = false;
                 
                 if (trace == ThirstEnum.PURIFIED) {
-                    if (ServerConfig.instance.getBoolean(ServerOptions.INFINITE_PURIFIED_WATER) || player.world.setBlockToAir(traceBlockPos.pos)) {
+                    // Only consume the block if INFINITE_PURIFIED_WATER is false
+                    if (ServerConfig.instance.getBoolean(ServerOptions.INFINITE_PURIFIED_WATER)) {
+                        tryAddDose(stack, ThirstEnum.PURIFIED);
+                        success = true;
+                    } else if (player.world.setBlockToAir(traceBlockPos.pos)) {
                         tryAddDose(stack, ThirstEnum.PURIFIED);
                         success = true;
                     }
@@ -109,8 +113,7 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
                     success = true;
                 } else if (trace == ThirstEnum.NORMAL) {
                     if (ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS) && !isCanteenFull(stack)) {
-                        formatCanteen(stack, ThirstEnum.NORMAL);
-                        setDosesInternal(stack, Math.min(getDoses(stack) + 1, getMaxDoses(stack)));
+                        tryAddDose(stack, ThirstEnum.NORMAL);
                         success = true;
                     }
                 } else if (trace == ThirstEnum.RAIN) {
@@ -315,30 +318,29 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
     
     @Override
     public boolean tryAddDose(ItemStack stack, ThirstEnum thirstEnum) {
-        int oldDamage = getDoses(stack);
-        if (oldDamage < 0) {
-            oldDamage = 0;
+        int oldDoses = getDoses(stack);
+        if (oldDoses < 0) {
+            oldDoses = 0;
         }
         
         boolean format = formatCanteen(stack, thirstEnum);
         
-        if (thirstEnum == ThirstEnum.NORMAL) {
-            setDosesInternal(stack, getMaxDoses(stack));
-        } else {
-            setDosesInternal(stack, getDoses(stack) + 1);
-        }
+        // Always add just one dose, regardless of water type
+        setDosesInternal(stack, getDoses(stack) + 1);
         
-        return format || getDoses(stack) != oldDamage;
+        return format || getDoses(stack) != oldDoses;
     }
     
     protected boolean formatCanteen(ItemStack stack, ThirstEnum thirstEnum) {
         if (thirstEnum != getThirstEnum(stack)) {
-            setCanteenEmpty(stack);
+            // When changing water type, keep existing doses but change the type
+            // This prevents losing all water when switching types
+            int currentDoses = getDoses(stack);
             setTypeTag(stack, thirstEnum);
+            setDosesInternal(stack, currentDoses);
             return true;
         }
         
-        getDoses(stack);
         return false;
     }
     
