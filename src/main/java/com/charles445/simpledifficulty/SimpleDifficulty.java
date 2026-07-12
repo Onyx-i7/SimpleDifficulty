@@ -1,5 +1,6 @@
 package com.charles445.simpledifficulty;
 
+import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.command.CommandSimpleDifficulty;
 import com.charles445.simpledifficulty.debug.DebugVerifier;
 import com.charles445.simpledifficulty.network.PacketHandler;
