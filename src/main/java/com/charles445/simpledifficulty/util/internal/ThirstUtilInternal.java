@@ -135,12 +135,11 @@ public class ThirstUtilInternal implements IThirstUtil
 		
 		if(traceBlock == Blocks.WATER)
 		{
-			// Check if the water is in an ocean biome - if so, it's salt water
-			Biome biome = player.getEntityWorld().getBiome(blockPos);
-			if (isOceanBiome(biome)) {
-				return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
+			// LOGIC: Default to Salt Water. Only Fresh Water if it's a River or a small enclosed lake.
+			if (isFreshWater(player, blockPos)) {
+				return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
 			}
-			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
+			return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
 		}
 		else if(traceBlock == SDFluids.blockPurifiedWater)
 		{
@@ -160,26 +159,54 @@ public class ThirstUtilInternal implements IThirstUtil
 		return null;
 	}
 	
-	// Helper method to check if a biome is an ocean biome
-	private boolean isOceanBiome(Biome biome) {
-		if (biome == null) {
-			return false;
+	// Determines if water is fresh (drinkable without filter)
+	private boolean isFreshWater(EntityPlayer player, BlockPos waterPos) {
+		// 1. Check if it's a River biome
+		Biome biome = player.getEntityWorld().getBiome(waterPos);
+		if (biome != null && biome.getRegistryName() != null) {
+			String name = biome.getRegistryName().toString();
+			if (name.contains("river")) {
+				return true;
+			}
 		}
 		
-		// Check biome category/name for ocean types
-		String biomeName = biome.getRegistryName() != null ? biome.getRegistryName().toString() : "";
-		
-		// Vanilla ocean biomes
-		return biomeName.contains("ocean") || 
-		       biomeName.equals("minecraft:frozen_ocean") ||
-		       biomeName.equals("minecraft:deep_ocean") ||
-		       biomeName.equals("minecraft:frozen_ocean") ||
-		       biomeName.equals("minecraft:cold_ocean") ||
-		       biomeName.equals("minecraft:deep_cold_ocean") ||
-		       biomeName.equals("minecraft:lukewarm_ocean") ||
-		       biomeName.equals("minecraft:deep_lukewarm_ocean") ||
-		       biomeName.equals("minecraft:warm_ocean") ||
-		       biomeName.equals("minecraft:deep_warm_ocean");
+		// 2. Check if it's a small enclosed lake/pond
+		// If land is found within 4 blocks in ALL 4 cardinal directions, it's a small lake.
+		// If ANY direction is open water, it's part of a large body (ocean/coast) -> Salt.
+		return isEnclosedLake(player.getEntityWorld(), waterPos);
+	}
+	
+	// Checks if the water body is small and enclosed by land
+	private boolean isEnclosedLake(net.minecraft.world.World world, BlockPos pos) {
+		int maxDist = 4; // Check up to 4 blocks away
+		int[] dirsX = {1, -1, 0, 0};
+		int[] dirsZ = {0, 0, 1, -1};
+
+		for (int d = 0; d < 4; d++) {
+			boolean foundLand = false;
+			for (int i = 1; i <= maxDist; i++) {
+				BlockPos check = pos.add(dirsX[d] * i, 0, dirsZ[d] * i);
+				
+				// Prevent chunk loading
+				if (!world.isBlockLoaded(check)) {
+					foundLand = true;
+					break;
+				}
+				
+				Block b = world.getBlockState(check).getBlock();
+				// If it's not water, we hit land/edge
+				if (b != Blocks.WATER) {
+					foundLand = true;
+					break;
+				}
+			}
+			// If we didn't find land in this direction, it's open water (Ocean/Coast)
+			if (!foundLand) {
+				return false;
+			}
+		}
+		// All 4 directions hit land -> Small enclosed lake/pond
+		return true;
 	}
 	
 	// Removed riverBlocks array - now using RIVER_BLOCKS_SET for O(1) lookups
