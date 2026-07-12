@@ -57,35 +57,31 @@ public class ThirstUtilInternal implements IThirstUtil
 		if(player.getHeldItemMainhand().isEmpty())
 		{
 			IThirstCapability capability = SDCapabilities.getThirstData(player);
-			if(capability.isThirsty())
+			if(traceResult.thirstEnum == ThirstEnum.PURIFIED)
 			{
-				//Empty-handed and thirsty
-				ThirstEnumBlockPos traceResult = ThirstUtil.traceWater(player);
-				if(traceResult.thirstEnum == ThirstEnum.PURIFIED) {
-				    if(!ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
-				        return null;
-				
-				    if(!ServerConfig.instance.getBoolean(ServerOptions.INFINITE_PURIFIED_WATER))
-				        player.world.setBlockToAir(traceResult.pos);
-				}
-				else if(traceResult.thirstEnum == ThirstEnum.RAIN && !ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_RAIN)) {
-				    return null;
-				}
-				else if(traceResult.thirstEnum == ThirstEnum.NORMAL) {
-				    if(!ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
-				        return null;
-				
-				    player.world.setBlockToAir(traceResult.pos);
-				}
-				else if(traceResult.thirstEnum == ThirstEnum.SALT && !ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS)) {
-				    return null;
-				}
-				else if(traceResult.thirstEnum == ThirstEnum.CLEAN) {
-				    tryAddDose(stack, ThirstEnum.CLEAN);
-				    success = true;
-				}
-				
-				return traceResult;
+			    if(!ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
+			        return null;
+			
+			    if(!ServerConfig.instance.getBoolean(ServerOptions.INFINITE_PURIFIED_WATER))
+			        player.world.setBlockToAir(traceResult.pos);
+			}
+			else if(traceResult.thirstEnum == ThirstEnum.RAIN && !ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_RAIN))
+			{
+			    return null;
+			}
+			else if(traceResult.thirstEnum == ThirstEnum.NORMAL)
+			{
+			    if(!ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
+			        return null;
+			
+			    player.world.setBlockToAir(traceResult.pos);
+			}
+			else if(traceResult.thirstEnum == ThirstEnum.SALT && !ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_BLOCKS))
+			{
+			    return null;
+			}
+			
+			return traceResult;
 			}
 		}
 		
