@@ -9,6 +9,7 @@ import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.api.thirst.*;
 import com.charles445.simpledifficulty.config.ModConfig;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -135,9 +136,9 @@ public class ThirstUtilInternal implements IThirstUtil
 		
 		if(traceBlock == Blocks.WATER)
 		{
-			// Check if the water is in an ocean biome - if so, it's salt water
-			Biome biome = player.getEntityWorld().getBiome(blockPos);
-			if (isOceanBiome(biome)) {
+			// Check if the water is in an ocean biome AND has enough water around it to be considered ocean
+			// This prevents coastal water from being treated as salt water
+			if (isTrueOceanWater(player, blockPos)) {
 				return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
 			}
 			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
@@ -158,6 +159,40 @@ public class ThirstUtilInternal implements IThirstUtil
 		}
 		
 		return null;
+	}
+	
+	// Helper method to check if water is truly ocean water (not coastal/lake water)
+	private boolean isTrueOceanWater(EntityPlayer player, BlockPos waterPos) {
+		// First check if it's in an ocean biome
+		Biome biome = player.getEntityWorld().getBiome(waterPos);
+		if (!isOceanBiome(biome)) {
+			return false;
+		}
+		
+		// Now check if there's enough water around to be considered ocean
+		// If there's land nearby, it's likely coastal water or a lake
+		int waterCount = 0;
+		int radius = 5; // Check 5 blocks in each direction
+		
+		for (int x = -radius; x <= radius; x++) {
+			for (int z = -radius; z <= radius; z++) {
+				BlockPos checkPos = waterPos.add(x, 0, z);
+				IBlockState state = player.getEntityWorld().getBlockState(checkPos);
+				
+				// Count water blocks at the same level
+				if (state.getBlock() == Blocks.WATER || state.getBlock() == SDFluids.blockSaltWater) {
+					waterCount++;
+				}
+			}
+		}
+		
+		// If there are many water blocks around, it's likely ocean
+		// A 5-block radius gives us 11x11 = 121 possible positions
+		// If more than 70% is water, it's ocean
+		int totalPositions = (radius * 2 + 1) * (radius * 2 + 1);
+		double waterPercentage = (double) waterCount / totalPositions;
+		
+		return waterPercentage > 0.7;
 	}
 	
 	// Helper method to check if a biome is an ocean biome
