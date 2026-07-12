@@ -59,4 +59,9 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
     public int getLightOpacity(IBlockState state) {
         return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
     }
+
+    @Override
+    protected ItemStack getBottleResult() {
+        return new ItemStack(SDItems.purifiedWaterBottle);
+    }
 }
