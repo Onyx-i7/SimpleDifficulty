@@ -3,6 +3,7 @@ package com.charles445.simpledifficulty.register;
 import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.block.BlockFluidBasic;
 import com.charles445.simpledifficulty.block.BlockFluidBasicMixable;
+import com.charles445.simpledifficulty.block.BlockFluidSaltWater;
 import com.charles445.simpledifficulty.fluid.FluidBasic;
 import com.ferreusveritas.dynamictrees.systems.DirtHelper;
 import net.minecraft.block.Block;
@@ -56,7 +57,7 @@ public class RegisterFluids
 			
 			//Create Fluid Blocks
 			blockPurifiedWater = new BlockFluidBasicMixable(purifiedWater, Material.WATER, "purifiedwater_ice");
-			blockSaltWater = new BlockFluidBasic(saltWater, Material.WATER, "saltwater_ice");
+			blockSaltWater = new BlockFluidSaltWater(saltWater, Material.WATER, "saltwater_ice");
 
 			for(String key : fluidBlocks.keySet())
 			{
