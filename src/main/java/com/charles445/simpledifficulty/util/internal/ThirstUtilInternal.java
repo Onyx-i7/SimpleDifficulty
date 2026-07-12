@@ -17,7 +17,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -136,9 +135,9 @@ public class ThirstUtilInternal implements IThirstUtil
 		
 		if(traceBlock == Blocks.WATER)
 		{
-			// Check if the water is in an ocean biome AND has enough water around it to be considered ocean
-			// This prevents coastal water from being treated as salt water
-			if (isTrueOceanWater(player, blockPos)) {
+			// Check if this is ocean water based on depth and surrounding water
+			// Ocean water is deep and has lots of water around it
+			if (isOceanWater(player, blockPos)) {
 				return new ThirstEnumBlockPos(ThirstEnum.SALT, blockPos);
 			}
 			return new ThirstEnumBlockPos(ThirstEnum.NORMAL, blockPos);
@@ -161,60 +160,44 @@ public class ThirstUtilInternal implements IThirstUtil
 		return null;
 	}
 	
-	// Helper method to check if water is truly ocean water (not coastal/lake water)
-	private boolean isTrueOceanWater(EntityPlayer player, BlockPos waterPos) {
-		// First check if it's in an ocean biome
-		Biome biome = player.getEntityWorld().getBiome(waterPos);
-		if (!isOceanBiome(biome)) {
+	// Helper method to determine if water is ocean water based on depth and surrounding area
+	private boolean isOceanWater(EntityPlayer player, BlockPos waterPos) {
+		// Check water depth (how many blocks of water below)
+		int depth = 0;
+		BlockPos checkPos = waterPos.down();
+		while (depth < 10 && player.getEntityWorld().getBlockState(checkPos).getBlock() == Blocks.WATER) {
+			depth++;
+			checkPos = checkPos.down();
+		}
+		
+		// If water is very shallow (less than 3 blocks deep), it's likely a lake/river
+		if (depth < 3) {
 			return false;
 		}
 		
-		// Now check if there's enough water around to be considered ocean
-		// If there's land nearby, it's likely coastal water or a lake
+		// Check how much water is around at the same level
 		int waterCount = 0;
-		int radius = 5; // Check 5 blocks in each direction
+		int radius = 8; // Larger radius for ocean detection
 		
 		for (int x = -radius; x <= radius; x++) {
 			for (int z = -radius; z <= radius; z++) {
-				BlockPos checkPos = waterPos.add(x, 0, z);
-				IBlockState state = player.getEntityWorld().getBlockState(checkPos);
+				BlockPos checkPos2 = waterPos.add(x, 0, z);
+				Block block = player.getEntityWorld().getBlockState(checkPos2).getBlock();
 				
-				// Count water blocks at the same level
-				if (state.getBlock() == Blocks.WATER || state.getBlock() == SDFluids.blockSaltWater) {
+				if (block == Blocks.WATER) {
 					waterCount++;
 				}
 			}
 		}
 		
-		// If there are many water blocks around, it's likely ocean
-		// A 5-block radius gives us 11x11 = 121 possible positions
-		// If more than 70% is water, it's ocean
+		// If there's a lot of water around, it's ocean
+		// A 8-block radius gives us 17x17 = 289 possible positions
+		// If more than 80% is water, it's definitely ocean
 		int totalPositions = (radius * 2 + 1) * (radius * 2 + 1);
 		double waterPercentage = (double) waterCount / totalPositions;
 		
-		return waterPercentage > 0.7;
-	}
-	
-	// Helper method to check if a biome is an ocean biome
-	private boolean isOceanBiome(Biome biome) {
-		if (biome == null) {
-			return false;
-		}
-		
-		// Check biome category/name for ocean types
-		String biomeName = biome.getRegistryName() != null ? biome.getRegistryName().toString() : "";
-		
-		// Vanilla ocean biomes
-		return biomeName.contains("ocean") || 
-		       biomeName.equals("minecraft:frozen_ocean") ||
-		       biomeName.equals("minecraft:deep_ocean") ||
-		       biomeName.equals("minecraft:frozen_ocean") ||
-		       biomeName.equals("minecraft:cold_ocean") ||
-		       biomeName.equals("minecraft:deep_cold_ocean") ||
-		       biomeName.equals("minecraft:lukewarm_ocean") ||
-		       biomeName.equals("minecraft:deep_lukewarm_ocean") ||
-		       biomeName.equals("minecraft:warm_ocean") ||
-		       biomeName.equals("minecraft:deep_warm_ocean");
+		// Ocean water must be deep AND have lots of water around
+		return waterPercentage > 0.8 && depth >= 3;
 	}
 	
 	// Removed riverBlocks array - now using RIVER_BLOCKS_SET for O(1) lookups
