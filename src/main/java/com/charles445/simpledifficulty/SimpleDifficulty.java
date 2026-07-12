@@ -48,6 +48,7 @@ public class SimpleDifficulty
 		proxy.preInit();
 		
 		com.charles445.simpledifficulty.compat.mod.Weather2Compat.init();
+		ModConfig.sendLocalServerConfigToAPI();
 	}
 	
 	@Mod.EventHandler
