@@ -199,7 +199,7 @@ For complete API documentation, see the [api](https://github.com/juraj-hrivnak/S
 ## Building From Source
 
 ### Prerequisites
-- Java Development Kit (JDK) 8 or higher
+- Java Development Kit (JDK) 25
 - Git
 
 ### Build Steps
