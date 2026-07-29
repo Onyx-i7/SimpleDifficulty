@@ -542,6 +542,7 @@ public class ModConfig
 		ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
 		ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
 		ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
+		ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
 	}
 	
 	private static MessageUpdateConfig getNewConfigMessage()
@@ -560,7 +561,8 @@ public class ModConfig
 		compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), ""+server.ironCanteenDoses);
 		compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
 		compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
-
+		compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);
+		
 		
 		return new MessageUpdateConfig(compound);
 	}
