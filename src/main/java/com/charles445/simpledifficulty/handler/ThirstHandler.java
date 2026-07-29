@@ -260,91 +260,75 @@ public class ThirstHandler {
     
     @SubscribeEvent
     public void onAttackEntity(AttackEntityEvent event) {
-        if (!QuickConfig.isThirstEnabled()) {
-            return;
-        }
+        if (!QuickConfig.isThirstEnabled()) return;
         
         World world = event.getEntity().world;
-        if (world.isRemote) {
-            return;
-        }
-        
+        if (world.isRemote) return;
+
         // Server Side
         EntityPlayer player = event.getEntityPlayer();
         
         if (!shouldSkipThirst(player)) {
             Entity monster = event.getTarget();
             if (monster.canBeAttackedWithItem() && !monster.hitByEntity(player)) {
-                addExhaustion(player, (float) ModConfig.server.thirst.thirstAttacking);
+                float exhaustion = (float) (ModConfig.server.thirst.thirstAttacking * QuickConfig.getThirstExhaustionMultiplier());
+                addExhaustion(player, exhaustion);
             }
         }
     }
     
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (!QuickConfig.isThirstEnabled()) {
-            return;
-        }
+        if (!QuickConfig.isThirstEnabled()) return;
         
         World world = event.getWorld();
-        if (world.isRemote) {
-            return;
-        }
+        if (world.isRemote) return;
         
-        // Server Side
         EntityPlayer player = event.getPlayer();
         
         if (!shouldSkipThirst(player)) {
-            // Check if the player is actually able to harvest the block
             if (event.getState().getBlock().canHarvestBlock(world, event.getPos(), player)) {
-                addExhaustion(player, (float) ModConfig.server.thirst.thirstBreakBlock);
+                float exhaustion = (float) (ModConfig.server.thirst.thirstBreakBlock * QuickConfig.getThirstExhaustionMultiplier());
+                addExhaustion(player, exhaustion);
             }
         }
     }
     
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
-        if (!QuickConfig.isThirstEnabled()) {
-            return;
-        }
+        if (!QuickConfig.isThirstEnabled()) return;
         
         World world = event.getEntity().world;
-        if (world.isRemote || event.getAmount() == 0.0f) {
-            return;
-        }
+        if (world.isRemote || event.getAmount() == 0.0f) return;
         
-        // Server Side
         if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
             
             if (!shouldSkipThirst(player)) {
-                // Damage source has special behavior
-                addExhaustion(player, event.getSource().getHungerDamage());
+                // Fix: Apply global multiplier to vanilla hunger damage conversion for consistency
+                float exhaustion = (float) (event.getSource().getHungerDamage() * QuickConfig.getThirstExhaustionMultiplier());
+                addExhaustion(player, exhaustion);
             }
         }
     }
     
     @SubscribeEvent
     public void onLivingJump(LivingJumpEvent event) {
-        if (!QuickConfig.isThirstEnabled()) {
-            return;
-        }
+        if (!QuickConfig.isThirstEnabled()) return;
         
         World world = event.getEntity().world;
-        if (world.isRemote) {
-            return;
-        }
+        if (world.isRemote) return;
         
-        // Server Side
         if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
             
             if (!shouldSkipThirst(player)) {
-                if (player.isSprinting()) {
-                    addExhaustion(player, (float) ModConfig.server.thirst.thirstSprintJump);
-                } else {
-                    addExhaustion(player, (float) ModConfig.server.thirst.thirstJump);
-                }
+                double multiplier = QuickConfig.getThirstExhaustionMultiplier();
+                float exhaustion = player.isSprinting() 
+                    ? (float) (ModConfig.server.thirst.thirstSprintJump * multiplier)
+                    : (float) (ModConfig.server.thirst.thirstJump * multiplier);
+                    
+                addExhaustion(player, exhaustion);
             }
         }
     }
@@ -354,6 +338,8 @@ public class ThirstHandler {
     }
     
     private void addExhaustion(EntityPlayer player, float exhaustion) {
+        if (exhaustion <= 0.0f) return;
+        
         IThirstCapability capability = SDCapabilities.getThirstData(player);
         capability.addThirstExhaustion(exhaustion);
     }

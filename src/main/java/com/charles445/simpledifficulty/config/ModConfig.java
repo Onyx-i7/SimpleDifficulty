@@ -304,6 +304,11 @@ public class ModConfig
 		{
 			//Not synchronized with clients
 			//Shouldn't need to be either, the thirst server sync is aggressive
+
+			@Config.Comment("Global Thirst Exhaustion Multiplier - Multiplies all thirst exhaustion values (1.0 = default, 2.0 = twice as fast, 0.0 = disabled)")
+			@Config.Name("ThirstExhaustionMultiplier")
+			@Config.RangeDouble(min=0.0)
+			public double thirstExhaustionMultiplier = 1.0d;
 			
 			@Config.Comment("Thirst Exhaustion Limit - How exhausted the player must get before they lose thirst.")
 			@Config.Name("ThirstExhaustionLimit")
