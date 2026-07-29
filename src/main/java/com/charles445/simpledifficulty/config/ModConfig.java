@@ -389,6 +389,10 @@ public class ModConfig
 			@Config.RangeDouble(min=0.0)
 			public double thirstDamageScaling = 0.0d;
 			
+			@Config.Comment("Whether drinking salt water (from oceans/large bodies) causes the Thirsty effect. If false, it acts like normal fresh water.")
+			@Config.Name("SaltWaterThirst")
+			public boolean saltWaterThirst = true;
+
 			
 		}
 	}
