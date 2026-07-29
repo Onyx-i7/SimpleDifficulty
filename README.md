@@ -152,7 +152,7 @@ SimpleDifficulty provides a complete API for other mods to integrate with the th
 ### Basic Example
 
 ```java
-import com.charlesmcraft.simpledifficulty.api.*;
+import com.charles445.simpledifficulty.api.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 // Get player's thirst data
