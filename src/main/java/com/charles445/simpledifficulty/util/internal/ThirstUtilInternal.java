@@ -161,7 +161,12 @@ public class ThirstUtilInternal implements IThirstUtil
 	
 	// Determines if water is fresh (drinkable without filter)
 	private boolean isFreshWater(EntityPlayer player, BlockPos waterPos) {
-		// 1. Check if it's a River biome
+		// If salt water thirst is disabled, all vanilla water is fresh
+		if (!ServerConfig.instance.getBoolean(ServerOptions.SALT_WATER_THIRST)) {
+			return true;
+		}
+
+		// 1. Check if it's a River biome (Rivers are always fresh)
 		Biome biome = player.getEntityWorld().getBiome(waterPos);
 		if (biome != null && biome.getRegistryName() != null) {
 			String name = biome.getRegistryName().toString();
