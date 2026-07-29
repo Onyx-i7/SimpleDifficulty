@@ -1,5 +1,7 @@
 package com.charles445.simpledifficulty.api.config;
 
+import com.charles445.simpledifficulty.config.ModConfig;
+
 public class QuickConfig
 {
 	//Alternative for commonly used config, should be convenient and have somewhat faster performance
