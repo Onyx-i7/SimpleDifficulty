@@ -52,6 +52,8 @@ public class ConfigSyncHelper {
     }
 
     private static void buildNBTRecursive(Object configObject, NBTTagCompound compound) {
+        if (configObject == null) return; // Additional Security
+        
         Class<?> clazz = configObject.getClass();
         for (Field field : clazz.getDeclaredFields()) {
             Config.Name nameAnnotation = field.getAnnotation(Config.Name.class);
@@ -64,7 +66,16 @@ public class ConfigSyncHelper {
                     e.printStackTrace();
                 }
             } else if (field.getType().isMemberClass()) {
-                buildNBTRecursive(field.get(configObject), compound);
+                // If it is an internal class (such as ConfigThirst), apply recursion
+                try {
+                    field.setAccessible(true);
+                    Object innerObject = field.get(configObject);
+                    if (innerObject != null) {
+                        buildNBTRecursive(innerObject, compound);
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
