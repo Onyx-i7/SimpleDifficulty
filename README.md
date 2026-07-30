@@ -224,7 +224,7 @@ build/libs/SimpleDifficulty-0.%.%-dev.jar
 ```
 
 - Regular JAR: For use in Minecraft
-- Source and API JAR: For development and debugging
+- Dev and API JAR: For development and debugging
 
 ## Development Environment
 To set up a development environment:
