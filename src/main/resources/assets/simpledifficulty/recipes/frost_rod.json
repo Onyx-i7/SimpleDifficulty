@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "F",
+    "B",
+    "F"
+  ],
+  "key": {
+    "F": { "item": "simpledifficulty:frost_powder" },
+    "B": { "item": "minecraft:blaze_rod" }
+  },
+  "result": {
+    "item": "simpledifficulty:frost_rod",
+    "count": 1
+  }
+}
