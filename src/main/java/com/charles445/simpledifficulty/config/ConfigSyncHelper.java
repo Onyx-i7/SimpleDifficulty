@@ -1,9 +1,11 @@
 package com.charles445.simpledifficulty.config;
 
+import com.charles445.simpledifficulty.api.config.IConfigOption;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Config;
+
 import java.lang.reflect.Field;
 
 public class ConfigSyncHelper {
@@ -19,12 +21,17 @@ public class ConfigSyncHelper {
                 try {
                     field.setAccessible(true);
                     Object value = field.get(configObject);
-                    ServerConfig.instance.put(nameAnnotation.value(), String.valueOf(value));
+                    
+                    // Find the corresponding configuration option in the ServerOptions enumeration
+                    IConfigOption option = findOptionByName(nameAnnotation.value());
+                    if (option != null) {
+                        ServerConfig.instance.put(option, String.valueOf(value));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             } else if (field.getType().isMemberClass()) {
-                // If it is an internal class (such as ConfigThirst), recursion
+                // If it is an internal class (such as ConfigThirst), apply recursion
                 try {
                     field.setAccessible(true);
                     autoSyncServerConfig(field.get(configObject));
@@ -60,5 +67,17 @@ public class ConfigSyncHelper {
                 buildNBTRecursive(field.get(configObject), compound);
             }
         }
+    }
+
+    /**
+     * Search the ServerOptions enumeration for the constant that matches the given name
+     */
+    private static IConfigOption findOptionByName(String name) {
+        for (ServerOptions option : ServerOptions.values()) {
+            if (option.getName().equals(name)) {
+                return option;
+            }
+        }
+        return null;
     }
 }
