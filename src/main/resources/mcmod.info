@@ -9,7 +9,7 @@
   "updateUrl": "https://raw.githubusercontent.com/juraj-hrivnak/SimpleDifficulty/refs/heads/master/modupdatechecker.json",
   "authorList": ["Charles445", "juraj-hrivnak", "Onyx-i7"],
   "credits": "Original mod by Charles445. Underdog version by juraj-hrivnak. Optimization and maintenance by Onyx-i7.",
-  "logoFile": "",
+  "logoFile": "logo.png",
   "screenshots": [],
   "dependencies": []
 }
