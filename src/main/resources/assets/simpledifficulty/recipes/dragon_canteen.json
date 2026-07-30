@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FPF",
+    "ICI",
+    "FIF"
+  ],
+  "key": {
+    "I": {
+      "item": "simpledifficulty:iron_canteen"
+    },
+    "C": {
+      "item": "simpledifficulty:charcoal_filter"
+    },
+    "F": {
+      "item": "simpledifficulty:frost_powder"
+    },
+    "P": {
+      "item": "simpledifficulty:frost_rod"
+    }
+  },
+  "result": {
+    "item": "simpledifficulty:dragon_canteen",
+    "count": 1
+  }
+}
