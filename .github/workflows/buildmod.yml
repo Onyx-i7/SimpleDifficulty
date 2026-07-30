@@ -2,7 +2,7 @@ name: Build SimpleDifficulty Mod
 
 on:
   push:
-    branches: [ main, master, testing ]
+    branches: [ 'main', 'master', 'testing', 'experiment/mixin-migration' ]
   workflow_dispatch:
 
 permissions:
