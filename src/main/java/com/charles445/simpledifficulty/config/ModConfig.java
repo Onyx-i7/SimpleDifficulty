@@ -91,6 +91,11 @@ public class ModConfig
 		@Config.Name("IronCanteenDoses")
 		@Config.RangeInt(min=1)
 		public int ironCanteenDoses = 8;
+
+		@Config.Comment("Maximum number of doses in a dragon canteen")
+		@Config.Name("DragonCanteenDoses")
+		@Config.RangeInt(min=1)
+		public int dragonCanteenDoses = 30;
 		
 		@Config.Comment("Whether purified water blocks are infinite")
 		@Config.Name("Infinite Purified Water")
