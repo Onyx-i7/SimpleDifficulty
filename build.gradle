@@ -111,8 +111,8 @@ artifacts {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'FMLCorePlugin': 'com.charles445.simpledifficulty.asm.CoreLoader',
-            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty'
+            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty',
+            'ForceLoadAsMod': 'true'
         ])
     }
 }
