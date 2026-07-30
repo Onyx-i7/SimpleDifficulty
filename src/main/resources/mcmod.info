@@ -1,18 +1,26 @@
 [
-{
-  "modid": "simpledifficulty",
-  "name": "SimpleDifficulty",
-  "description": "Mod that adds temperature and thirst mechanics based on Tough As Nails",
-  "version": "${version}",
-  "mcversion": "1.12.2",
-  "url": "https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog",
-  "updateUrl": "https://raw.githubusercontent.com/juraj-hrivnak/SimpleDifficulty/refs/heads/master/modupdatechecker.json",
-  "authorList": ["Charles445", "juraj-hrivnak", "Onyx-i7"],
-  "credits": "Original mod by Charles445. Underdog version by juraj-hrivnak. Optimization and maintenance by Onyx-i7.",
-  "logoFile": "logo.png",
-  "issueTrackerUrl": "https://github.com/juraj-hrivnak/SimpleDifficulty/issues",
-  "license": "MIT",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "simpledifficulty",
+    "name": "SimpleDifficulty",
+    "description": "A survival mod that adds dynamic temperature and thirst mechanics to Minecraft 1.12.2, inspired by Tough As Nails. It features customizable hydration and environmental temperature effects",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog",
+    "updateUrl": "https://raw.githubusercontent.com/juraj-hrivnak/SimpleDifficulty/refs/heads/master/modupdatechecker.json",
+    "authorList": [
+      "Charles445",
+      "juraj-hrivnak",
+      "Onyx-i7"
+    ],
+    "credits": "Original concept and development by Charles445. Underdog fork and maintenance by juraj-hrivnak. Performance optimization, and bug fixes by Onyx-i7.",
+    "logoFile": "logo.png",
+    "screenshots": [],
+    "dependencies": [],
+    "modProperties": {
+      "issueTrackerUrl": "https://github.com/juraj-hrivnak/SimpleDifficulty/issues",
+      "iconFile": "logo.png",
+      "backgroundFile": "logo.png",
+      "license": "MIT"
+    }
+  }
 ]
