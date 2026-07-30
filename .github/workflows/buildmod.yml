@@ -2,7 +2,7 @@ name: Build SimpleDifficulty Mod
 
 on:
   push:
-    branches: [ 'main', 'master', 'testing', 'experiment/mixin-migration' ]
+    branches: [ 'main', 'master', 'testing' ]
   workflow_dispatch:
 
 permissions:
@@ -56,9 +56,6 @@ jobs:
           name: SimpleDifficulty-dev-${{ steps.vars.outputs.short_sha }}
           path: |
             build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-deobf.jar
-            !build/libs/*-api.jar
           if-no-files-found: error
 
       - name: Upload Build Logs on Failure
