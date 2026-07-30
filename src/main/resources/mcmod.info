@@ -10,6 +10,8 @@
   "authorList": ["Charles445", "juraj-hrivnak", "Onyx-i7"],
   "credits": "Original mod by Charles445. Underdog version by juraj-hrivnak. Optimization and maintenance by Onyx-i7.",
   "logoFile": "logo.png",
+  "issueTrackerUrl": "https://github.com/juraj-hrivnak/SimpleDifficulty/issues",
+  "license": "MIT",
   "screenshots": [],
   "dependencies": []
 }
