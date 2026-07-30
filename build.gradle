@@ -37,8 +37,16 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
+        name = "SpongePowered"
+        url = "https://repo.spongepowered.org/repository/maven-public/"
+    }
+    maven {
         name = 'CurseForge'
         url = 'https://www.cursemaven.com'
+    }
+    maven {
+        name = 'CleanroomMC'
+        url = 'https://maven.cleanroommc.com'
     }
     maven {
         name = 'Fluidlogged API'
