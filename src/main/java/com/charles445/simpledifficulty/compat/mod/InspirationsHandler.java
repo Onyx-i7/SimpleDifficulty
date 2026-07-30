@@ -104,7 +104,88 @@ public class InspirationsHandler {
     public class InspirationsRightClickCauldron implements IRightClick {        
         @Override
         public void process(RightClickBlock event, World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-            // ... (este método queda EXACTAMENTE IGUAL que en tu código original) ...
+			if(!ModConfig.server.compatibility.toggles.inspirations || !c_BlockEnhancedCauldron.isInstance(state.getBlock()))
+			{
+				fallbackCauldron.process(event, world, pos, state, player);
+				return;
+			}
+			
+			ItemStack heldItem = player.getHeldItemMainhand();
+			if(heldItem.isEmpty() && player.isSneaking())
+			{
+				if(SDCapabilities.getThirstData(player).isThirsty())
+				{
+					//Sneak-right clicking on a cauldron with an empty hand, with a thirsty player
+					boolean boiling = state.getValue(o_BlockEnhancedCauldron_BOILING);
+					
+					try
+					{
+						int level = getCauldronLevel(state);
+						if(level > 0)
+						{
+							//Store if it's boiling right here
+							
+							
+							TileEntity te = world.getTileEntity(pos);
+							if(c_TileCauldron.isInstance(te))
+							{
+								Object cauldronState = getCauldronState(te);
+								if(cauldronState != null)
+								{
+									Fluid fluid = getCauldronStateFluid(cauldronState);
+									if(fluid != null)
+									{
+										if(fluid == FluidRegistry.WATER)
+										{
+											if(boiling)
+											{
+												ThirstUtil.takeDrink(player, ThirstEnum.PURIFIED);
+												damageFromBoilingDrink(player);
+												setFluidLevel(te, level - 1);
+											}
+											else
+											{
+												ThirstUtil.takeDrink(player, ThirstEnum.NORMAL);
+											}
+											SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ENTITY_GENERIC_DRINK);
+										}
+										else if(fluid == SDFluids.purifiedWater)
+										{
+											ThirstUtil.takeDrink(player, ThirstEnum.PURIFIED);
+											if(boiling)
+											{
+												damageFromBoilingDrink(player);
+											}
+											SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ENTITY_GENERIC_DRINK);
+											//Lower the cauldron level
+											setFluidLevel(te, 0);
+										}
+									}
+								}
+							}
+							else
+							{
+								if(boiling)
+								{
+									ThirstUtil.takeDrink(player, ThirstEnum.PURIFIED);
+									damageFromBoilingDrink(player);
+								}
+								else
+								{
+									ThirstUtil.takeDrink(player, ThirstEnum.NORMAL);
+								}
+								SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.ENTITY_GENERIC_DRINK);
+							}
+						}
+					}
+					catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+					{
+						SimpleDifficulty.logger.error("Inspirations compatibility failed while handling a cauldron!", e);
+						errorFallback();
+						return;
+					}
+				}
+			}
         }
     }
     
@@ -119,7 +200,6 @@ public class InspirationsHandler {
             
             try {
                 Class c_InspirationsRegistry = Class.forName("knightminer.inspirations.library.InspirationsRegistry");
-                // Usamos la clase real directamente, no Class.forName
                 Class c_ICauldronRecipe = ICauldronRecipe.class; 
                 Method m_InspirationsRegistry_addCauldronRecipe = ReflectUtil.findMethod(c_InspirationsRegistry, "addCauldronRecipe", c_ICauldronRecipe);
 
@@ -131,7 +211,35 @@ public class InspirationsHandler {
 
         @Override
         public boolean matches(ItemStack stack, boolean boiling, int level, CauldronState state) {
-            // ... (este método queda EXACTAMENTE IGUAL) ...
+            if(!ModConfig.server.compatibility.toggles.inspirations)
+				return false;
+			
+			if(level == 0)
+				return false;
+			
+			if(stack.getItem() instanceof IItemCanteen)
+			{
+				IItemCanteen canteen = (IItemCanteen)stack.getItem();
+				
+				Fluid fluid = state.getFluid();
+				
+				if(fluid == null)
+					return false;
+				
+				if(fluid == FluidRegistry.WATER)
+				{
+					if(boiling)
+					{
+						return canteen.tryAddDose(stack, ThirstEnum.PURIFIED);
+					}
+					else
+					{
+						return canteen.tryAddDose(stack, ThirstEnum.NORMAL);
+					}
+				}
+			}
+			
+			return false;
         }
 
         @Override
