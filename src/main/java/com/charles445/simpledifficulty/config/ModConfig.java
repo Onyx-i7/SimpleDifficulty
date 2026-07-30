@@ -1,12 +1,12 @@
 package com.charles445.simpledifficulty.config;
 
-import com.charles445.simpledifficulty.config.ConfigSyncHelper;
 import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.api.config.ClientConfig;
 import com.charles445.simpledifficulty.api.config.ClientOptions;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.config.compat.ConfigServerCompatibility;
+import com.charles445.simpledifficulty.config.ConfigSyncHelper;
 import com.charles445.simpledifficulty.network.MessageConfigLAN;
 import com.charles445.simpledifficulty.network.MessageUpdateConfig;
 import com.charles445.simpledifficulty.network.PacketHandler;
@@ -23,382 +23,371 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Config(modid = SimpleDifficulty.MODID)
 public class ModConfig 
 {
-	@Config.Comment("Client configuration")
+	@Config.Comment("Client-side configuration (visual and interface settings)")
 	@Config.Name("Client")
 	public static final ConfigClientConfig client = new ConfigClientConfig();
 	
-	@Config.Comment("Server configuration")
+	@Config.Comment("Server-side configuration (gameplay and mechanics)")
 	@Config.Name("Server")
 	public static final ConfigServerConfig server = new ConfigServerConfig();
 	
-	//TODO Lang
-	
 	public static class ConfigServerConfig
 	{
-		@Config.Comment("Built-in mod compatibility options")
+		@Config.Comment("Compatibility settings for other mods")
 		@Config.Name("Compatibility")
 		public final ConfigServerCompatibility compatibility = new ConfigServerCompatibility();
 		
-		@Config.Comment("Miscellaneous gameplay configurations")
-		@Config.Name("Miscellaneous")
-		public final ConfigMiscellaneous miscellaneous = new ConfigMiscellaneous();
+		@Config.Comment("General gameplay settings (campfires, drops, potions, etc.)")
+		@Config.Name("General")
+		public final ConfigGeneral general = new ConfigGeneral();
 		
-		@Config.Comment("Temperature related configurations")
+		@Config.Comment("Temperature system settings")
 		@Config.Name("Temperature")
 		public final ConfigTemperature temperature = new ConfigTemperature();
 		
-		@Config.Comment("Thirst related configurations")
+		@Config.Comment("Thirst and hydration system settings")
 		@Config.Name("Thirst")
 		public final ConfigThirst thirst = new ConfigThirst();
 		
 		///
-		/// Server Options
+		/// Core Server Options
 		///
-		@Config.Comment("Whether thirst is enabled.")
-		@Config.Name("ThirstEnabled")
+		@Config.Comment("Enable or disable the entire thirst system")
+		@Config.Name("Enable Thirst System")
 		public boolean thirstEnabled = true;
 		
-		@Config.Comment("Whether the player is allowed to drink from normal water blocks.")
-		@Config.Name("ThirstDrinkBlocks")
+		@Config.Comment("Allow players to drink directly from water blocks")
+		@Config.Name("Allow Drinking From Blocks")
 		public boolean thirstDrinkBlocks = true;
 		
-		@Config.Comment("Whether the player is allowed to drink from the rain.")
-		@Config.Name("ThirstDrinkRain")
+		@Config.Comment("Allow players to drink rainwater by looking up during rain")
+		@Config.Name("Allow Drinking Rain")
 		public boolean thirstDrinkRain = true;
 		
-		@Config.Comment("Whether the mod should be dangerous on Peaceful difficulty.")
-		@Config.Name("PeacefulDanger")
+		@Config.Comment("Make the mod dangerous even on Peaceful difficulty (parasites, temperature damage)")
+		@Config.Name("Enable Danger on Peaceful")
 		public boolean peacefulDanger = false;
 		
-		@Config.Comment("Whether temperature is enabled.")
-		@Config.Name("TemperatureEnabled")
+		@Config.Comment("Enable or disable the entire temperature system")
+		@Config.Name("Enable Temperature System")
 		public boolean temperatureEnabled = true;
 		
-		@Config.Comment("Whether temperature tile entities are enabled.")
-		@Config.Name("TemperatureTileEntities")
+		@Config.Comment("Enable temperature-affecting tile entities (heaters, chillers)")
+		@Config.Name("Enable Temperature Tile Entities")
 		public boolean temperatureTEEnabled = true;
 		
-		@Config.Comment("Maximum number of doses in a canteen")
-		@Config.Name("CanteenDoses")
-		@Config.RangeInt(min=1)
+		@Config.Comment("Maximum doses for the basic leather canteen")
+		@Config.Name("Canteen Capacity")
+		@Config.RangeInt(min=1, max=100)
 		public int canteenDoses = 3;
 		
-		@Config.Comment("Whether heaters and chillers only work indoors")
-		@Config.Name("StrictHeaters")
-		public boolean strictHeaters = true;
-		
-		@Config.Comment("Maximum number of doses in an iron canteen")
-		@Config.Name("IronCanteenDoses")
-		@Config.RangeInt(min=1)
+		@Config.Comment("Maximum doses for the iron canteen")
+		@Config.Name("Iron Canteen Capacity")
+		@Config.RangeInt(min=1, max=100)
 		public int ironCanteenDoses = 8;
-
-		@Config.Comment("Maximum number of doses in a dragon canteen")
-		@Config.Name("DragonCanteenDoses")
-		@Config.RangeInt(min=1)
+		
+		@Config.Comment("Maximum doses for the dragon canteen (end-game item)")
+		@Config.Name("Dragon Canteen Capacity")
+		@Config.RangeInt(min=1, max=100)
 		public int dragonCanteenDoses = 30;
 		
-		@Config.Comment("Whether purified water blocks are infinite")
+		@Config.Comment("Require heaters and chillers to be placed indoors to function")
+		@Config.Name("Strict Indoor Heaters")
+		public boolean strictHeaters = true;
+		
+		@Config.Comment("Purified water blocks are infinite (do not deplete when collected)")
 		@Config.Name("Infinite Purified Water")
 		public boolean infinitePurifiedWater = false;
 
-		@Config.Comment("Make Purified Water only reduce light level by 1 per Y-level, instead of 3.")
+		@Config.Comment("Reduce light opacity of purified water blocks (1 instead of 3) for better visibility")
 		@Config.Name("Brighter Purified Water")
 		public boolean purifiedWaterOpacity = false;
 
-		@Config.Comment("Spams chat with debug messages, do not enable this unless you are testing!")
-		@Config.Name("DebugMode")
+		@Config.Comment("Enable debug logging (spam console with detailed messages)")
+		@Config.Name("Debug Mode")
 		public boolean debug = false;
 		
-		public class ConfigMiscellaneous
+		public class ConfigGeneral
 		{
-			//Not synchronized with clients
-			@Config.Comment("Campfire has a 1/X chance to lose fuel when ticked (default is 2, a 1/2 chance")
-			@Config.Name("CampfireDecayChance")
-			@Config.RangeInt(min=1)
+			@Config.Comment("Campfire fuel decay chance (1 in X ticks, default: 2 = 50% chance)")
+			@Config.Name("Campfire Fuel Decay Chance")
+			@Config.RangeInt(min=1, max=100)
 			public int campfireDecayChance = 2;
 			
-			@Config.Comment("Campfire has a 1/X chance to ignite with a stick (default is 5, a 1/5 chance")
-			@Config.Name("CampfireStickIgniteChance")
-			@Config.RangeInt(min=1)
+			@Config.Comment("Chance to ignite campfire with a stick (1 in X attempts, default: 5 = 20% chance)")
+			@Config.Name("Campfire Stick Ignition Chance")
+			@Config.RangeInt(min=1, max=100)
 			public int campfireStickIgniteChance = 5;
 			
-			@Config.Comment("How many seconds it takes for a campfire spit to cook food")
-			@Config.Name("CampfireSpitDelay")
-			@Config.RangeInt(min=1)
+			@Config.Comment("Time in seconds to cook food on a campfire spit")
+			@Config.Name("Campfire Spit Cooking Time")
+			@Config.RangeInt(min=1, max=120)
 			public int campfireSpitDelay = 35;
 			
-			@Config.Comment("How many pieces of food can fit on a campfire spit (any existing spits won't change size)")
-			@Config.Name("CampfireSpitSize")
+			@Config.Comment("Maximum food items that can fit on a campfire spit")
+			@Config.Name("Campfire Spit Capacity")
 			@Config.RangeInt(min=1, max=10)
 			public int campfireSpitSize = 3;
 			
-			@Config.Comment("Should cooking food on a campfire spit give experience like a furnace")
-			@Config.Name("CampfireSpitExperience")
+			@Config.Comment("Grant experience points when cooking food on a campfire spit (like a furnace)")
+			@Config.Name("Campfire Spit Experience")
 			public boolean campfireSpitExperience = true;
 			
-			@Config.Comment("Blacklisted items in the campfire spit (ex. minecraft:beef")
-			@Config.Name("CampfireSpitBlacklist")
+			@Config.Comment("Items that cannot be cooked on a campfire spit (e.g., minecraft:beef)")
+			@Config.Name("Campfire Spit Blacklist")
 			public String[] campfireSpitBlacklist = new String[0];
 			
-			@Config.Comment("Whether the campfire spit blacklist is a whitelist instead")
-			@Config.Name("CampfireSpitBlacklistIsWhitelist")
+			@Config.Comment("Treat the blacklist as a whitelist instead (only listed items can be cooked)")
+			@Config.Name("Blacklist is Whitelist")
 			public boolean campfireSpitBlacklistIsWhitelist = false;
 			
-			@Config.Comment("Whether Golden Apple Juice gives the golden apple effect")
-			@Config.Name("GoldenAppleJuiceEffect")
+			@Config.Comment("Golden Apple Juice grants the Golden Apple effect when consumed")
+			@Config.Name("Golden Apple Juice Effect")
 			public boolean goldenAppleJuiceEffect = true;
 			
-			@Config.Comment("Whether Ice Blocks drop Ice Chunks")
-			@Config.Name("IceDropsChunks")
+			@Config.Comment("Ice blocks drop Ice Chunks when broken")
+			@Config.Name("Ice Blocks Drop Chunks")
 			public boolean iceDropsChunks = true;
 			
-			@Config.Comment("Whether Magma Blocks drop Magma Chunks")
-			@Config.Name("MagmaDropsChunks")
+			@Config.Comment("Magma blocks drop Magma Chunks when broken")
+			@Config.Name("Magma Blocks Drop Chunks")
 			public boolean magmaDropsChunks = true;
 			
-			@Config.Comment("Chance for rain collector to fill (1/n chance, default is 6")
-			@Config.Name("RainCollectorFillChance")
-			@Config.RangeInt(min=1)
+			@Config.Comment("Rain collector fill chance (1 in X ticks, default: 6)")
+			@Config.Name("Rain Collector Fill Chance")
+			@Config.RangeInt(min=1, max=100)
 			public int rainCollectorFillChance = 6;
 			
-			@Config.Comment("Whether to register the cooling and heating enchantments")
-			@Config.Name("RegisterEnchantments")
+			@Config.Comment("Register the Cooling and Heating enchantments")
+			@Config.Name("Register Temperature Enchantments")
 			@Config.RequiresMcRestart
 			public boolean registerEnchantments = true;
 			
-			@Config.Comment("Duration of short heat/cold resistance potions, in ticks")
-			@Config.Name("ResistancePotionDurationShort")
+			@Config.Comment("Duration of short Heat/Cold Resistance potions (in ticks, 20 ticks = 1 second)")
+			@Config.Name("Short Resistance Potion Duration")
 			@Config.RequiresMcRestart
-			@Config.RangeInt(min=1)
+			@Config.RangeInt(min=1, max=72000)
 			public int resistancePotionDurationShort = 1200;
 			
-			@Config.Comment("Duration of long heat/cold resistance potions, in ticks")
-			@Config.Name("ResistancePotionDurationLong")
+			@Config.Comment("Duration of long Heat/Cold Resistance potions (in ticks, 20 ticks = 1 second)")
+			@Config.Name("Long Resistance Potion Duration")
 			@Config.RequiresMcRestart
-			@Config.RangeInt(min=1)
+			@Config.RangeInt(min=1, max=72000)
 			public int resistancePotionDurationLong = 2400;
 			
-			@Config.Comment("How often player temperature and thirst are regularly synced, in ticks")
-			@Config.Name("RoutinePacketDelay")
-			@Config.RangeInt(min=0)
+			@Config.Comment("How often player temperature and thirst data is synced to clients (in ticks)")
+			@Config.Name("Data Sync Interval")
+			@Config.RangeInt(min=0, max=200)
 			public int routinePacketDelay = 30;
 		}
 		
 		public class ConfigTemperature
 		{
-			//Not synchronized with clients
-			//TODO it probably should be though, because of thermometers and such
-			
-			@Config.Comment("Altitude Temperature Multiplier - How strongly altitude affects temperature")
-			@Config.Name("AltitudeMultiplier")
-			@Config.RangeInt
+			@Config.Comment("How strongly altitude affects temperature (higher = more extreme changes)")
+			@Config.Name("Altitude Effect Multiplier")
+			@Config.RangeInt(min=-100, max=100)
 			public int altitudeMultiplier = 3;
 			
-			@Config.Comment("Biome Temperature Multiplier - The maximum temperature change in any biome")
-			@Config.Name("BiomeMultiplier")
-			@Config.RangeInt
+			@Config.Comment("Maximum temperature change from biome effects")
+			@Config.Name("Biome Effect Multiplier")
+			@Config.RangeInt(min=-100, max=100)
 			public int biomeMultiplier = 10;
 			
-			@Config.Comment("Underground Effect - Whether being deep underground reduces some surface temperature effects")
-			@Config.Name("UndergroundEffect")
+			@Config.Comment("Being underground reduces surface temperature effects")
+			@Config.Name("Enable Underground Insulation")
 			public boolean undergroundEffect = true;
 			
-			@Config.Comment("Underground Effect Cutoff - Y Level where surface temperature effects do nothing")
-			@Config.Name("UndergroundEffectCutoff")
+			@Config.Comment("Y-level where surface temperature effects are completely blocked")
+			@Config.Name("Underground Insulation Depth")
 			@Config.RangeInt(min=0, max=64)
 			public int undergroundEffectCutoff = 30;
 			
-			@Config.Comment("Time Temperature Multiplier - How strongly time affects temperature")
-			@Config.Name("TimeMultiplier")
-			@Config.RangeInt
+			@Config.Comment("How strongly time of day affects temperature")
+			@Config.Name("Time of Day Effect Multiplier")
+			@Config.RangeInt(min=-100, max=100)
 			public int timeMultiplier = 3;
 			
-			@Config.Comment("Time Temperature Day - Whether time changes temperature during the day")
-			@Config.Name("TimeTemperatureDay")
+			@Config.Comment("Time of day affects temperature during daytime")
+			@Config.Name("Enable Daytime Temperature Changes")
 			public boolean timeTemperatureDay = true;
 			
-			@Config.Comment("Time Temperature Night - Whether time changes temperature during the night")
-			@Config.Name("TimeTemperatureNight")
+			@Config.Comment("Time of day affects temperature during nighttime")
+			@Config.Name("Enable Nighttime Temperature Changes")
 			public boolean timeTemperatureNight = true;
 			
-			@Config.Comment("Time Temperature Shade - Effect of shade on time temperature, only applies when time temperature is hot")
-			@Config.Name("TimeTemperatureShade")
+			@Config.Comment("Temperature reduction when in shade during hot daytime (negative value)")
+			@Config.Name("Shade Cooling Effect")
+			@Config.RangeInt(min=-50, max=0)
 			public int timeTemperatureShade = -2;
 			
-			@Config.Comment("Time Biome Temperature Multiplier - How strongly different biomes effect day/night temperature")
-			@Config.Name("TimeBiomeMultiplier")
-			@Config.RangeDouble(min=1.0,max=1000000.0)
+			@Config.Comment("How strongly different biomes amplify day/night temperature changes")
+			@Config.Name("Biome Time Multiplier")
+			@Config.RangeDouble(min=1.0, max=100.0)
 			public double timeBiomeMultiplier = 1.25d;
 
-			@Config.Comment("Snow Temperature Value - Effect of snowfall on temperature")
-			@Config.Name("SnowValue")
-			@Config.RangeInt
+			@Config.Comment("Temperature effect of snowfall (negative value)")
+			@Config.Name("Snow Cooling Effect")
+			@Config.RangeInt(min=-100, max=0)
 			public int snowValue = -10;
 			
-			@Config.Comment("Sprinting Temperature Value - Effect of sprinting on temperature")
-			@Config.Name("SprintingValue")
-			@Config.RangeInt
+			@Config.Comment("Temperature increase from sprinting")
+			@Config.Name("Sprint Heating Effect")
+			@Config.RangeInt(min=0, max=100)
 			public int sprintingValue = 3;
 			
-			@Config.Comment("Wet Temperature Value - Effect of being wet on temperature")
-			@Config.Name("WetValue")
-			@Config.RangeInt
+			@Config.Comment("Temperature effect of being wet (negative value)")
+			@Config.Name("Wet Cooling Effect")
+			@Config.RangeInt(min=-100, max=0)
 			public int wetValue = -7;
 			
-			@Config.Comment("Temperature Max Speed - Maximum time in ticks for a player temperature change")
-			@Config.Name("TemperatureTickMax")
-			@Config.RangeInt(min=20)
+			@Config.Comment("Maximum time in ticks for temperature to change (slower = more stable)")
+			@Config.Name("Temperature Change Max Speed")
+			@Config.RangeInt(min=20, max=24000)
 			public int temperatureTickMax = 400;
 			
-			@Config.Comment("Temperature Min Speed - Minimum time in ticks for a player temperature change")
-			@Config.Name("TemperatureTickMin")
-			@Config.RangeInt(min=20)
+			@Config.Comment("Minimum time in ticks for temperature to change (faster = more volatile)")
+			@Config.Name("Temperature Change Min Speed")
+			@Config.RangeInt(min=20, max=24000)
 			public int temperatureTickMin = 20;
 			
-			@Config.Comment("TemperatureTickDangerBoost - How much faster in ticks temperature changes happen when escaping dangerous temperatures")
-			@Config.Name("TemperatureTickDangerBoost")
-			@Config.RangeInt(min=0)
+			@Config.Comment("How much faster temperature changes when escaping dangerous temperatures (in ticks)")
+			@Config.Name("Danger Recovery Speed Boost")
+			@Config.RangeInt(min=0, max=1200)
 			public int temperatureTickDangerBoost = 60;
 			
-			@Config.Comment("Enchantment Temperature Change - Effect of temperature enchantments")
-			@Config.Name("EnchantmentTemperature")
-			@Config.RangeInt
+			@Config.Comment("Temperature change from Cooling/Heating enchantments")
+			@Config.Name("Enchantment Temperature Effect")
+			@Config.RangeInt(min=-100, max=100)
 			public int enchantmentTemperature = 1;
 			
-			@Config.Comment("Heater Temperature Change - Strength of heaters / chillers")
-			@Config.Name("HeaterTemperature")
-			@Config.RangeInt(min=-1000000, max=1000000)
+			@Config.Comment("Temperature change strength of heaters and chillers")
+			@Config.Name("Heater/Chiller Strength")
+			@Config.RangeInt(min=-1000, max=1000)
 			public int heaterTemperature = 10;
 			
-			@Config.Comment("Heater Full Power Range - Distance where a heater / chiller starts to lose strength")
-			@Config.Name("HeaterFullPowerRange")
+			@Config.Comment("Distance where heaters/chillers start losing effectiveness")
+			@Config.Name("Heater/Chiller Full Power Range")
 			@Config.RangeDouble(min=0, max=50)
 			public double heaterFullPowerRange = 16.0d;
 			
-			@Config.Comment("Heater Max Range - Distance where a heater / chiller has no effect")
-			@Config.Name("HeaterMaxRange")
+			@Config.Comment("Maximum distance where heaters/chillers have any effect")
+			@Config.Name("Heater/Chiller Max Range")
 			@Config.RangeDouble(min=0, max=50)
 			public double heaterMaxRange = 32.0d;
 			
-			@Config.Comment("Blocks Tiles Separate - Whether blocks and tile entities should have temperature calculated separately, for example, if this is set to true heaters and campfires will both add their heat individually")
-			@Config.Name("BlocksTilesSeparate")
+			@Config.Comment("Calculate block and tile entity temperatures separately (e.g., campfire + heater stack individually)")
+			@Config.Name("Separate Block and Tile Entity Calculations")
 			public boolean blocksTilesSeparate = true;
 			
-			@Config.Comment("Stacking Temperature - Whether multiple blocks in a vicinity should combine their effect")
-			@Config.Name("StackingTemperature")
+			@Config.Comment("Allow multiple heat/cold sources to combine their effects")
+			@Config.Name("Enable Temperature Stacking")
 			public boolean stackingTemperature = true;
 			
-			@Config.Comment("Stacking Temperature Limit - How much more extreme block temperature can be from stacking temperature")
-			@Config.Name("StackingTemperatureLimit")
-			@Config.RangeDouble(min=0, max = 1000000)
+			@Config.Comment("Maximum multiplier for stacked temperature effects")
+			@Config.Name("Temperature Stacking Limit")
+			@Config.RangeDouble(min=1.0, max=100.0)
 			public double stackingTemperatureLimit = 3;
 			
-			@Config.Comment("Temperature Damage Scaling - Extra damage from hyperthermia and hypothermia over time")
-			@Config.Name("TemperatureDamageScaling")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Extra damage over time from extreme temperatures (0.0 = disabled)")
+			@Config.Name("Temperature Damage Scaling")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double temperatureDamageScaling = 0.0d;
 			
-			@Config.Comment("TemperatureDamageDuration - Duration in ticks of hypothermia and hyperthermia")
-			@Config.Name("TemperatureDamageDuration")
-			@Config.RangeInt(min=0)
+			@Config.Comment("Duration of Hypothermia and Hyperthermia effects (in ticks, 20 ticks = 1 second)")
+			@Config.Name("Temperature Effect Duration")
+			@Config.RangeInt(min=0, max=72000)
 			public int temperatureDamageDuration = 400;
-			
-			
 		}
+		
 		public class ConfigThirst
 		{
-			//Not synchronized with clients
-			//Shouldn't need to be either, the thirst server sync is aggressive
-
-			@Config.Comment("Global Thirst Exhaustion Multiplier - Multiplies all thirst exhaustion values (1.0 = default, 2.0 = twice as fast, 0.0 = disabled)")
-			@Config.Name("ThirstExhaustionMultiplier")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Global multiplier for all thirst exhaustion (1.0 = normal, 2.0 = twice as fast, 0.0 = disabled)")
+			@Config.Name("Global Thirst Exhaustion Multiplier")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstExhaustionMultiplier = 1.0d;
 			
-			@Config.Comment("Thirst Exhaustion Limit - How exhausted the player must get before they lose thirst.")
-			@Config.Name("ThirstExhaustionLimit")
-			@Config.RangeDouble(min=1.0)
+			@Config.Comment("How much exhaustion is needed before losing a thirst point")
+			@Config.Name("Thirst Exhaustion Threshold")
+			@Config.RangeDouble(min=1.0, max=20.0)
 			public double thirstExhaustionLimit = 4.0d;
 			
-			@Config.Comment("Thirsty Strength - Strength of the Thirsty Effect")
-			@Config.Name("ThirstyStrength")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Strength of the Thirsty effect (higher = faster dehydration)")
+			@Config.Name("Thirsty Effect Strength")
+			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstyStrength = 0.025d;
 			
-			@Config.Comment("Thirst Attacking - How exhausting attacking enemies is")
-			@Config.Name("ThirstAttacking")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from attacking enemies")
+			@Config.Name("Combat Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstAttacking = 0.3d;
 			
-			@Config.Comment("Thirst Break Block - How exhausting breaking blocks is")
-			@Config.Name("ThirstBreakBlock")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from breaking blocks")
+			@Config.Name("Block Breaking Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstBreakBlock = 0.025d;
 			
-			@Config.Comment("Thirst Sprint Jump - How exhausting jumping while sprinting is")
-			@Config.Name("ThirstSprintJump")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from jumping while sprinting")
+			@Config.Name("Sprint Jump Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstSprintJump = 0.8d;
 			
-			@Config.Comment("Thirst Jump - How exhausting jumping without sprinting is")
-			@Config.Name("ThirstJump")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from jumping without sprinting")
+			@Config.Name("Jump Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstJump = 0.2d;
 			
-			@Config.Comment("Thirst Base Movement - How exhausting any kind of movement is")
-			@Config.Name("ThirstBaseMovement")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from any movement")
+			@Config.Name("Base Movement Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstBaseMovement = 0.01d;
 			
-			@Config.Comment("Thirst Swimming Movement - How exhausting swimming movement is")
-			@Config.Name("ThirstSwimmingMovement")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from swimming")
+			@Config.Name("Swimming Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstSwimmingMovement = 0.015d;
 			
-			@Config.Comment("Thirst Sprinting Movement - How exhausting sprinting movement is")
-			@Config.Name("ThirstSprintingMovement")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from sprinting")
+			@Config.Name("Sprinting Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstSprintingMovement = 0.1d;
 			
-			@Config.Comment("Thirst Walking Movement - How exhausting walking movement is")
-			@Config.Name("ThirstWalkingMovement")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Thirst exhaustion from walking")
+			@Config.Name("Walking Exhaustion")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstWalkingMovement = 0.01d;
 
-			@Config.Comment("Whether the player can get parasites from drinking unclean water")
-			@Config.Name("ThirstParasites")
+			@Config.Comment("Allow players to get parasites from drinking unclean water")
+			@Config.Name("Enable Water Parasites")
 			public boolean thirstParasites = false;
 			
-			@Config.Comment("The chance of parasites from drinking unclean water")
-			@Config.Name("ThirstParasitesChance")
+			@Config.Comment("Chance of getting parasites from unclean water (0.0 = never, 1.0 = always)")
+			@Config.Name("Parasite Infection Chance")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesChance = 0.04d;
 			
-			@Config.Comment("The duration parasites last")
-			@Config.Name("ThirstParasitesDuration")
-			@Config.RangeInt(min=1)
+			@Config.Comment("Duration of parasite effects (in ticks, 20 ticks = 1 second)")
+			@Config.Name("Parasite Effect Duration")
+			@Config.RangeInt(min=1, max=72000)
 			public int thirstParasitesDuration = 1200;
 			
-			@Config.Comment("How strongly parasites make a player hungry (0.005 is same speed as hunger, 0 to disable")
-			@Config.Name("ThirstParasitesHunger")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("How strongly parasites increase hunger (0.005 = same as normal hunger, 0 = disabled)")
+			@Config.Name("Parasite Hunger Effect")
+			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesHunger = 0.02d;
 			
-			@Config.Comment("The chance a player takes damage from parasites (1 is poison speed, 0 to disable)")
-			@Config.Name("ThirstParasitesDamage")
+			@Config.Comment("Chance of taking damage from parasites (1.0 = poison speed, 0 = disabled)")
+			@Config.Name("Parasite Damage Chance")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesDamage = 0.2d;
 			
-			@Config.Comment("Thirst Damage Scaling - Extra damage from dehydration over time")
-			@Config.Name("ThirstDamageScaling")
-			@Config.RangeDouble(min=0.0)
+			@Config.Comment("Extra damage over time from dehydration (0.0 = disabled)")
+			@Config.Name("Dehydration Damage Scaling")
+			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstDamageScaling = 0.0d;
 			
-			@Config.Comment("Whether drinking salt water (from oceans/large bodies) causes the Thirsty effect. If false, it acts like normal fresh water.")
-			@Config.Name("SaltWaterThirst")
+			@Config.Comment("Drinking salt water (from oceans/large bodies) causes the Thirsty effect. Disable to treat all water as fresh")
+			@Config.Name("Enable Salt Water Thirst Effect")
 			public boolean saltWaterThirst = true;
-
-			
 		}
 	}
 	
@@ -408,69 +397,55 @@ public class ModConfig
 	
 	public static class ConfigClientConfig
 	{
-		//Debug configuration for working on ingame models
-		
-		//public double xx = 0.0d;
-		//public double yy = 0.0d;
-		//public double zz = 0.0d;
-		//public double ra = 0.0d;
-		//public double rx = 0.0d;
-		//public double ry = 0.0d;
-		//public double rz = 0.0d;
-		//public double px = 0.0d;
-		//public double py = 0.0d;
-		//public double pz = 0.0d;
-		
-		@Config.Comment("Thermometer Configuration")
+		@Config.Comment("Thermometer display settings")
 		@Config.Name("Thermometer")
 		public final ConfigClientThermometer thermometer = new ConfigClientThermometer();
 		
-		@Config.Comment("Whether the alternate temperature display is enabled")
-		@Config.Name("AlternateTemperature")
+		@Config.Comment("Show alternate temperature display (numeric value)")
+		@Config.Name("Alternate Temperature Display")
 		public boolean alternateTemp = true;
 		
-		@Config.Comment("Whether to draw thirst saturation on the HUD")
-		@Config.Name("DrawThirstSaturation")
+		@Config.Comment("Display thirst saturation overlay on the HUD")
+		@Config.Name("Show Thirst Saturation")
 		public boolean drawThirstSaturation = true;
 		
-		@Config.Comment("Debug mode for clients")
-		@Config.Name("Client DebugMode")
+		@Config.Comment("Enable client-side debug messages")
+		@Config.Name("Client Debug Mode")
 		public boolean clientdebug = false;
 		
-		@Config.Comment("Debug temperature readout")
-		@Config.Name("TemperatureReadout")
+		@Config.Comment("Show detailed temperature readout in debug mode")
+		@Config.Name("Temperature Debug Readout")
 		public boolean temperatureReadout = false;
 		
-		@Config.Comment("Enables the classic temperature icon")
-		@Config.Name("ClassicHUDTemperature")
+		@Config.Comment("Use the classic temperature icon style")
+		@Config.Name("Classic Temperature Icon")
 		public boolean classicHUDTemperature = false;
 		
-		@Config.Comment("Enables the classic thirst bar")
-		@Config.Name("ClassicHUDThirst")
+		@Config.Comment("Use the classic thirst bar style")
+		@Config.Name("Classic Thirst Bar")
 		public boolean classicHUDThirst = false;
 		
-		@Config.Comment("Enables chiller and heater particles")
-		@Config.Name("HeaterParticles")
+		@Config.Comment("Show particle effects for heaters and chillers")
+		@Config.Name("Heater/Chiller Particles")
 		public boolean heaterParticles = true;
 		
 		public class ConfigClientThermometer
 		{
-			@Config.Comment("Whether thermometers display the correct temperature. Only disable this if you are trying to determine what's lagging.")
-			@Config.Name("EnableThermometer")
+			@Config.Comment("Enable thermometer functionality (disable only for debugging performance issues)")
+			@Config.Name("Enable Thermometer")
 			public boolean enableThermometer = true;
 			
-			@Config.Comment("Whether thermometers in your inventory will display on your HUD")
-			@Config.Name("HUDThermometer")
+			@Config.Comment("Display thermometer reading on HUD when in inventory")
+			@Config.Name("HUD Thermometer Display")
 			public boolean hudThermometer = true;
 			
-			@Config.Comment("How far left or right the Thermometer HUD is from the default position")
-			@Config.Name("XOffset")
+			@Config.Comment("Horizontal offset for the Thermometer HUD position")
+			@Config.Name("HUD Thermometer X Offset")
 			public int hudThermometerX = 0;
 			
-			@Config.Comment("How far up or down the Thermometer HUD is from the default position")
-			@Config.Name("YOffset")
+			@Config.Comment("Vertical offset for the Thermometer HUD position")
+			@Config.Name("HUD Thermometer Y Offset")
 			public int hudThermometerY = 0;
-			
 		}
 	}
 	
@@ -490,34 +465,21 @@ public class ModConfig
 				ConfigManager.sync(SimpleDifficulty.MODID, Config.Type.INSTANCE);
 				sendLocalClientConfigToAPI();
 				
-				//Make sure there's a world running
 				if(event.isWorldRunning())
 				{
-					//Make new message
 					MessageConfigLAN message = new MessageConfigLAN();
-					
-					//Send to server
 					PacketHandler.instance.sendToServer(message);
 				}
 				else
 				{
-					//Title Screen
 					sendLocalServerConfigToAPI();
 				}
 			}
 		}
 	}
 	
-	//TODO proper hash mapping so adding new config is easier, but it's not very important
-	//It didn't work the first time I tried, that spurred on the creation of DebugVerify
-	
 	public static void sendLocalClientConfigToAPI()
 	{
-		//TODO if it's client side, it doesn't need to be synchronized
-		//So it should just be referenced directly instead of using this hash map stuff?...
-		
-		//Place in Client Config
-
 		ClientConfig.instance.put(ClientOptions.DEBUG, client.clientdebug);
 		ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, client.drawThirstSaturation);
 		ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, client.thermometer.enableThermometer);
@@ -531,23 +493,26 @@ public class ModConfig
 		ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, client.heaterParticles);
 	}
 	
-	public static void sendLocalServerConfigToAPI() {
-	    ConfigSyncHelper.autoSyncServerConfig(server);
+	public static void sendLocalServerConfigToAPI()
+	{
+		// Automated sync using reflection
+		ConfigSyncHelper.autoSyncServerConfig(server);
 	}
 	
-	private static MessageUpdateConfig getNewConfigMessage() {
-	    return new MessageUpdateConfig(ConfigSyncHelper.autoGenerateConfigNBT(server));
+	private static MessageUpdateConfig getNewConfigMessage()
+	{
+		return new MessageUpdateConfig(ConfigSyncHelper.autoGenerateConfigNBT(server));
 	}
 	
 	public static void sendServerConfigToPlayer(EntityPlayerMP player)
 	{
-		SimpleDifficulty.logger.info("Sending Configuration to player: "+player.getName());
+		SimpleDifficulty.logger.info("Sending configuration to player: " + player.getName());
 		PacketHandler.instance.sendTo(getNewConfigMessage(), player);
 	}
 	
 	public static void sendServerConfigToAllPlayers()
 	{
-		SimpleDifficulty.logger.info("Sending Configuration to all players");
+		SimpleDifficulty.logger.info("Sending configuration to all players");
 		PacketHandler.instance.sendToAll(getNewConfigMessage());
 	}
 }
