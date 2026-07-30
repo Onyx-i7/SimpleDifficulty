@@ -15,7 +15,7 @@ public class ItemDragonCanteen extends ItemCanteen {
     public static final String EI_CAPACITY = "capacity";
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
     
-    public int capacity = 10;
+    public int capacity = 30;
 
     public ItemDragonCanteen() {
         super();
