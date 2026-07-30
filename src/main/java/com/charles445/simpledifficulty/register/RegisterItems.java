@@ -68,6 +68,7 @@ public class RegisterItems
 
 			frost_powder = registerAs("frost_powder", new Item(), registry);
 			frost_rod = registerAs("frost_rod", new Item(), registry);
+			dragonCanteen = registerAs("dragon_canteen", new ItemDragonCanteen(new ExtraItem()), registry);
 			
 			//Extra Items
 			
