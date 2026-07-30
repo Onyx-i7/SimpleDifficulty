@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.charles445.simpledifficulty.mixin",
+  "refmap": "mixins.simpledifficulty.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinInspirationsHandler"
+  ],
+  "client": [],
+  "server": []
+}

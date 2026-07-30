@@ -37,8 +37,16 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
+        name = "SpongePowered"
+        url = "https://repo.spongepowered.org/repository/maven-public/"
+    }
+    maven {
         name = 'CurseForge'
         url = 'https://www.cursemaven.com'
+    }
+    maven {
+        name = 'CleanroomMC'
+        url = 'https://maven.cleanroommc.com'
     }
     maven {
         name = 'Fluidlogged API'
@@ -47,6 +55,15 @@ repositories {
 }
 
 dependencies {
+    def mixin = 'zone.rong:mixinbooter:11.12'
+
+    modUtils.enableMixins(mixin)
+    
+    implementation (mixin) {
+        transitive = false
+    }
+    annotationProcessor mixin
+    
     // Streams
     implementation rfg.deobf('curse.maven:streams-229769:3109315')
     implementation rfg.deobf('curse.maven:farseek-229708:3093852')
@@ -56,6 +73,9 @@ dependencies {
 
     // Dynamic Trees
     compileOnly rfg.deobf('curse.maven:DynamicTrees-252818:3812473')
+
+    // Inspirations
+    compileOnly rfg.deobf('curse.maven:inspirations-284007:2843007')
 
     // Fluidlogged API
     implementation rfg.deobf('com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT')
@@ -91,8 +111,8 @@ artifacts {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'FMLCorePlugin': 'com.charles445.simpledifficulty.asm.CoreLoader',
-            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty'
+            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty',
+            'ForceLoadAsMod': 'true'
         ])
     }
 }
