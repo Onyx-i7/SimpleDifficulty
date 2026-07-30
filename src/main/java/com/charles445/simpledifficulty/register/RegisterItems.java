@@ -80,17 +80,7 @@ public class RegisterItems
 				if(extraItem.enabled)
 				{
 					switch(name)
-					{
-						case ExtraItemNames.DRAGON_CANTEEN:
-							registerAs(name, new ItemDragonCanteen(extraItem), registry);
-							break;
-						
-						//Generic items
-						case ExtraItemNames.FROST_ROD:
-						case ExtraItemNames.FROST_POWDER:
-							registerAs(name, new Item(), registry);
-							break;
-						
+					{	
 						default: 
 							SimpleDifficulty.logger.error("Tried to register invalid extra item: "+name);
 							break;
