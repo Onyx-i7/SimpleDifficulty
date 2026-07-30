@@ -18,7 +18,6 @@
     "dependencies": [],
     "modProperties": {
       "issueTrackerUrl": "https://github.com/juraj-hrivnak/SimpleDifficulty/issues",
-      "iconFile": "logo.png",
       "license": "MIT"
     }
   }
