@@ -47,13 +47,15 @@ repositories {
 }
 
 dependencies {
-    modUtils.enableMixins(mixin)
     def mixin = 'zone.rong:mixinbooter:11.12'
 
+    modUtils.enableMixins(mixin)
+    
     implementation (mixin) {
         transitive = false
     }
     annotationProcessor mixin
+    
     // Streams
     implementation rfg.deobf('curse.maven:streams-229769:3109315')
     implementation rfg.deobf('curse.maven:farseek-229708:3093852')
