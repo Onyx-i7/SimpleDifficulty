@@ -220,7 +220,7 @@ The compiled JAR files will be located in:
 ```text
 build/libs/SimpleDifficulty-0.%.%.jar
 build/libs/SimpleDifficulty-0.%.%-api.jar
-build/libs/SimpleDifficulty-0.%.%-sources.jar
+build/libs/SimpleDifficulty-0.%.%-dev.jar
 ```
 
 - Regular JAR: For use in Minecraft
