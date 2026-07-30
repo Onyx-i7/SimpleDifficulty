@@ -1,9 +1,10 @@
 package com.charles445.simpledifficulty.item;
 
 import com.charles445.simpledifficulty.SimpleDifficulty;
+import com.charles445.simpledifficulty.api.config.ServerConfig;
+import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.api.item.IItemCanteen;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
-import com.charles445.simpledifficulty.config.json.ExtraItem;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
@@ -12,34 +13,11 @@ import net.minecraft.util.ResourceLocation;
 
 public class ItemDragonCanteen extends ItemCanteen {
 
-    public static final String EI_CAPACITY = "capacity";
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
-    
-    public int capacity = 30;
 
     public ItemDragonCanteen() {
         super();
-        initPropertyOverride();
-    }
-
-    public ItemDragonCanteen(int capacity) {
-        super();
-        this.capacity = capacity;
-        initPropertyOverride();
-    }
-
-    public ItemDragonCanteen(ExtraItem extraItem) {
-        super();
         
-        Integer oCapacity = extraItem.getInteger(EI_CAPACITY);
-        if (oCapacity != null) {
-            this.capacity = oCapacity.intValue();
-        }
-        
-        initPropertyOverride();
-    }
-
-    private void initPropertyOverride() {
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
             if (stack.getItem() instanceof IItemCanteen) {
                 IItemCanteen canteen = (IItemCanteen) stack.getItem();
@@ -51,7 +29,7 @@ public class ItemDragonCanteen extends ItemCanteen {
     
     @Override
     public int getMaxDoses(ItemStack stack) {
-        return this.capacity;
+        return ServerConfig.instance.getInteger(ServerOptions.DRAGON_CANTEEN_DOSES);
     }
     
     @Override
