@@ -40,7 +40,7 @@ public class ModifierArmor extends ModifierBase
 		float sum = 0.0f;
 		
 		//Enchantments
-		if(ModConfig.server.miscellaneous.registerEnchantments)
+		if(ModConfig.server.general.registerEnchantments)
 		{
 			if(EnchantmentHelper.getEnchantmentLevel(SDEnchantments.chilling, stack) > 0)
 			{

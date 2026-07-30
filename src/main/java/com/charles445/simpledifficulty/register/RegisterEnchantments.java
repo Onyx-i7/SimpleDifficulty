@@ -31,7 +31,7 @@ public class RegisterEnchantments
 			newEnchantment.setName(name);
 			newEnchantment.setRegistryName(SimpleDifficulty.MODID,name);
 			
-			if(ModConfig.server.miscellaneous.registerEnchantments)
+			if(ModConfig.server.general.registerEnchantments)
 				registry.register(newEnchantment);
 			
 			//Add to map

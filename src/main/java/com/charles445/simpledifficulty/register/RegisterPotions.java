@@ -40,11 +40,11 @@ public class RegisterPotions
 		{
 			final IForgeRegistry<PotionType> registry = event.getRegistry();
 			
-			cold_resist_type = registerTypeAs("cold_resist_type", SDPotions.cold_resist, ModConfig.server.miscellaneous.resistancePotionDurationShort, registry);
-			long_cold_resist_type = registerTypeAs("long_cold_resist_type", SDPotions.cold_resist, ModConfig.server.miscellaneous.resistancePotionDurationLong, registry);
+			cold_resist_type = registerTypeAs("cold_resist_type", SDPotions.cold_resist, ModConfig.server.general.resistancePotionDurationShort, registry);
+			long_cold_resist_type = registerTypeAs("long_cold_resist_type", SDPotions.cold_resist, ModConfig.server.general.resistancePotionDurationLong, registry);
 			
-			heat_resist_type = registerTypeAs("heat_resist_type", SDPotions.heat_resist, ModConfig.server.miscellaneous.resistancePotionDurationShort, registry);
-			long_heat_resist_type = registerTypeAs("long_heat_resist_type", SDPotions.heat_resist, ModConfig.server.miscellaneous.resistancePotionDurationLong, registry);
+			heat_resist_type = registerTypeAs("heat_resist_type", SDPotions.heat_resist, ModConfig.server.general.resistancePotionDurationShort, registry);
+			long_heat_resist_type = registerTypeAs("long_heat_resist_type", SDPotions.heat_resist, ModConfig.server.general.resistancePotionDurationLong, registry);
 			
 		}
 		

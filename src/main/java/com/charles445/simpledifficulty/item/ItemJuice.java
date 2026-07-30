@@ -24,7 +24,7 @@ public class ItemJuice extends ItemDrinkBase {
     @Override
     public void runSecondaryEffect(EntityPlayer player, ItemStack stack) {
         JuiceEnum type = getEnumForStack(stack);
-        if (type == JuiceEnum.GOLDEN_APPLE && ModConfig.server.miscellaneous.goldenAppleJuiceEffect) {
+        if (type == JuiceEnum.GOLDEN_APPLE && ModConfig.server.general.goldenAppleJuiceEffect) {
             player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 1));
             player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 2400, 0));
         }

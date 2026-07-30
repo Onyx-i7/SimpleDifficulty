@@ -37,7 +37,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
     private int timer = 0;
     
     public TileEntitySpit() {
-        items = new ItemHandler(ModConfig.server.miscellaneous.campfireSpitSize);
+        items = new ItemHandler(ModConfig.server.general.campfireSpitSize);
     }
     
     @Override
@@ -57,7 +57,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
     private void secondUpdate() {
         if (shouldCook()) {
             progress++;
-            if (progress >= ModConfig.server.miscellaneous.campfireSpitDelay) {
+            if (progress >= ModConfig.server.general.campfireSpitDelay) {
                 cookFood();
                 progress = 0;
             }
@@ -76,7 +76,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
             if (isCookable(stack)) {
                 ItemStack result = FurnaceRecipes.instance().getSmeltingResult(stack).copy();
                 
-                if (ModConfig.server.miscellaneous.campfireSpitExperience) {
+                if (ModConfig.server.general.campfireSpitExperience) {
                     experience += FurnaceRecipes.instance().getSmeltingExperience(result);
                 }
                 
@@ -121,7 +121,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
         if (!withdrewToHand && isCookable(heldItemStack)) {
             String heldItemName = heldItemStack.getItem().getRegistryName().toString();
             boolean isBlacklisted = false;
-            String[] spitBlacklist = ModConfig.server.miscellaneous.campfireSpitBlacklist;
+            String[] spitBlacklist = ModConfig.server.general.campfireSpitBlacklist;
             
             for (String s : spitBlacklist) {
                 if (s.equals(heldItemName)) {
@@ -130,7 +130,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
                 }
             }
             
-            if (isBlacklisted == ModConfig.server.miscellaneous.campfireSpitBlacklistIsWhitelist) {
+            if (isBlacklisted == ModConfig.server.general.campfireSpitBlacklistIsWhitelist) {
                 for (int i = 0; i < items.getSlots(); i++) {
                     if (items.getStackInSlot(i).isEmpty()) {
                         items.insertItem(i, new ItemStack(heldItemStack.getItem(), 1, heldItemStack.getItemDamage()), false);

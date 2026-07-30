@@ -32,12 +32,12 @@ public class BlockHandler
 			if(fortune < 0)
 				fortune = 0;
 			
-			if(block == Blocks.ICE && ModConfig.server.miscellaneous.iceDropsChunks)
+			if(block == Blocks.ICE && ModConfig.server.general.iceDropsChunks)
 			{
 				event.getDrops().clear(); //TODO Consider not overriding old drops?
 				event.getDrops().add(new ItemStack(SDItems.ice_chunk, world.rand.nextInt(fortune+1) + world.rand.nextInt(2)));
 			}
-			else if(block == Blocks.MAGMA && ModConfig.server.miscellaneous.magmaDropsChunks)
+			else if(block == Blocks.MAGMA && ModConfig.server.general.magmaDropsChunks)
 			{
 				event.getDrops().clear(); //TODO Consider not overriding old drops?
 				event.getDrops().add(new ItemStack(SDItems.magma_chunk, world.rand.nextInt(fortune+1) + world.rand.nextInt(3)));
