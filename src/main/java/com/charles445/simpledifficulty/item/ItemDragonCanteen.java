@@ -13,11 +13,20 @@ import net.minecraft.util.ResourceLocation;
 public class ItemDragonCanteen extends ItemCanteen {
 
     public static final String EI_CAPACITY = "capacity";
-    
-    // Cached values array locally to prevent overhead from continuous values() cloning
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
     
-    public int capacity = 12;
+    public int capacity = 10;
+
+    public ItemDragonCanteen() {
+        super();
+        initPropertyOverride();
+    }
+
+    public ItemDragonCanteen(int capacity) {
+        super();
+        this.capacity = capacity;
+        initPropertyOverride();
+    }
 
     public ItemDragonCanteen(ExtraItem extraItem) {
         super();
@@ -27,7 +36,10 @@ public class ItemDragonCanteen extends ItemCanteen {
             this.capacity = oCapacity.intValue();
         }
         
-        // Optimized property override using a clean lambda expression to save memory
+        initPropertyOverride();
+    }
+
+    private void initPropertyOverride() {
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
             if (stack.getItem() instanceof IItemCanteen) {
                 IItemCanteen canteen = (IItemCanteen) stack.getItem();
@@ -65,14 +77,13 @@ public class ItemDragonCanteen extends ItemCanteen {
             
             ItemStack fullCanteen = emptyCanteen.copy();
             setCanteenFull(fullCanteen);
-            
             setTypeTag(fullCanteen, ThirstEnum.PURIFIED.ordinal());
             
             items.add(emptyCanteen);
             items.add(fullCanteen);
         }
     }
-    
+
     protected void customSetTypeTag(ItemStack stack) {
         stack.setTagInfo(CANTEENTYPE, new NBTTagInt(ThirstEnum.PURIFIED.ordinal()));
     }
