@@ -135,7 +135,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
             {
                 if(!player.capabilities.isCreativeMode)
                     heldItemStack.shrink(1);
-                if(world.rand.nextInt(ModConfig.server.general.campfireStickIgniteChance) == 0)
+                if(world.rand.nextInt(ModConfig.server.miscellaneous.campfireStickIgniteChance) == 0)
                 {
                     world.setBlockState(pos, state.withProperty(BURNING, true), 3);
                     ignited = true;
@@ -170,7 +170,7 @@ public class BlockCampfire extends Block implements IBlockStateIgnore
                 return;
             }
 
-            if (rand.nextInt(ModConfig.server.general.campfireDecayChance) == 0) {
+            if (rand.nextInt(ModConfig.server.miscellaneous.campfireDecayChance) == 0) {
                 age++;
                 if (age >= AGE_MAX) {
                     world.setBlockState(pos, state.withProperty(AGE, AGE_MAX).withProperty(BURNING, false), 3);

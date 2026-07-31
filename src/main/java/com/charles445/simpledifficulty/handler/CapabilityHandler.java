@@ -63,7 +63,7 @@ public class CapabilityHandler
 		
 		//Server Side (assumes EntityPlayerMP from this point on)
 		
-		int packetTimerThreshold = ModConfig.server.general.routinePacketDelay;
+		int packetTimerThreshold = ModConfig.server.miscellaneous.routinePacketDelay;
 		
 		//Update Temperature
 		if(QuickConfig.isTemperatureEnabled())
