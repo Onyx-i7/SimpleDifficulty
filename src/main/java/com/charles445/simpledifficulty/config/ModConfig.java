@@ -48,9 +48,9 @@ public class ModConfig
 		@Config.Name("Thirst")
 		public final ConfigThirst thirst = new ConfigThirst();
 		
-		///
-		/// Core Server Options (Names MUST match ServerOptions enum exactly)
-		///
+		// =====================================================================
+		// CORE SERVER OPTIONS (Names MUST match ServerOptions enum exactly)
+		// =====================================================================
 		@Config.Comment("Enable or disable the entire thirst system")
 		@Config.Name("thirstEnabled")
 		public boolean thirstEnabled = true;
@@ -63,7 +63,7 @@ public class ModConfig
 		@Config.Name("thirstDrinkRain")
 		public boolean thirstDrinkRain = true;
 		
-		@Config.Comment("Make the mod dangerous even on Peaceful difficulty (parasites, temperature damage)")
+		@Config.Comment("Make the mod dangerous even on Peaceful difficulty")
 		@Config.Name("peacefulDanger")
 		public boolean peacefulDanger = false;
 		
@@ -98,22 +98,24 @@ public class ModConfig
 		@Config.Name("infinitePurifiedWater")
 		public boolean infinitePurifiedWater = false;
 
-		@Config.Comment("Reduce light opacity of purified water blocks (1 instead of 3) for better visibility")
+		@Config.Comment("Reduce light opacity of purified water blocks for better visibility")
 		@Config.Name("purifiedWaterOpacity")
 		public boolean purifiedWaterOpacity = false;
 
-		@Config.Comment("Enable debug logging (spam console with detailed messages)")
+		@Config.Comment("Enable debug logging (spams console with detailed messages)")
 		@Config.Name("debug")
 		public boolean debug = false;
 		
-		public class ConfigGeneral
-		{
-			@Config.Comment("Campfire fuel decay chance (1 in X ticks, default: 2 = 50% chance)")
+		// =====================================================================
+		// NESTED CLASSES (Read directly via ModConfig.server.general.xxx)
+		// =====================================================================
+		public class ConfigGeneral {
+			@Config.Comment("Campfire fuel decay chance (1 in X ticks)")
 			@Config.Name("campfireDecayChance")
 			@Config.RangeInt(min=1, max=100)
 			public int campfireDecayChance = 2;
 			
-			@Config.Comment("Chance to ignite campfire with a stick (1 in X attempts, default: 5 = 20% chance)")
+			@Config.Comment("Chance to ignite campfire with a stick (1 in X attempts)")
 			@Config.Name("campfireStickIgniteChance")
 			@Config.RangeInt(min=1, max=100)
 			public int campfireStickIgniteChance = 5;
@@ -128,19 +130,19 @@ public class ModConfig
 			@Config.RangeInt(min=1, max=10)
 			public int campfireSpitSize = 3;
 			
-			@Config.Comment("Grant experience points when cooking food on a campfire spit (like a furnace)")
+			@Config.Comment("Grant experience points when cooking food on a campfire spit")
 			@Config.Name("campfireSpitExperience")
 			public boolean campfireSpitExperience = true;
 			
-			@Config.Comment("Items that cannot be cooked on a campfire spit (e.g., minecraft:beef)")
+			@Config.Comment("Items that cannot be cooked on a campfire spit")
 			@Config.Name("campfireSpitBlacklist")
 			public String[] campfireSpitBlacklist = new String[0];
 			
-			@Config.Comment("Treat the blacklist as a whitelist instead (only listed items can be cooked)")
+			@Config.Comment("Treat the blacklist as a whitelist instead")
 			@Config.Name("campfireSpitBlacklistIsWhitelist")
 			public boolean campfireSpitBlacklistIsWhitelist = false;
 			
-			@Config.Comment("Golden Apple Juice grants the Golden Apple effect when consumed")
+			@Config.Comment("Golden Apple Juice grants the Golden Apple effect")
 			@Config.Name("goldenAppleJuiceEffect")
 			public boolean goldenAppleJuiceEffect = true;
 			
@@ -152,7 +154,7 @@ public class ModConfig
 			@Config.Name("magmaDropsChunks")
 			public boolean magmaDropsChunks = true;
 			
-			@Config.Comment("Rain collector fill chance (1 in X ticks, default: 6)")
+			@Config.Comment("Rain collector fill chance (1 in X ticks)")
 			@Config.Name("rainCollectorFillChance")
 			@Config.RangeInt(min=1, max=100)
 			public int rainCollectorFillChance = 6;
@@ -162,27 +164,26 @@ public class ModConfig
 			@Config.RequiresMcRestart
 			public boolean registerEnchantments = true;
 			
-			@Config.Comment("Duration of short Heat/Cold Resistance potions (in ticks, 20 ticks = 1 second)")
+			@Config.Comment("Duration of short Heat/Cold Resistance potions (in ticks)")
 			@Config.Name("resistancePotionDurationShort")
 			@Config.RequiresMcRestart
 			@Config.RangeInt(min=1, max=72000)
 			public int resistancePotionDurationShort = 1200;
 			
-			@Config.Comment("Duration of long Heat/Cold Resistance potions (in ticks, 20 ticks = 1 second)")
+			@Config.Comment("Duration of long Heat/Cold Resistance potions (in ticks)")
 			@Config.Name("resistancePotionDurationLong")
 			@Config.RequiresMcRestart
 			@Config.RangeInt(min=1, max=72000)
 			public int resistancePotionDurationLong = 2400;
 			
-			@Config.Comment("How often player temperature and thirst data is synced to clients (in ticks)")
+			@Config.Comment("How often player data is synced to clients (in ticks)")
 			@Config.Name("routinePacketDelay")
 			@Config.RangeInt(min=0, max=200)
 			public int routinePacketDelay = 30;
 		}
 		
-		public class ConfigTemperature
-		{
-			@Config.Comment("How strongly altitude affects temperature (higher = more extreme changes)")
+		public class ConfigTemperature {
+			@Config.Comment("How strongly altitude affects temperature")
 			@Config.Name("altitudeMultiplier")
 			@Config.RangeInt(min=-100, max=100)
 			public int altitudeMultiplier = 3;
@@ -196,7 +197,7 @@ public class ModConfig
 			@Config.Name("undergroundEffect")
 			public boolean undergroundEffect = true;
 			
-			@Config.Comment("Y-level where surface temperature effects are completely blocked")
+			@Config.Comment("Y-level where surface temperature effects are blocked")
 			@Config.Name("undergroundEffectCutoff")
 			@Config.RangeInt(min=0, max=64)
 			public int undergroundEffectCutoff = 30;
@@ -214,17 +215,17 @@ public class ModConfig
 			@Config.Name("timeTemperatureNight")
 			public boolean timeTemperatureNight = true;
 			
-			@Config.Comment("Temperature reduction when in shade during hot daytime (negative value)")
+			@Config.Comment("Temperature reduction when in shade during hot daytime")
 			@Config.Name("timeTemperatureShade")
 			@Config.RangeInt(min=-50, max=0)
 			public int timeTemperatureShade = -2;
 			
-			@Config.Comment("How strongly different biomes amplify day/night temperature changes")
+			@Config.Comment("How strongly biomes amplify day/night temperature changes")
 			@Config.Name("timeBiomeMultiplier")
 			@Config.RangeDouble(min=1.0, max=100.0)
 			public double timeBiomeMultiplier = 1.25d;
 
-			@Config.Comment("Temperature effect of snowfall (negative value)")
+			@Config.Comment("Temperature effect of snowfall")
 			@Config.Name("snowValue")
 			@Config.RangeInt(min=-100, max=0)
 			public int snowValue = -10;
@@ -234,22 +235,22 @@ public class ModConfig
 			@Config.RangeInt(min=0, max=100)
 			public int sprintingValue = 3;
 			
-			@Config.Comment("Temperature effect of being wet (negative value)")
+			@Config.Comment("Temperature effect of being wet")
 			@Config.Name("wetValue")
 			@Config.RangeInt(min=-100, max=0)
 			public int wetValue = -7;
 			
-			@Config.Comment("Maximum time in ticks for temperature to change (slower = more stable)")
+			@Config.Comment("Maximum time in ticks for temperature to change")
 			@Config.Name("temperatureTickMax")
 			@Config.RangeInt(min=20, max=24000)
 			public int temperatureTickMax = 400;
 			
-			@Config.Comment("Minimum time in ticks for temperature to change (faster = more volatile)")
+			@Config.Comment("Minimum time in ticks for temperature to change")
 			@Config.Name("temperatureTickMin")
 			@Config.RangeInt(min=20, max=24000)
 			public int temperatureTickMin = 20;
 			
-			@Config.Comment("How much faster temperature changes when escaping dangerous temperatures (in ticks)")
+			@Config.Comment("Speed boost for temperature changes when escaping danger")
 			@Config.Name("temperatureTickDangerBoost")
 			@Config.RangeInt(min=0, max=1200)
 			public int temperatureTickDangerBoost = 60;
@@ -274,11 +275,11 @@ public class ModConfig
 			@Config.RangeDouble(min=0, max=50)
 			public double heaterMaxRange = 32.0d;
 			
-			@Config.Comment("Calculate block and tile entity temperatures separately (e.g., campfire + heater stack individually)")
+			@Config.Comment("Calculate block and tile entity temperatures separately")
 			@Config.Name("blocksTilesSeparate")
 			public boolean blocksTilesSeparate = true;
 			
-			@Config.Comment("Allow multiple heat/cold sources to combine their effects")
+			@Config.Comment("Allow multiple heat/cold sources to combine effects")
 			@Config.Name("stackingTemperature")
 			public boolean stackingTemperature = true;
 			
@@ -287,20 +288,19 @@ public class ModConfig
 			@Config.RangeDouble(min=1.0, max=100.0)
 			public double stackingTemperatureLimit = 3;
 			
-			@Config.Comment("Extra damage over time from extreme temperatures (0.0 = disabled)")
+			@Config.Comment("Extra damage over time from extreme temperatures")
 			@Config.Name("temperatureDamageScaling")
 			@Config.RangeDouble(min=0.0, max=10.0)
 			public double temperatureDamageScaling = 0.0d;
 			
-			@Config.Comment("Duration of Hypothermia and Hyperthermia effects (in ticks, 20 ticks = 1 second)")
+			@Config.Comment("Duration of Hypothermia and Hyperthermia effects (in ticks)")
 			@Config.Name("temperatureDamageDuration")
 			@Config.RangeInt(min=0, max=72000)
 			public int temperatureDamageDuration = 400;
 		}
 		
-		public class ConfigThirst
-		{
-			@Config.Comment("Global multiplier for all thirst exhaustion (1.0 = normal, 2.0 = twice as fast, 0.0 = disabled)")
+		public class ConfigThirst {
+			@Config.Comment("Global multiplier for all thirst exhaustion")
 			@Config.Name("thirstExhaustionMultiplier")
 			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstExhaustionMultiplier = 1.0d;
@@ -310,7 +310,7 @@ public class ModConfig
 			@Config.RangeDouble(min=1.0, max=20.0)
 			public double thirstExhaustionLimit = 4.0d;
 			
-			@Config.Comment("Strength of the Thirsty effect (higher = faster dehydration)")
+			@Config.Comment("Strength of the Thirsty effect")
 			@Config.Name("thirstyStrength")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstyStrength = 0.025d;
@@ -359,48 +359,43 @@ public class ModConfig
 			@Config.Name("thirstParasites")
 			public boolean thirstParasites = false;
 			
-			@Config.Comment("Chance of getting parasites from unclean water (0.0 = never, 1.0 = always)")
+			@Config.Comment("Chance of getting parasites from unclean water")
 			@Config.Name("thirstParasitesChance")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesChance = 0.04d;
 			
-			@Config.Comment("Duration of parasite effects (in ticks, 20 ticks = 1 second)")
+			@Config.Comment("Duration of parasite effects (in ticks)")
 			@Config.Name("thirstParasitesDuration")
 			@Config.RangeInt(min=1, max=72000)
 			public int thirstParasitesDuration = 1200;
 			
-			@Config.Comment("How strongly parasites increase hunger (0.005 = same as normal hunger, 0 = disabled)")
+			@Config.Comment("How strongly parasites increase hunger")
 			@Config.Name("thirstParasitesHunger")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesHunger = 0.02d;
 			
-			@Config.Comment("Chance of taking damage from parasites (1.0 = poison speed, 0 = disabled)")
+			@Config.Comment("Chance of taking damage from parasites")
 			@Config.Name("thirstParasitesDamage")
 			@Config.RangeDouble(min=0.0, max=1.0)
 			public double thirstParasitesDamage = 0.2d;
 			
-			@Config.Comment("Extra damage over time from dehydration (0.0 = disabled)")
+			@Config.Comment("Extra damage over time from dehydration")
 			@Config.Name("thirstDamageScaling")
 			@Config.RangeDouble(min=0.0, max=10.0)
 			public double thirstDamageScaling = 0.0d;
 			
-			@Config.Comment("Drinking salt water (from oceans/large bodies) causes the Thirsty effect. Disable to treat all water as fresh")
+			@Config.Comment("Drinking salt water causes the Thirsty effect")
 			@Config.Name("saltWaterThirst")
 			public boolean saltWaterThirst = true;
 		}
 	}
 	
-	///
-	/// Client Options
-	///
-	
-	public static class ConfigClientConfig
-	{
+	public static class ConfigClientConfig {
 		@Config.Comment("Thermometer display settings")
 		@Config.Name("Thermometer")
 		public final ConfigClientThermometer thermometer = new ConfigClientThermometer();
 		
-		@Config.Comment("Show alternate temperature display (numeric value)")
+		@Config.Comment("Show alternate temperature display")
 		@Config.Name("alternateTemp")
 		public boolean alternateTemp = true;
 		
@@ -428,9 +423,8 @@ public class ModConfig
 		@Config.Name("heaterParticles")
 		public boolean heaterParticles = true;
 		
-		public class ConfigClientThermometer
-		{
-			@Config.Comment("Enable thermometer functionality (disable only for debugging performance issues)")
+		public class ConfigClientThermometer {
+			@Config.Comment("Enable thermometer functionality")
 			@Config.Name("enableThermometer")
 			public boolean enableThermometer = true;
 			
@@ -438,47 +432,35 @@ public class ModConfig
 			@Config.Name("hudThermometer")
 			public boolean hudThermometer = true;
 			
-			@Config.Comment("Horizontal offset for the Thermometer HUD position")
+			@Config.Comment("Horizontal offset for the Thermometer HUD")
 			@Config.Name("hudThermometerX")
 			public int hudThermometerX = 0;
 			
-			@Config.Comment("Vertical offset for the Thermometer HUD position")
+			@Config.Comment("Vertical offset for the Thermometer HUD")
 			@Config.Name("hudThermometerY")
 			public int hudThermometerY = 0;
 		}
 	}
 	
-	///
-	/// Event Handler
-	///
-	
 	@Mod.EventBusSubscriber(modid = SimpleDifficulty.MODID)
-	private static class EventHandler
-	{
+	private static class EventHandler {
 		@SubscribeEvent
 		@SideOnly(Side.CLIENT)
-		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
-		{
-			if(event.getModID().equals(SimpleDifficulty.MODID))
-			{
+		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+			if(event.getModID().equals(SimpleDifficulty.MODID)) {
 				ConfigManager.sync(SimpleDifficulty.MODID, Config.Type.INSTANCE);
 				sendLocalClientConfigToAPI();
 				
-				if(event.isWorldRunning())
-				{
-					MessageConfigLAN message = new MessageConfigLAN();
-					PacketHandler.instance.sendToServer(message);
-				}
-				else
-				{
+				if(event.isWorldRunning()) {
+					PacketHandler.instance.sendToServer(new MessageConfigLAN());
+				} else {
 					sendLocalServerConfigToAPI();
 				}
 			}
 		}
 	}
 	
-	public static void sendLocalClientConfigToAPI()
-	{
+	public static void sendLocalClientConfigToAPI() {
 		ClientConfig.instance.put(ClientOptions.DEBUG, client.clientdebug);
 		ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, client.drawThirstSaturation);
 		ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, client.thermometer.enableThermometer);
@@ -492,25 +474,52 @@ public class ModConfig
 		ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, client.heaterParticles);
 	}
 	
-	public static void sendLocalServerConfigToAPI()
-	{
-		// Automated sync using reflection
-		ConfigSyncHelper.autoSyncServerConfig(server);
+	public static void sendLocalServerConfigToAPI() {
+		// EXPLICIT, SAFE SYNCING (No reflection)
+		ServerConfig.instance.put(ServerOptions.DEBUG, server.debug);
+		ServerConfig.instance.put(ServerOptions.THIRST_ENABLED, server.thirstEnabled);
+		ServerConfig.instance.put(ServerOptions.THIRST_DRINK_BLOCKS, server.thirstDrinkBlocks);
+		ServerConfig.instance.put(ServerOptions.THIRST_DRINK_RAIN, server.thirstDrinkRain);
+		ServerConfig.instance.put(ServerOptions.PEACEFUL_DANGER, server.peacefulDanger);
+		ServerConfig.instance.put(ServerOptions.TEMPERATURE_ENABLED, server.temperatureEnabled);
+		ServerConfig.instance.put(ServerOptions.TEMPERATURE_TE_ENABLED, server.temperatureTEEnabled);
+		ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, server.canteenDoses);
+		ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, server.strictHeaters);
+		ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
+		ServerConfig.instance.put(ServerOptions.DRAGON_CANTEEN_DOSES, server.dragonCanteenDoses);
+		ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
+		ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
+		ServerConfig.instance.put(ServerOptions.THIRST_EXHAUSTION_MULTIPLIER, server.thirst.thirstExhaustionMultiplier);
+		ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
 	}
 	
-	private static MessageUpdateConfig getNewConfigMessage()
-	{
-		return new MessageUpdateConfig(ConfigSyncHelper.autoGenerateConfigNBT(server));
+	private static MessageUpdateConfig getNewConfigMessage() {
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString(ServerOptions.DEBUG.getName(), String.valueOf(server.debug));
+		compound.setString(ServerOptions.THIRST_ENABLED.getName(), String.valueOf(server.thirstEnabled));
+		compound.setString(ServerOptions.THIRST_DRINK_BLOCKS.getName(), String.valueOf(server.thirstDrinkBlocks));
+		compound.setString(ServerOptions.THIRST_DRINK_RAIN.getName(), String.valueOf(server.thirstDrinkRain));
+		compound.setString(ServerOptions.PEACEFUL_DANGER.getName(), String.valueOf(server.peacefulDanger));
+		compound.setString(ServerOptions.TEMPERATURE_ENABLED.getName(), String.valueOf(server.temperatureEnabled));
+		compound.setString(ServerOptions.TEMPERATURE_TE_ENABLED.getName(), String.valueOf(server.temperatureTEEnabled));
+		compound.setString(ServerOptions.CANTEEN_DOSES.getName(), String.valueOf(server.canteenDoses));
+		compound.setString(ServerOptions.STRICT_HEATERS.getName(), String.valueOf(server.strictHeaters));
+		compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), String.valueOf(server.ironCanteenDoses));
+		compound.setString(ServerOptions.DRAGON_CANTEEN_DOSES.getName(), String.valueOf(server.dragonCanteenDoses));
+		compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), String.valueOf(server.infinitePurifiedWater));
+		compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), String.valueOf(server.purifiedWaterOpacity));
+		compound.setString(ServerOptions.THIRST_EXHAUSTION_MULTIPLIER.getName(), String.valueOf(server.thirst.thirstExhaustionMultiplier));
+		compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), String.valueOf(server.thirst.saltWaterThirst));
+		
+		return new MessageUpdateConfig(compound);
 	}
 	
-	public static void sendServerConfigToPlayer(EntityPlayerMP player)
-	{
+	public static void sendServerConfigToPlayer(EntityPlayerMP player) {
 		SimpleDifficulty.logger.info("Sending configuration to player: " + player.getName());
 		PacketHandler.instance.sendTo(getNewConfigMessage(), player);
 	}
 	
-	public static void sendServerConfigToAllPlayers()
-	{
+	public static void sendServerConfigToAllPlayers() {
 		SimpleDifficulty.logger.info("Sending configuration to all players");
 		PacketHandler.instance.sendToAll(getNewConfigMessage());
 	}
