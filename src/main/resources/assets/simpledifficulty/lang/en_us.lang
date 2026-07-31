@@ -108,3 +108,7 @@ item.simpledifficulty:dragon_canteen_purified.name=Regular Water Dragon Canteen
 item.simpledifficulty:dragon_canteen_salt.name=Salt Water Dragon Canteen
 
 death.attack.inspirationscauldronburn=%1$s died from drinking boiling water
+
+# Unused textures given purpose
+item.simpledifficulty.frost_powder.name=Frost Powder
+item.simpledifficulty.frost_rod.name=Frost Rod

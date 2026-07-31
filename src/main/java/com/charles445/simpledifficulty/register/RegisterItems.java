@@ -65,6 +65,12 @@ public class RegisterItems
 			ice_chestplate = registerAs("ice_chestplate", new ItemArmorTemperature(iceArmorMaterial, EntityEquipmentSlot.CHEST), registry);
 			ice_leggings = registerAs("ice_leggings", new ItemArmorTemperature(iceArmorMaterial, EntityEquipmentSlot.LEGS), registry);
 			ice_boots = registerAs("ice_boots", new ItemArmorTemperature(iceArmorMaterial, EntityEquipmentSlot.FEET), registry);
+
+			frost_powder = registerAs("frost_powder", new Item(), registry);
+			frost_rod = registerAs("frost_rod", new Item(), registry);
+			
+			// Dragon Canteen
+			dragonCanteen = registerAs("dragon_canteen", new ItemDragonCanteen(), registry);
 			
 			//Extra Items
 			
@@ -76,17 +82,7 @@ public class RegisterItems
 				if(extraItem.enabled)
 				{
 					switch(name)
-					{
-						case ExtraItemNames.DRAGON_CANTEEN:
-							registerAs(name, new ItemDragonCanteen(extraItem), registry);
-							break;
-						
-						//Generic items
-						case ExtraItemNames.FROST_ROD:
-						case ExtraItemNames.FROST_POWDER:
-							registerAs(name, new Item(), registry);
-							break;
-						
+					{	
 						default: 
 							SimpleDifficulty.logger.error("Tried to register invalid extra item: "+name);
 							break;

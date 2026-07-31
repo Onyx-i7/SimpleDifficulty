@@ -91,6 +91,11 @@ public class ModConfig
 		@Config.Name("IronCanteenDoses")
 		@Config.RangeInt(min=1)
 		public int ironCanteenDoses = 8;
+
+		@Config.Comment("Maximum number of doses in a dragon canteen")
+		@Config.Name("DragonCanteenDoses")
+		@Config.RangeInt(min=1)
+		public int dragonCanteenDoses = 30;
 		
 		@Config.Comment("Whether purified water blocks are infinite")
 		@Config.Name("Infinite Purified Water")
@@ -528,43 +533,44 @@ public class ModConfig
 	
 	public static void sendLocalServerConfigToAPI()
 	{
-		//Place in Server Config
-		
-		ServerConfig.instance.put(ServerOptions.DEBUG, server.debug);
-		ServerConfig.instance.put(ServerOptions.THIRST_ENABLED, server.thirstEnabled);
-		ServerConfig.instance.put(ServerOptions.THIRST_DRINK_BLOCKS, server.thirstDrinkBlocks);
-		ServerConfig.instance.put(ServerOptions.THIRST_DRINK_RAIN, server.thirstDrinkRain);
-		ServerConfig.instance.put(ServerOptions.PEACEFUL_DANGER, server.peacefulDanger);
-		ServerConfig.instance.put(ServerOptions.TEMPERATURE_ENABLED, server.temperatureEnabled);
-		ServerConfig.instance.put(ServerOptions.TEMPERATURE_TE_ENABLED, server.temperatureTEEnabled);
-		ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, server.canteenDoses);
-		ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, server.strictHeaters);
-		ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
-		ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
-		ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
-		ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
+	    //Place in Server Config
+	    
+	    ServerConfig.instance.put(ServerOptions.DEBUG, server.debug);
+	    ServerConfig.instance.put(ServerOptions.THIRST_ENABLED, server.thirstEnabled);
+	    ServerConfig.instance.put(ServerOptions.THIRST_DRINK_BLOCKS, server.thirstDrinkBlocks);
+	    ServerConfig.instance.put(ServerOptions.THIRST_DRINK_RAIN, server.thirstDrinkRain);
+	    ServerConfig.instance.put(ServerOptions.PEACEFUL_DANGER, server.peacefulDanger);
+	    ServerConfig.instance.put(ServerOptions.TEMPERATURE_ENABLED, server.temperatureEnabled);
+	    ServerConfig.instance.put(ServerOptions.TEMPERATURE_TE_ENABLED, server.temperatureTEEnabled);
+	    ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, server.canteenDoses);
+	    ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, server.strictHeaters);
+	    ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
+	    ServerConfig.instance.put(ServerOptions.DRAGON_CANTEEN_DOSES, server.dragonCanteenDoses);
+	    ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
+	    ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
+	    ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
 	}
 	
 	private static MessageUpdateConfig getNewConfigMessage()
 	{
-		NBTTagCompound compound = new NBTTagCompound();
-		
-		compound.setString(ServerOptions.DEBUG.getName(), ""+server.debug);
-		compound.setString(ServerOptions.THIRST_ENABLED.getName(), ""+server.thirstEnabled);
-		compound.setString(ServerOptions.THIRST_DRINK_BLOCKS.getName(), ""+server.thirstDrinkBlocks);
-		compound.setString(ServerOptions.THIRST_DRINK_RAIN.getName(), ""+server.thirstDrinkRain);
-		compound.setString(ServerOptions.PEACEFUL_DANGER.getName(), ""+server.peacefulDanger);
-		compound.setString(ServerOptions.TEMPERATURE_ENABLED.getName(), ""+server.temperatureEnabled);
-		compound.setString(ServerOptions.TEMPERATURE_TE_ENABLED.getName(), ""+server.temperatureTEEnabled);
-		compound.setString(ServerOptions.CANTEEN_DOSES.getName(), ""+server.canteenDoses);
-		compound.setString(ServerOptions.STRICT_HEATERS.getName(), ""+server.strictHeaters);
-		compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), ""+server.ironCanteenDoses);
-		compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
-		compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
-		compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);
-		
-		
-		return new MessageUpdateConfig(compound);
+	    NBTTagCompound compound = new NBTTagCompound();
+	    
+	    compound.setString(ServerOptions.DEBUG.getName(), ""+server.debug);
+	    compound.setString(ServerOptions.THIRST_ENABLED.getName(), ""+server.thirstEnabled);
+	    compound.setString(ServerOptions.THIRST_DRINK_BLOCKS.getName(), ""+server.thirstDrinkBlocks);
+	    compound.setString(ServerOptions.THIRST_DRINK_RAIN.getName(), ""+server.thirstDrinkRain);
+	    compound.setString(ServerOptions.PEACEFUL_DANGER.getName(), ""+server.peacefulDanger);
+	    compound.setString(ServerOptions.TEMPERATURE_ENABLED.getName(), ""+server.temperatureEnabled);
+	    compound.setString(ServerOptions.TEMPERATURE_TE_ENABLED.getName(), ""+server.temperatureTEEnabled);
+	    compound.setString(ServerOptions.CANTEEN_DOSES.getName(), ""+server.canteenDoses);
+	    compound.setString(ServerOptions.STRICT_HEATERS.getName(), ""+server.strictHeaters);
+	    compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), ""+server.ironCanteenDoses);
+	    compound.setString(ServerOptions.DRAGON_CANTEEN_DOSES.getName(), ""+server.dragonCanteenDoses);
+	    compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
+	    compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
+	    compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);
+	    
+	    return new MessageUpdateConfig(compound);
 	}
 	
 	public static void sendServerConfigToPlayer(EntityPlayerMP player)

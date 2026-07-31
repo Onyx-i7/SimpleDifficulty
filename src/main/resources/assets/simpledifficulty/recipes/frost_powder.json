@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { 
+      "item": "simpledifficulty:ice_chunk" 
+    }
+  ],
+  "result": {
+    "item": "simpledifficulty:frost_powder",
+    "count": 2
+  }
+}

@@ -50,6 +50,7 @@ public class SimpleDifficulty
 		
 		com.charles445.simpledifficulty.compat.mod.Weather2Compat.init();
 		ModConfig.sendLocalServerConfigToAPI();
+    	ModConfig.sendLocalClientConfigToAPI();
 	}
 	
 	@Mod.EventHandler
