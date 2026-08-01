@@ -406,24 +406,14 @@ public class ModConfig
 	/// Client Options
 	///
 	
-	public static class ConfigClientConfig
-	{
-		//Debug configuration for working on ingame models
-		
-		//public double xx = 0.0d;
-		//public double yy = 0.0d;
-		//public double zz = 0.0d;
-		//public double ra = 0.0d;
-		//public double rx = 0.0d;
-		//public double ry = 0.0d;
-		//public double rz = 0.0d;
-		//public double px = 0.0d;
-		//public double py = 0.0d;
-		//public double pz = 0.0d;
-		
+	public static class ConfigClientConfig {
 		@Config.Comment("Thermometer Configuration")
 		@Config.Name("Thermometer")
 		public final ConfigClientThermometer thermometer = new ConfigClientThermometer();
+		
+		@Config.Comment("HUD Positioning Configuration - Allows fine-tuning of element positions")
+		@Config.Name("HUD Positioning")
+		public final ConfigClientHUD hudPositioning = new ConfigClientHUD();
 		
 		@Config.Comment("Whether the alternate temperature display is enabled")
 		@Config.Name("AlternateTemperature")
@@ -470,21 +460,16 @@ public class ModConfig
 			@Config.Comment("How far up or down the Thermometer HUD is from the default position")
 			@Config.Name("YOffset")
 			public int hudThermometerY = 0;
+		}
 
-			@Config.Comment("HUD Positioning Configuration - Allows fine-tuning of element positions")
-			@Config.Name("HUD Positioning")
-			public final ConfigClientHUD hudPositioning = new ConfigClientHUD();
-		
-			public class ConfigClientHUD
-			{
-				@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left)")
-				@Config.Name("Thirst Offset X")
-				public int thirstOffsetX = 0;
+		public class ConfigClientHUD {
+			@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left)")
+			@Config.Name("Thirst Offset X")
+			public int thirstOffsetX = 0;
 
-				@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up)")
-				@Config.Name("Thirst Offset Y")
-				public int thirstOffsetY = 0;
-			}
+			@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up)")
+			@Config.Name("Thirst Offset Y")
+			public int thirstOffsetY = 0;
 		}
 	}
 	
