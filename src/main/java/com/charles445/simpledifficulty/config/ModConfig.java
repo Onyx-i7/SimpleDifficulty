@@ -463,9 +463,9 @@ public class ModConfig
 		}
 
 		public class ConfigClientHUD {
-			@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left). Default is -10 for optimal alignment above the hunger bar")
+			@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left). Default is -1 for optimal alignment above the hunger bar")
 			@Config.Name("Thirst Offset X")
-			public int thirstOffsetX = -10;
+			public int thirstOffsetX = -1;
 
 			@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up). Default is 9 for optimal alignment above the hunger bar")
 			@Config.Name("Thirst Offset Y")
