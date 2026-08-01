@@ -470,7 +470,21 @@ public class ModConfig
 			@Config.Comment("How far up or down the Thermometer HUD is from the default position")
 			@Config.Name("YOffset")
 			public int hudThermometerY = 0;
-			
+
+			@Config.Comment("HUD Positioning Configuration - Allows fine-tuning of element positions")
+			@Config.Name("HUD Positioning")
+			public final ConfigClientHUD hudPositioning = new ConfigClientHUD();
+		
+			public class ConfigClientHUD
+			{
+				@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left)")
+				@Config.Name("Thirst Offset X")
+				public int thirstOffsetX = 0;
+
+				@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up)")
+				@Config.Name("Thirst Offset Y")
+				public int thirstOffsetY = 0;
+			}
 		}
 	}
 	
@@ -511,13 +525,12 @@ public class ModConfig
 	//TODO proper hash mapping so adding new config is easier, but it's not very important
 	//It didn't work the first time I tried, that spurred on the creation of DebugVerify
 	
-	public static void sendLocalClientConfigToAPI()
-	{
+	public static void sendLocalClientConfigToAPI() {
 		//TODO if it's client side, it doesn't need to be synchronized
 		//So it should just be referenced directly instead of using this hash map stuff?...
-		
-		//Place in Client Config
 
+		//Place in Client Config
+		
 		ClientConfig.instance.put(ClientOptions.DEBUG, client.clientdebug);
 		ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, client.drawThirstSaturation);
 		ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, client.thermometer.enableThermometer);
@@ -529,6 +542,8 @@ public class ModConfig
 		ClientConfig.instance.put(ClientOptions.CLASSICHUD_TEMPERATURE, client.classicHUDTemperature);
 		ClientConfig.instance.put(ClientOptions.CLASSICHUD_THIRST, client.classicHUDThirst);
 		ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, client.heaterParticles);
+		ClientConfig.instance.put(ClientOptions.THIRST_HUD_X, client.hudPositioning.thirstOffsetX);
+		ClientConfig.instance.put(ClientOptions.THIRST_HUD_Y, client.hudPositioning.thirstOffsetY);
 	}
 	
 	public static void sendLocalServerConfigToAPI()
