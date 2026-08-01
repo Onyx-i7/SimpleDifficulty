@@ -88,7 +88,8 @@ public class ThirstGui {
         // Increment right_height FIRST so Forge's automatic spacing system handles the vertical offset correctly.
         GuiIngameForge.right_height += 10;
         
-        // FIX: Apply configurable offsets to the base calculated position.
+        // FIX: Base alignment (91) matches vanilla hunger bar. 
+        // Config offsets (defaulting to -10 and 9) provide the perfect visual alignment above the hunger bar.
         int left = width / 2 + 91 + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_X); 
         int top = height - GuiIngameForge.right_height + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_Y); 
         
