@@ -3,6 +3,8 @@ package com.charles445.simpledifficulty.client.gui;
 import com.charles445.simpledifficulty.api.SDCapabilities;
 import com.charles445.simpledifficulty.api.SDCompatibility;
 import com.charles445.simpledifficulty.api.SDPotions;
+import com.charles445.simpledifficulty.api.config.ClientConfig;
+import com.charles445.simpledifficulty.api.config.ClientOptions;
 import com.charles445.simpledifficulty.api.config.QuickConfig;
 import com.charles445.simpledifficulty.api.thirst.IThirstCapability;
 import com.charles445.simpledifficulty.config.ModConfig;
@@ -30,10 +32,8 @@ public class ThirstGui {
     public static final ResourceLocation ICONS = new ResourceLocation("simpledifficulty:textures/gui/icons.png");
     public static final ResourceLocation THIRSTHUD = new ResourceLocation("simpledifficulty:textures/gui/thirsthud.png");
     
-    // Position on the icons sheet
     private static final int texturepos_X = 0;
     private static final int texturepos_Y = 0;
-    // Dimensions of the icon
     private static final int textureWidth = 9;
     private static final int textureHeight = 9;
     
@@ -50,23 +50,19 @@ public class ThirstGui {
                 return;
             }
 
-            // Set the seed to avoid shaking during pausing
             rand.setSeed((long) (updateCounter * 445));
             
             boolean classic = ModConfig.client.classicHUDThirst;
             
-            // Bind to custom icons image
             if (classic) {
                 bind(ICONS);
             } else {
                 bind(THIRSTHUD);
             }
             
-            // Render thirst at the scaled resolution
             ScaledResolution resolution = event.getResolution();
             renderThirst(resolution.getScaledWidth(), resolution.getScaledHeight(), capability.getThirstLevel(), capability.getThirstSaturation());
             
-            // Rebind to old icons image
             bind(Gui.ICONS);
         }
     }
@@ -74,14 +70,12 @@ public class ThirstGui {
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            // Make sure game isn't paused as the GUI shouldn't be changing
             if (!minecraftInstance.isGamePaused()) {
                 updateCounter++;
             }
         }
     }
     
-    // Similar behavior to net.minecraftforge.client.GuiIngameForge.renderFood
     private void renderThirst(int width, int height, int thirst, float thirstSaturation) {
         EntityPlayerSP player = minecraftInstance.player;
         if (player == null) {
@@ -95,8 +89,6 @@ public class ThirstGui {
         GuiIngameForge.right_height += 10;
         
         // FIX: Apply configurable offsets to the base calculated position.
-        // X: 91 aligns with vanilla hunger bar.
-        // Y: Calculated dynamically based on right_height.
         int left = width / 2 + 91 + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_X); 
         int top = height - GuiIngameForge.right_height + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_Y); 
         
