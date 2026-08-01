@@ -89,48 +89,39 @@ public class ThirstGui {
         }
 
         GlStateManager.enableBlend();
-        
-        // Many mods set this and forget to set it back.
-        // Setting it back pre-emptively because this has been reported with two mods.
         GlStateManager.color(1.0f, 1.0f, 1.0f);
         
-        // FIX: Increment right_height BEFORE calculating position so Forge's automatic 
-        // spacing system handles the vertical offset correctly. This ensures the thirst 
-        // bar renders directly above the hunger bar with proper spacing that adapts 
-        // to different GUI scales and resolutions.
+        // Increment right_height FIRST so Forge's automatic spacing system handles the vertical offset correctly.
         GuiIngameForge.right_height += 10;
         
-        int left = width / 2 + 91; 
-        int top = height - GuiIngameForge.right_height; 
+        // FIX: Apply configurable offsets to the base calculated position.
+        // X: 91 aligns with vanilla hunger bar.
+        // Y: Calculated dynamically based on right_height.
+        int left = width / 2 + 91 + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_X); 
+        int top = height - GuiIngameForge.right_height + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_Y); 
         
-        // Performance fix: Cache potion status before processing the loops
         boolean isThirsty = player.isPotionActive(SDPotions.thirsty);
         int xOffset = isThirsty ? (textureWidth * 4) : 0;
         int bgXOffset = isThirsty ? (textureWidth * 13) : 0;
         
-        // Draw the 10 thirst bubbles
         for (int i = 0; i < 10; i++) {
             int halfIcon = i * 2 + 1;
             int x = left - i * 8;
             int y = top;
             
-            // Shake based on saturation and thirst level
             if (thirstSaturation <= 0.0F && updateCounter % (thirst * 3 + 1) == 0) {
                 y = top + (rand.nextInt(3) - 1);
             }
     
-            // Background
             RenderUtil.drawTexturedModalRect(x, y, texturepos_X + bgXOffset, texturepos_Y, textureWidth, textureHeight);
             
-            // Foreground
-            if (halfIcon < thirst) { // Full
+            if (halfIcon < thirst) {
                 RenderUtil.drawTexturedModalRect(x, y, texturepos_X + xOffset + (textureWidth * 4), texturepos_Y, textureWidth, textureHeight);
-            } else if (halfIcon == thirst) { // Half
+            } else if (halfIcon == thirst) {
                 RenderUtil.drawTexturedModalRect(x, y, texturepos_X + xOffset + (textureWidth * 5), texturepos_Y, textureWidth, textureHeight);
             }
         }
         
-        // Draw the 10 saturation bubbles
         int thirstSaturationInt = (int) thirstSaturation;
         if (thirstSaturationInt > 0 && ModConfig.client.drawThirstSaturation) {
             for (int i = 0; i < 10; i++) {
@@ -138,10 +129,9 @@ public class ThirstGui {
                 int x = left - i * 8;
                 int y = top;
                 
-                // Foreground
-                if (halfIcon < thirstSaturationInt) { // Full
+                if (halfIcon < thirstSaturationInt) {
                     RenderUtil.drawTexturedModalRect(x, y, texturepos_X + (textureWidth * 14), texturepos_Y, textureWidth, textureHeight);
-                } else if (halfIcon == thirstSaturationInt) { // Half
+                } else if (halfIcon == thirstSaturationInt) {
                     RenderUtil.drawTexturedModalRect(x, y, texturepos_X + (textureWidth * 15), texturepos_Y, textureWidth, textureHeight);
                 }
             }
