@@ -68,10 +68,6 @@ public class ThirstGui {
             
             // Rebind to old icons image
             bind(Gui.ICONS);
-            
-            // Bump up the rendering height so air bubbles draw above thirst
-            // TODO does this break any mods?
-            GuiIngameForge.right_height += 10;
         }
     }
     
@@ -92,15 +88,18 @@ public class ThirstGui {
             return;
         }
 
-        // thirst is 0 - 20
         GlStateManager.enableBlend();
         
         // Many mods set this and forget to set it back.
         // Setting it back pre-emptively because this has been reported with two mods.
         GlStateManager.color(1.0f, 1.0f, 1.0f);
         
-        int left = width / 2 + 82; // Same x offset as the hunger bar
-        int top = height - GuiIngameForge.right_height;
+        // FIX: 
+        // 1. Horizontal: Use 91 to perfectly match the vanilla hunger bar's starting X coordinate.
+        // 2. Vertical: Subtract 11 (10 for the hunger bar height + 1 pixel for a clean visual gap).
+        // This ensures the thirst bar renders strictly ABOVE the hunger bar, preventing any overlap.
+        int left = width / 2 + 91; 
+        int top = height - GuiIngameForge.right_height - 11; 
         
         // Performance fix: Cache potion status before processing the loops
         boolean isThirsty = player.isPotionActive(SDPotions.thirsty);
@@ -130,7 +129,6 @@ public class ThirstGui {
         }
         
         // Draw the 10 saturation bubbles
-        // Because AppleSkin is awesome and everybody knows it
         int thirstSaturationInt = (int) thirstSaturation;
         if (thirstSaturationInt > 0 && ModConfig.client.drawThirstSaturation) {
             for (int i = 0; i < 10; i++) {
@@ -148,6 +146,11 @@ public class ThirstGui {
         }
         
         GlStateManager.disableBlend();
+        
+        // Increment right_height by 11 (10 for icon height + 1 for gap) so that 
+        // other HUD elements (like vanilla armor, mount health, or other mods) 
+        // know to render above the thirst bar, maintaining a proper stack.
+        GuiIngameForge.right_height += 11;
     }
     
     private void bind(ResourceLocation resource) {
