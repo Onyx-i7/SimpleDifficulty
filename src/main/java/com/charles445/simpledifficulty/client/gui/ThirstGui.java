@@ -94,12 +94,14 @@ public class ThirstGui {
         // Setting it back pre-emptively because this has been reported with two mods.
         GlStateManager.color(1.0f, 1.0f, 1.0f);
         
-        // FIX: 
-        // 1. Horizontal: Use 91 to perfectly match the vanilla hunger bar's starting X coordinate.
-        // 2. Vertical: Subtract 11 (10 for the hunger bar height + 1 pixel for a clean visual gap).
-        // This ensures the thirst bar renders strictly ABOVE the hunger bar, preventing any overlap.
+        // FIX: Increment right_height BEFORE calculating position so Forge's automatic 
+        // spacing system handles the vertical offset correctly. This ensures the thirst 
+        // bar renders directly above the hunger bar with proper spacing that adapts 
+        // to different GUI scales and resolutions.
+        GuiIngameForge.right_height += 10;
+        
         int left = width / 2 + 91; 
-        int top = height - GuiIngameForge.right_height - 11; 
+        int top = height - GuiIngameForge.right_height; 
         
         // Performance fix: Cache potion status before processing the loops
         boolean isThirsty = player.isPotionActive(SDPotions.thirsty);
@@ -146,11 +148,6 @@ public class ThirstGui {
         }
         
         GlStateManager.disableBlend();
-        
-        // Increment right_height by 11 (10 for icon height + 1 for gap) so that 
-        // other HUD elements (like vanilla armor, mount health, or other mods) 
-        // know to render above the thirst bar, maintaining a proper stack.
-        GuiIngameForge.right_height += 11;
     }
     
     private void bind(ResourceLocation resource) {
