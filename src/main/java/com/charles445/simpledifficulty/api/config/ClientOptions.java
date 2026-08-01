@@ -12,7 +12,9 @@ public enum ClientOptions implements IConfigOption
 	/*Integer*/ TEMPERATURE_READOUT ("temperatureReadout"),
 	/*Boolean*/ CLASSICHUD_TEMPERATURE ("classicHUDTemperature"),
 	/*Boolean*/ CLASSICHUD_THIRST ("classicHUDThirst"),
-	/*Boolean*/ HEATER_PARTICLES ("heaterParticles");
+	/*Boolean*/ HEATER_PARTICLES ("heaterParticles"),
+	/*Integer*/ THIRST_HUD_X ("thirstHudX"),
+	/*Integer*/ THIRST_HUD_Y ("thirstHudY");
 	
 	String name;
 	

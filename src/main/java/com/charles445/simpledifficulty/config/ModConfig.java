@@ -406,24 +406,14 @@ public class ModConfig
 	/// Client Options
 	///
 	
-	public static class ConfigClientConfig
-	{
-		//Debug configuration for working on ingame models
-		
-		//public double xx = 0.0d;
-		//public double yy = 0.0d;
-		//public double zz = 0.0d;
-		//public double ra = 0.0d;
-		//public double rx = 0.0d;
-		//public double ry = 0.0d;
-		//public double rz = 0.0d;
-		//public double px = 0.0d;
-		//public double py = 0.0d;
-		//public double pz = 0.0d;
-		
+	public static class ConfigClientConfig {
 		@Config.Comment("Thermometer Configuration")
 		@Config.Name("Thermometer")
 		public final ConfigClientThermometer thermometer = new ConfigClientThermometer();
+		
+		@Config.Comment("HUD Positioning Configuration - Allows fine-tuning of element positions")
+		@Config.Name("HUD Positioning")
+		public final ConfigClientHUD hudPositioning = new ConfigClientHUD();
 		
 		@Config.Comment("Whether the alternate temperature display is enabled")
 		@Config.Name("AlternateTemperature")
@@ -470,7 +460,16 @@ public class ModConfig
 			@Config.Comment("How far up or down the Thermometer HUD is from the default position")
 			@Config.Name("YOffset")
 			public int hudThermometerY = 0;
-			
+		}
+
+		public class ConfigClientHUD {
+			@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left). Default is -1 for optimal alignment above the hunger bar")
+			@Config.Name("Thirst Offset X")
+			public int thirstOffsetX = -1;
+
+			@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up). Default is 9 for optimal alignment above the hunger bar")
+			@Config.Name("Thirst Offset Y")
+			public int thirstOffsetY = 9;
 		}
 	}
 	
@@ -511,13 +510,12 @@ public class ModConfig
 	//TODO proper hash mapping so adding new config is easier, but it's not very important
 	//It didn't work the first time I tried, that spurred on the creation of DebugVerify
 	
-	public static void sendLocalClientConfigToAPI()
-	{
+	public static void sendLocalClientConfigToAPI() {
 		//TODO if it's client side, it doesn't need to be synchronized
 		//So it should just be referenced directly instead of using this hash map stuff?...
-		
-		//Place in Client Config
 
+		//Place in Client Config
+		
 		ClientConfig.instance.put(ClientOptions.DEBUG, client.clientdebug);
 		ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, client.drawThirstSaturation);
 		ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, client.thermometer.enableThermometer);
@@ -529,6 +527,8 @@ public class ModConfig
 		ClientConfig.instance.put(ClientOptions.CLASSICHUD_TEMPERATURE, client.classicHUDTemperature);
 		ClientConfig.instance.put(ClientOptions.CLASSICHUD_THIRST, client.classicHUDThirst);
 		ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, client.heaterParticles);
+		ClientConfig.instance.put(ClientOptions.THIRST_HUD_X, client.hudPositioning.thirstOffsetX);
+		ClientConfig.instance.put(ClientOptions.THIRST_HUD_Y, client.hudPositioning.thirstOffsetY);
 	}
 	
 	public static void sendLocalServerConfigToAPI()

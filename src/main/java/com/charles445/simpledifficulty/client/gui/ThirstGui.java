@@ -3,6 +3,8 @@ package com.charles445.simpledifficulty.client.gui;
 import com.charles445.simpledifficulty.api.SDCapabilities;
 import com.charles445.simpledifficulty.api.SDCompatibility;
 import com.charles445.simpledifficulty.api.SDPotions;
+import com.charles445.simpledifficulty.api.config.ClientConfig;
+import com.charles445.simpledifficulty.api.config.ClientOptions;
 import com.charles445.simpledifficulty.api.config.QuickConfig;
 import com.charles445.simpledifficulty.api.thirst.IThirstCapability;
 import com.charles445.simpledifficulty.config.ModConfig;
@@ -30,10 +32,8 @@ public class ThirstGui {
     public static final ResourceLocation ICONS = new ResourceLocation("simpledifficulty:textures/gui/icons.png");
     public static final ResourceLocation THIRSTHUD = new ResourceLocation("simpledifficulty:textures/gui/thirsthud.png");
     
-    // Position on the icons sheet
     private static final int texturepos_X = 0;
     private static final int texturepos_Y = 0;
-    // Dimensions of the icon
     private static final int textureWidth = 9;
     private static final int textureHeight = 9;
     
@@ -50,87 +50,71 @@ public class ThirstGui {
                 return;
             }
 
-            // Set the seed to avoid shaking during pausing
             rand.setSeed((long) (updateCounter * 445));
             
             boolean classic = ModConfig.client.classicHUDThirst;
             
-            // Bind to custom icons image
             if (classic) {
                 bind(ICONS);
             } else {
                 bind(THIRSTHUD);
             }
             
-            // Render thirst at the scaled resolution
             ScaledResolution resolution = event.getResolution();
             renderThirst(resolution.getScaledWidth(), resolution.getScaledHeight(), capability.getThirstLevel(), capability.getThirstSaturation());
             
-            // Rebind to old icons image
             bind(Gui.ICONS);
-            
-            // Bump up the rendering height so air bubbles draw above thirst
-            // TODO does this break any mods?
-            GuiIngameForge.right_height += 10;
         }
     }
     
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            // Make sure game isn't paused as the GUI shouldn't be changing
             if (!minecraftInstance.isGamePaused()) {
                 updateCounter++;
             }
         }
     }
     
-    // Similar behavior to net.minecraftforge.client.GuiIngameForge.renderFood
     private void renderThirst(int width, int height, int thirst, float thirstSaturation) {
         EntityPlayerSP player = minecraftInstance.player;
         if (player == null) {
             return;
         }
 
-        // thirst is 0 - 20
         GlStateManager.enableBlend();
-        
-        // Many mods set this and forget to set it back.
-        // Setting it back pre-emptively because this has been reported with two mods.
         GlStateManager.color(1.0f, 1.0f, 1.0f);
         
-        int left = width / 2 + 82; // Same x offset as the hunger bar
-        int top = height - GuiIngameForge.right_height;
+        // Increment right_height FIRST so Forge's automatic spacing system handles the vertical offset correctly.
+        GuiIngameForge.right_height += 10;
         
-        // Performance fix: Cache potion status before processing the loops
+        // FIX: Base alignment (91) matches vanilla hunger bar. 
+        // Config offsets (defaulting to -10 and 9) provide the perfect visual alignment above the hunger bar.
+        int left = width / 2 + 82 + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_X); 
+        int top = height - GuiIngameForge.right_height + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_Y); 
+        
         boolean isThirsty = player.isPotionActive(SDPotions.thirsty);
         int xOffset = isThirsty ? (textureWidth * 4) : 0;
         int bgXOffset = isThirsty ? (textureWidth * 13) : 0;
         
-        // Draw the 10 thirst bubbles
         for (int i = 0; i < 10; i++) {
             int halfIcon = i * 2 + 1;
             int x = left - i * 8;
             int y = top;
             
-            // Shake based on saturation and thirst level
             if (thirstSaturation <= 0.0F && updateCounter % (thirst * 3 + 1) == 0) {
                 y = top + (rand.nextInt(3) - 1);
             }
     
-            // Background
             RenderUtil.drawTexturedModalRect(x, y, texturepos_X + bgXOffset, texturepos_Y, textureWidth, textureHeight);
             
-            // Foreground
-            if (halfIcon < thirst) { // Full
+            if (halfIcon < thirst) {
                 RenderUtil.drawTexturedModalRect(x, y, texturepos_X + xOffset + (textureWidth * 4), texturepos_Y, textureWidth, textureHeight);
-            } else if (halfIcon == thirst) { // Half
+            } else if (halfIcon == thirst) {
                 RenderUtil.drawTexturedModalRect(x, y, texturepos_X + xOffset + (textureWidth * 5), texturepos_Y, textureWidth, textureHeight);
             }
         }
         
-        // Draw the 10 saturation bubbles
-        // Because AppleSkin is awesome and everybody knows it
         int thirstSaturationInt = (int) thirstSaturation;
         if (thirstSaturationInt > 0 && ModConfig.client.drawThirstSaturation) {
             for (int i = 0; i < 10; i++) {
@@ -138,10 +122,9 @@ public class ThirstGui {
                 int x = left - i * 8;
                 int y = top;
                 
-                // Foreground
-                if (halfIcon < thirstSaturationInt) { // Full
+                if (halfIcon < thirstSaturationInt) {
                     RenderUtil.drawTexturedModalRect(x, y, texturepos_X + (textureWidth * 14), texturepos_Y, textureWidth, textureHeight);
-                } else if (halfIcon == thirstSaturationInt) { // Half
+                } else if (halfIcon == thirstSaturationInt) {
                     RenderUtil.drawTexturedModalRect(x, y, texturepos_X + (textureWidth * 15), texturepos_Y, textureWidth, textureHeight);
                 }
             }
