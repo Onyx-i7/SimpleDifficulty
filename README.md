@@ -3,8 +3,8 @@
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
-[![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.16.5-red.svg?style=flat-square)](https://minecraft.net)
+[![Forge](https://img.shields.io/badge/Forge-36.2.42-green.svg?style=flat-square)](https://files.minecraftforge.net/)
 [![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files)
 
 **An improved [SimpleDifficulty](https://github.com/juraj-hrivnak/SimpleDifficulty) fork**
@@ -12,6 +12,14 @@
 [Installation](#installation) • [Features](#features) • [API](#api-usage) • [Compatibility](#mod-integrations)
 
 </div>
+
+# ⚠️ UNDER DEVELOPMENT (1.16.5 Port)
+
+> **Important Notice:** This branch (`1.16.5-development`) is an ongoing, unofficial port of **SimpleDifficulty** to Minecraft 1.16.5 based on my enhanced 1.12.2 version
+
+* **Status:** Testing & Development only
+* **Stability:** Highly unstable. It is **NOT** ready for survival worlds or modpacks yet
+* **Usage:** Use this code at your own risk strictly for testing or development purposes
 
 ---
 
