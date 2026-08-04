@@ -7,37 +7,37 @@ import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
 import com.charles445.simpledifficulty.api.thirst.ThirstUtil;
 import com.charles445.simpledifficulty.compat.mod.Weather2Compat;
 import com.charles445.simpledifficulty.util.SoundUtil;
-import net.minecraft.block.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.Direction;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
 
 public class BlockRainCollector extends Block {
-    public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_1_8;
+    // Crea tu propia propiedad LEVEL (0-3 para este bloque)
+    public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 3);
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
     public BlockRainCollector(Properties properties) {
@@ -56,9 +56,12 @@ public class BlockRainCollector extends Block {
     }
 
     private void scheduleDynamicUpdate(World world, BlockPos pos) {
-        if (!world.getBlockTicks().willTickThisTick(pos, this)) {
-            int dynamicRate = 240 + world.random.nextInt(81);
-            world.scheduleTick(pos, this, dynamicRate);
+        if (world instanceof ServerWorld) {
+            ServerWorld serverWorld = (ServerWorld) world;
+            if (!serverWorld.getBlockTicks().willTickThisTick(pos, this)) {
+                int dynamicRate = 240 + world.random.nextInt(81);
+                serverWorld.getBlockTicks().scheduleTick(pos, this, dynamicRate);
+            }
         }
     }
 
@@ -97,7 +100,7 @@ public class BlockRainCollector extends Block {
                 int amount = state.getValue(LEVEL);
                 if (amount > 0) {
                     if (SDCapabilities.getThirstData(player).isThirsty()) {
-                        SoundUtil.commonPlayPlayerSound(player, SoundEvents.GenericDrink);
+                        SoundUtil.commonPlayPlayerSound(player, SoundEvents.GENERIC_DRINK);
                         if (!world.isClientSide) {
                             this.setWaterLevel(world, pos, state, player.isCreative() ? amount : amount - 1);
                             ThirstUtil.takeDrink(player, ThirstEnum.NORMAL);
@@ -119,12 +122,12 @@ public class BlockRainCollector extends Block {
                     if (!player.isCreative()) {
                         if (itemstack.isEmpty()) {
                             player.setItemInHand(hand, bucket);
-                        } else if (!player.getInventory.add(bucket)) {
+                        } else if (!player.inventory.add(bucket)) {
                             player.drop(bucket, false);
                         }
                     }
                     this.setWaterLevel(world, pos, state, player.isCreative() ? amount : amount - 1);
-                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BucketFill);
+                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BUCKET_FILL);
                 }
                 return ActionResultType.SUCCESS;
             } else if (item == Items.GLASS_BOTTLE) {
@@ -135,14 +138,14 @@ public class BlockRainCollector extends Block {
                     
                     if (itemstack.isEmpty()) {
                         player.setItemInHand(hand, waterBottle);
-                    } else if (!player.getInventory.add(waterBottle)) {
+                    } else if (!player.inventory.add(waterBottle)) {
                         player.drop(waterBottle, false);
                     } else if (player instanceof ServerPlayerEntity) {
-                        ((ServerPlayerEntity) player).getInventory().setChanged();
+                        ((ServerPlayerEntity) player).inventory.setChanged();
                     }
                     
                     this.setWaterLevel(world, pos, state, player.isCreative() ? amount : amount - 1);
-                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BottleFill);
+                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BOTTLE_FILL);
                 }
                 return ActionResultType.SUCCESS;
             } else if (item == SDItems.canteen.get()) {
@@ -155,7 +158,7 @@ public class BlockRainCollector extends Block {
                             this.setWaterLevel(world, pos, state, amount - 1);
                         }
                     }
-                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BucketFill);
+                    SoundUtil.serverPlayBlockSound(world, pos, SoundEvents.BUCKET_FILL);
                 }
                 return ActionResultType.SUCCESS;
             }

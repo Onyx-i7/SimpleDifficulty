@@ -30,9 +30,9 @@ import java.util.function.Supplier;
 import java.util.Random;
 
 public class BlockFluidBasic extends FlowingFluidBlock {
-    private final String iceBlock;
+    protected final String iceBlock;
 
-    public BlockFluidBasic(Supplier<? extends FlowingFluid> fluid, AbstractBlock.Properties properties) {
+    public BlockFluidBasic(Supplier<? extends Fluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
         super(fluid, properties);
         this.iceBlock = iceBlock;
     }
@@ -73,7 +73,7 @@ public class BlockFluidBasic extends FlowingFluidBlock {
     }
 
     public boolean canFreeze(World world, BlockPos pos) {
-        Biome biome = world.getBiome(pos).value();
+        Biome biome = world.getBiome(pos);
         float f = SereneSeasonsReflectionBridge.getTemperatureSafe(world, biome, pos);
 
         if (f <= 0.15F) {

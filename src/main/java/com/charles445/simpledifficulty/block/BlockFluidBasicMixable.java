@@ -13,11 +13,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.fluid.FlowingFluid;
 
+import java.util.function.Supplier;
 import java.util.Random;
 
 public class BlockFluidBasicMixable extends BlockFluidBasic {
-    public BlockFluidBasicMixable(Fluid fluid, Properties properties, String iceBlock) {
+    public BlockFluidBasicMixable(Supplier<? extends Fluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
         super(fluid, properties, iceBlock);
     }
 
@@ -38,7 +42,9 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
         
         if (!world.isLoaded(pos)) return;
         
-        world.scheduleTick(pos, this, 5);
+        if (world instanceof net.minecraft.world.server.ServerWorld) {
+            ((net.minecraft.world.server.ServerWorld) world).getBlockTicks().scheduleTick(pos, this, 5);
+        }
         
         if (FluidHandler.canMix(pos, world)) {
             FluidHandler.scheduleMixing(world, pos);

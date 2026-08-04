@@ -138,7 +138,7 @@ public class ThirstUtilInternal implements IThirstUtil {
             return true;
         }
 
-        Biome biome = player.level.getBiome(waterPos).value();
+        Biome biome = player.level.getBiome(waterPos);
         if (biome != null && biome.getRegistryName() != null) {
             String name = biome.getRegistryName().toString();
             if (name.contains("river")) {

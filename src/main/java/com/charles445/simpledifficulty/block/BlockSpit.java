@@ -2,14 +2,14 @@ package com.charles445.simpledifficulty.block;
 
 import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.tileentity.TileEntitySpit;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -18,6 +18,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockSpit extends Block {
@@ -32,8 +33,9 @@ public class BlockSpit extends Block {
         return SHAPE;
     }
 
+    @Nullable
     @Override
-    public TileEntity newBlockEntity(BlockState state, IBlockReader world) {
+    public TileEntity newBlockEntity(IBlockReader world) {
         return new TileEntitySpit();
     }
     
@@ -55,12 +57,14 @@ public class BlockSpit extends Block {
     }
     
     @Override
-    public boolean canSurvive(BlockState state, World world, BlockPos pos) {
+    public boolean canSurvive(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos) {
         return hasCampfire(world, pos);
     }
     
+    @SuppressWarnings("deprecation")
     @Override
-    public void onNeighborChange(BlockState state, World world, BlockPos pos, BlockPos neighbor) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, world, pos, block, fromPos, isMoving);
         if (!world.isClientSide) {
             checkCampfireOrDestroy(world, pos, state);
         }
@@ -78,14 +82,15 @@ public class BlockSpit extends Block {
     }
     
     @Override
-    public void removeBlock(World world, BlockPos pos, BlockState state, BlockState newState, boolean isMoving) {
-        TileEntity te = world.getBlockEntity(pos);
-        if(te instanceof TileEntitySpit) {
-            ((TileEntitySpit) te).dumpItems(world, pos);
-            ((TileEntitySpit) te).dumpExperience(world, pos);
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            TileEntity te = world.getBlockEntity(pos);
+            if(te instanceof TileEntitySpit) {
+                ((TileEntitySpit) te).dumpItems(world, pos);
+                ((TileEntitySpit) te).dumpExperience(world, pos);
+            }
         }
-        
-        super.removeBlock(world, pos, state, newState, isMoving);
+        super.onRemove(state, world, pos, newState, isMoving);
     }
 
     @Override

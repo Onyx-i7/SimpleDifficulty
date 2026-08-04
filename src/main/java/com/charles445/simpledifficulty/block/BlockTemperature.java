@@ -1,10 +1,11 @@
 package com.charles445.simpledifficulty.block;
 
-import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.tileentity.TileEntityTemperature;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -15,10 +16,10 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.state.BooleanProperty;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockTemperature extends Block {
@@ -37,8 +38,9 @@ public class BlockTemperature extends Block {
         return temperature;
     }
     
+    @Nullable
     @Override
-    public TileEntity newBlockEntity(BlockState state, IBlockReader world) {
+    public TileEntity newBlockEntity(IBlockReader world) {
         return new TileEntityTemperature();
     }
     
@@ -53,13 +55,19 @@ public class BlockTemperature extends Block {
         }
     }
     
+    @SuppressWarnings("deprecation")
     @Override
-    public void onNeighborChange(BlockState state, World world, BlockPos pos, BlockPos neighbor) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, world, pos, block, fromPos, isMoving);
         if (!world.isClientSide) {
             boolean enabled = state.getValue(ENABLED);
             boolean powered = world.hasNeighborSignal(pos);
         
-            if (enabled && !powered) world.scheduleTick(pos, this, 4);
+            if (enabled && !powered) {
+                if (world instanceof ServerWorld) {
+                    ((ServerWorld) world).getBlockTicks().scheduleTick(pos, this, 4);
+                }
+            }
             else if (!enabled && powered) turnOn(world, pos, state);
         }
     }
@@ -80,9 +88,11 @@ public class BlockTemperature extends Block {
     }
 
     @Override
-    public void removeBlock(World world, BlockPos pos, BlockState state, BlockState newState, boolean isMoving) {
-        super.removeBlock(world, pos, state, newState, isMoving);
-        world.removeBlockEntity(pos);
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            world.removeBlockEntity(pos);
+        }
+        super.onRemove(state, world, pos, newState, isMoving);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -91,8 +101,16 @@ public class BlockTemperature extends Block {
         super.animateTick(state, world, pos, rand);
         
         if(state.getValue(ENABLED) && rand.nextFloat() <= 0.33f) {
-            SimpleDifficulty.proxy.spawnClientParticle(world, temperature >= 0.0f ? "HEATER" : "CHILLER", 
-                    pos.getX() + 0.5D, pos.getY() + 0.775D, pos.getZ() + 0.5D, 0.0D, 0.05D, 0.0D);
+            // Spawn particles based on temperature type
+            if (temperature >= 0.0f) {
+                world.addParticle(ParticleTypes.FLAME, 
+                    pos.getX() + 0.5D, pos.getY() + 0.775D, pos.getZ() + 0.5D, 
+                    0.0D, 0.05D, 0.0D);
+            } else {
+                world.addParticle(ParticleTypes.CLOUD, 
+                    pos.getX() + 0.5D, pos.getY() + 0.775D, pos.getZ() + 0.5D, 
+                    0.0D, 0.05D, 0.0D);
+            }
         }
     }
 

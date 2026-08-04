@@ -43,7 +43,7 @@ public class ModifierTime extends ModifierBase {
             timetemperature *= -1.0f;
 
         // Biome multiplier
-        float biomeMultiplier = 1.0f + (Math.abs(normalizeToPlusMinus(getTempForBiome(world.getBiome(pos).value(), pos))) * (ModConfig.SERVER.timeBiomeMultiplier.get().floatValue() - 1.0f));
+        float biomeMultiplier = 1.0f + (Math.abs(normalizeToPlusMinus(getTempForBiome(world.getBiome(pos), pos))) * (ModConfig.SERVER.timeBiomeMultiplier.get().floatValue() - 1.0f));
         timetemperature *= biomeMultiplier;
 
         // Shade calculation

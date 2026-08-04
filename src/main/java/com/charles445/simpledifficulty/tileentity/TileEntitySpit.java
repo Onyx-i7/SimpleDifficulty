@@ -154,28 +154,14 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
         if (!withdrewToHand && isCookable(heldItemStack)) {
             String heldItemName = heldItemStack.getItem().getRegistryName().toString();
             boolean isBlacklisted = false;
-            java.util.List<?> spitBlacklist = ModConfig.SERVER.campfireSpitBlacklist.get();
-
+            
+            @SuppressWarnings("unchecked")
+            java.util.List<String> spitBlacklist = (java.util.List<String>) ModConfig.SERVER.campfireSpitBlacklist.get();
+            
             for (String s : spitBlacklist) {
                 if (s.equals(heldItemName)) {
                     isBlacklisted = true;
                     break;
-                }
-            }
-
-            java.util.List<? extends String> spitBlacklist = ModConfig.SERVER.campfireSpitBlacklist.get(); {
-                for (int i = 0; i < items.getSlots(); i++) {
-                    if (items.getStackInSlot(i).isEmpty()) {
-                        items.insertItem(i, new ItemStack(heldItemStack.getItem(), 1), false);
-                        heldItemStack.shrink(1);
-                        progress = 0;
-
-                        if (!playedSound) {
-                            playedSound = playWorldSound(world, pos, true);
-                        }
-                        found = true;
-                        break;
-                    }
                 }
             }
         }

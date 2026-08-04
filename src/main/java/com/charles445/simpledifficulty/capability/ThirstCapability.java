@@ -64,22 +64,22 @@ public class ThirstCapability implements IThirstCapability {
 
         if (moveDistance > 0) {
             // Manage exhaustion
-            float moveSensitivity = (float) ModConfig.SERVER.thirstBaseMovement.get();
+            float moveSensitivity = ModConfig.SERVER.thirstBaseMovement.get().floatValue();
             if (player.isInWater() || player.isInWaterOrBubble()) {
-                moveSensitivity = (float) ModConfig.SERVER.thirstSwimmingMovement.get();
+                moveSensitivity = ModConfig.SERVER.thirstSwimmingMovement.get().floatValue();
             } else if (player.isOnGround()) {
                 if (player.isSprinting()) {
-                    moveSensitivity = (float) ModConfig.SERVER.thirstSprintingMovement.get();
+                    moveSensitivity = ModConfig.SERVER.thirstSprintingMovement.get().floatValue();
                 } else {
-                    moveSensitivity = (float) ModConfig.SERVER.thirstWalkingMovement.get();
+                    moveSensitivity = ModConfig.SERVER.thirstWalkingMovement.get().floatValue();
                 }
             }
             this.addThirstExhaustion(moveSensitivity * 0.01f * moveDistance);
         }
 
         // Process exhaustion
-        if (this.getThirstExhaustion() > (float) ModConfig.SERVER.thirstExhaustionLimit.get()) {
-            this.addThirstExhaustion(-1.0f * (float) ModConfig.SERVER.thirstExhaustionLimit.get());
+        if (this.getThirstExhaustion() > ModConfig.SERVER.thirstExhaustionLimit.get().floatValue()) {
+            this.addThirstExhaustion(-1.0f * ModConfig.SERVER.thirstExhaustionLimit.get().floatValue());
 
             if (this.getThirstSaturation() > 0.0f) {
                 this.addThirstSaturation(-1.0f);
@@ -95,7 +95,7 @@ public class ThirstCapability implements IThirstCapability {
                 this.setThirstTickTimer(0);
 
                 if (DamageUtil.isModDangerous(world) && DamageUtil.healthAboveDifficulty(world, player)) {
-                    float thirstDamageToApply = 1.0f + (1.0f * (float) this.getThirstDamageCounter() * (float) ModConfig.SERVER.thirstDamageScaling.get());
+                    float thirstDamageToApply = 1.0f + (1.0f * (float) this.getThirstDamageCounter() * ModConfig.SERVER.thirstDamageScaling.get().floatValue());
                     player.hurt(SDDamageSources.DEHYDRATION, thirstDamageToApply);
                     this.addThirstDamageCounter(1);
                 }

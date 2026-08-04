@@ -20,15 +20,15 @@ public class ModifierBiome extends ModifierBase {
         // This allows for biome temperatures to blend at their borders
 
         float biomeAverage =
-                (getTempForBiome(world.getBiome(pos.offset(10, 0, 0)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(-10, 0, 0)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(0, 0, 10)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(0, 0, -10)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(7, 0, 7)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(7, 0, -7)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(-7, 0, 7)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos.offset(-7, 0, -7)).value(), pos) +
-                        getTempForBiome(world.getBiome(pos).value(), pos)) / 9.0f;
+                (getTempForBiome(world.getBiome(pos.offset(10, 0, 0)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(-10, 0, 0)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(0, 0, 10)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(0, 0, -10)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(7, 0, 7)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(7, 0, -7)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(-7, 0, 7)), pos) +
+                        getTempForBiome(world.getBiome(pos.offset(-7, 0, -7)), pos) +
+                        getTempForBiome(world.getBiome(pos), pos)) / 9.0f;
 
         // Turn the range 0-1 into -1 to +1 and apply the config multiplier
         return applyUndergroundEffect(normalizeToPlusMinus(biomeAverage) * ModConfig.SERVER.biomeMultiplier.get(), world, pos);

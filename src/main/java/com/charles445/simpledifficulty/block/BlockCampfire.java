@@ -76,7 +76,9 @@ public class BlockCampfire extends Block {
     }
 
     private void scheduleRainCheck(World world, BlockPos pos) {
-        world.getBlockTicks().scheduleTick(pos, this, RAIN_CHECK_RATE);
+        if (world instanceof net.minecraft.world.server.ServerWorld) {
+            ((net.minecraft.world.server.ServerWorld) world).getBlockTicks().scheduleTick(pos, this, RAIN_CHECK_RATE);
+        }
     }
 
     @Override
@@ -100,7 +102,7 @@ public class BlockCampfire extends Block {
         }
 
         Block heldBlock = Block.byItem(heldItem.getItem());
-        if (heldBlock == SDBlocks.SPIT.get()) {
+        if (heldBlock == com.charles445.simpledifficulty.register.RegisterBlocks.SPIT.get()) {
             return ActionResultType.PASS;
         }
 
@@ -111,7 +113,7 @@ public class BlockCampfire extends Block {
                 int age = state.getValue(AGE);
                 boolean burning = state.getValue(BURNING);
                 if (!burning && age < AGE_MAX && !isRaining) {
-                    world.playSound(player, pos, SoundEvents.ITEM_FLINT_AND_STEEL_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
+                    world.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
                 }
             }
             return ActionResultType.SUCCESS;
@@ -219,7 +221,7 @@ public class BlockCampfire extends Block {
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getTickDelay(BlockState state, IWorldReader world) {
+    public int getTickDelay(BlockState state, net.minecraft.world.IWorldReader world) {
         return RAIN_CHECK_RATE;
     }
 
@@ -285,7 +287,7 @@ public class BlockCampfire extends Block {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, IBlockReader world, BlockPos pos, net.minecraft.pathfinding.PathNodeType type) {
+    public boolean isPathfindable(BlockState state, net.minecraft.world.IBlockReader world, BlockPos pos, net.minecraft.pathfinding.PathNodeType type) {
         return false;
     }
 }
