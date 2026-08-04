@@ -48,7 +48,7 @@ jobs:
       
       # Build the mod
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ./gradlew build --no-daemon
       
       - name: Upload Development Artifact
         uses: actions/upload-artifact@v7.0.1

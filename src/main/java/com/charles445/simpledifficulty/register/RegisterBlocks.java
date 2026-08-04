@@ -26,11 +26,11 @@ public class RegisterBlocks {
 
     // Tile Entities
     public static final RegistryObject<TileEntityType<TileEntitySpit>> SPIT_TILE_ENTITY = TILE_ENTITIES.register("campfirespit", 
-            () -> TileEntityType.Builder.create(TileEntitySpit::new, SPIT.get()).build(null)
-    
-    public static final RegistryObject<TileEntityType<TileEntityTemperature>> TEMPERATURE_TILE_ENTITY = TILE_ENTITIES.register("temperaturechanged", 
-            () -> TileEntityType.Builder.create(TileEntityTemperature::new, HEATER.get(), CHILLER.get()).build(null));
+        () -> TileEntityType.Builder.create(TileEntitySpit::new, SPIT.get()).build(null));
 
+    public static final RegistryObject<TileEntityType<TileEntityTemperature>> TEMPERATURE_TILE_ENTITY = TILE_ENTITIES.register("temperaturechanged", 
+        () -> TileEntityType.Builder.create(TileEntityTemperature::new, HEATER.get(), CHILLER.get()).build(null));
+   
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
         TILE_ENTITIES.register(eventBus);
