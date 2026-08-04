@@ -24,11 +24,11 @@ public class RegisterBlocks {
     public static final RegistryObject<Block> RAIN_COLLECTOR = BLOCKS.register("rain_collector",
             () -> new BlockRainCollector(AbstractBlock.Properties.of(Material.METAL).strength(2.0f).sound(SoundType.METAL).noOcclusion()));
 
-    public static final RegistryObject<Block> HEATER = BLOCKS.register("heater",
-            () -> new BlockTemperature(1.0f, AbstractBlock.Properties.of(Material.METAL).strength(0.5f).sound(SoundType.METAL).lightLevel(state -> state.getValue(ENABLED) ? 7 : 0));
+    public static final RegistryObject<Block> HEATER = BLOCKS.register("heater", 
+        () -> new BlockTemperature(1.0f, AbstractBlock.Properties.of(Material.METAL).strength(0.5f).sound(SoundType.METAL).lightLevel(state -> state.getValue(BlockTemperature.ENABLED) ? 7 : 0)));
 
-    public static final RegistryObject<Block> CHILLER = BLOCKS.register("chiller",
-            () -> new BlockTemperature(-1.0f, AbstractBlock.Properties.of(Material.METAL).strength(0.5f).sound(SoundType.METAL).lightLevel(state -> state.getValue(ENABLED) ? 7 : 0));
+    public static final RegistryObject<Block> CHILLER = BLOCKS.register("chiller", 
+        () -> new BlockTemperature(-1.0f, AbstractBlock.Properties.of(Material.METAL).strength(0.5f).sound(SoundType.METAL).lightLevel(state -> state.getValue(BlockTemperature.ENABLED) ? 7 : 0)));
 
     public static final RegistryObject<Block> SPIT = BLOCKS.register("spit",
             () -> new BlockSpit(AbstractBlock.Properties.of(Material.WOOD).strength(0.5f).sound(SoundType.WOOD).noOcclusion()));

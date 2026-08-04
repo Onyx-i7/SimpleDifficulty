@@ -28,9 +28,10 @@ public class ClientCommandIdentityCopy extends ClientCommandBase {
     @Override
     public LiteralArgumentBuilder<CommandSource> getCommandBuilder() {
         return LiteralArgumentBuilder.<CommandSource>literal(getName())
-                .then(RequiredArgumentBuilder.<CommandSource, Integer>argument("metadata", IntegerArgumentType.integer()))
-                    .then(RequiredArgumentBuilder.<CommandSource, String>argument("nbt", StringArgumentType.greedyString()))
-                            .executes(this::executeCopy)));
+            dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("sdcopyidentity")
+                .then(RequiredArgumentBuilder.<CommandSource, Integer>argument("metadata", IntegerArgumentType.integer())
+                    .then(RequiredArgumentBuilder.<CommandSource, String>argument("nbt", StringArgumentType.greedyString())
+                            .executes(this::executeCopy))));
     }
 
     private int executeCopy(CommandContext<CommandSource> context) {

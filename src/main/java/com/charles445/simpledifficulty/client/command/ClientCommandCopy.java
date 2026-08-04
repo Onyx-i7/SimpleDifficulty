@@ -27,10 +27,10 @@ public class ClientCommandCopy extends ClientCommandBase {
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> getCommandBuilder() {
-        return LiteralArgumentBuilder.<CommandSource>literal(getName())
-                .then(RequiredArgumentBuilder.<CommandSource, String>argument("nbt", StringArgumentType.greedyString()))
-                        .executes(this::executeCopy));
+    public void register(CommandDispatcher<CommandSource> dispatcher) {
+        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("sdcopy")
+                .then(RequiredArgumentBuilder.<CommandSource, String>argument("text", StringArgumentType.greedyString())
+                        .executes(this::executeCopy)));
     }
 
     private int executeCopy(CommandContext<CommandSource> context) {
