@@ -6,13 +6,11 @@ import com.charles445.simpledifficulty.api.config.ClientOptions;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import org.apache.commons.lang3.tuple.Pair;
 
-@Mod.EventBusSubscriber(modid = SimpleDifficulty.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModConfig {
     public static final ForgeConfigSpec CLIENT_SPEC;
     public static final ForgeConfigSpec SERVER_SPEC;
@@ -33,15 +31,6 @@ public class ModConfig {
     public static void register() {
         ModLoadingContext.get().registerConfig(Type.CLIENT, CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(Type.SERVER, SERVER_SPEC);
-    }
-
-    // Automatically syncs config values to the API whenever the config is loaded or changed
-    @SubscribeEvent
-    public static void onModConfigEvent(final net.minecraftforge.fml.config.ModConfig.Event event) {
-        if (event.getConfig().getModId().equals(SimpleDifficulty.MODID)) {
-            sendLocalClientConfigToAPI();
-            sendLocalServerConfigToAPI();
-        }
     }
 
     public static class ClientConfigBuilder {
