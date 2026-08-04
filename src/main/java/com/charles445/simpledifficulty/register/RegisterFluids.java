@@ -7,6 +7,7 @@ import com.charles445.simpledifficulty.fluid.FluidBasic;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FlowingFluid;  // ← AGREGAR ESTE IMPORT
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
