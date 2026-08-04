@@ -26,7 +26,7 @@ public class ItemThermometer extends Item {
     public ItemThermometer(Properties properties) {
         super(properties);
 
-        addPropertyOverride(new ResourceLocation("temperature"), (stack, world, pendingEntity) -> {
+        this.addPropertyOverride(new ResourceLocation("temperature"), (stack, world, entity) -> {
             boolean hasEntity = pendingEntity != null;
             Entity entity = hasEntity ? pendingEntity : stack.getFrame();
 

@@ -21,7 +21,7 @@ public class ItemJuice extends ItemDrinkBase {
     private static final JuiceEnum[] JUICE_VALUES = JuiceEnum.values();
 
     public ItemJuice(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(8)); 
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ItemJuice extends ItemDrinkBase {
 
     @Override
     public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(tab)) {
+        if (this.isInCreativeTab(tab)) {
             for (JuiceEnum juice : JUICE_VALUES) {
                 ItemStack stack = new ItemStack(this, 1);
                 setJuiceType(stack, juice);
@@ -102,7 +102,7 @@ public class ItemJuice extends ItemDrinkBase {
         if (type == JuiceEnum.GOLDEN_APPLE || type == JuiceEnum.GOLDEN_CARROT || type == JuiceEnum.GOLDEN_MELON) {
             return true;
         }
-        return super.isFoil(stack);
+        return super.hasEffect(stack);
     }
 
     /**

@@ -19,7 +19,7 @@ public class ItemDragonCanteen extends ItemCanteen {
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
 
     public ItemDragonCanteen(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
 
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
             if (stack.getItem() instanceof IItemCanteen) {
@@ -51,7 +51,7 @@ public class ItemDragonCanteen extends ItemCanteen {
 
     @Override
     public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(tab)) {
+        if (this.isInCreativeTab(tab)) {
             ItemStack emptyCanteen = new ItemStack(this, 1);
             createTypeTag(emptyCanteen);
             setCanteenEmpty(emptyCanteen);

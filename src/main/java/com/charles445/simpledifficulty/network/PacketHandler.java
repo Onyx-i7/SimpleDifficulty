@@ -5,8 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.SimpleChannel;
-import net.minecraftforge.fml.network.simpleimpl.SimpleChannel;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.function.Function;
 

@@ -51,12 +51,45 @@ public abstract class FluidBasic extends ForgeFlowingFluid {
 
         @Override
         public int getAmount(FluidState state) {
-            return state.getValue(LEVEL);
+            return state.getValue(net.minecraftforge.fluids.ForgeFlowingFluid.LEVEL);
         }
 
         @Override
         public boolean isSource(FluidState state) {
             return false;
         }
+    }
+
+    @Override
+    protected boolean canBeReplacedWith(FluidState state, net.minecraft.world.IBlockReader world, 
+            net.minecraft.util.math.BlockPos pos, net.minecraft.fluid.Fluid fluidIn, 
+            net.minecraft.util.Direction direction) {
+        return false;
+    }
+
+    @Override
+    protected net.minecraft.util.math.vector.Vector3d getFlow(net.minecraft.world.IBlockReader world, 
+            net.minecraft.util.math.BlockPos pos, FluidState state) {
+        return net.minecraft.util.math.vector.Vector3d.ZERO;
+    }
+
+    @Override
+    protected int getSlopeFindDistance(net.minecraft.world.IWorldReader world) {
+        return 4;
+    }
+
+    @Override
+    protected int getDropOff(net.minecraft.world.IWorldReader world) {
+        return 1;
+    }
+
+    @Override
+    protected int getTickDelay(net.minecraft.world.IWorldReader world) {
+        return 5;
+    }
+
+    @Override
+    protected float getExplosionResistance() {
+        return 100.0f;
     }
 }

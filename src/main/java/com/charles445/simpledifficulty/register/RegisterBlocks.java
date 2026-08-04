@@ -15,7 +15,8 @@ public class RegisterBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, SimpleDifficulty.MODID);
     public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, SimpleDifficulty.MODID);
 
-    public static final RegistryObject<Block> CAMPFIRE = BLOCKS.register("campfire", BlockCampfire::new);
+    public static final RegistryObject<Block> CAMPFIRE = BLOCKS.register("campfire", 
+        () -> new BlockCampfire(AbstractBlock.Properties.create(Material.WOOD)));
     public static final RegistryObject<Block> RAIN_COLLECTOR = BLOCKS.register("rain_collector", BlockRainCollector::new);
     public static final RegistryObject<Block> HEATER = BLOCKS.register("heater", () -> new BlockTemperature(1.0f));
     public static final RegistryObject<Block> CHILLER = BLOCKS.register("chiller", () -> new BlockTemperature(-1.0f));
@@ -25,10 +26,10 @@ public class RegisterBlocks {
 
     // Tile Entities
     public static final RegistryObject<TileEntityType<TileEntitySpit>> SPIT_TILE_ENTITY = TILE_ENTITIES.register("campfirespit", 
-            () -> TileEntityType.Builder.of(TileEntitySpit::new, SPIT.get()).build(null));
+            () -> TileEntityType.Builder.create(TileEntitySpit::new, SPIT.get()).build(null)
     
     public static final RegistryObject<TileEntityType<TileEntityTemperature>> TEMPERATURE_TILE_ENTITY = TILE_ENTITIES.register("temperaturechanged", 
-            () -> TileEntityType.Builder.of(TileEntityTemperature::new, HEATER.get(), CHILLER.get()).build(null));
+            () -> TileEntityType.Builder.create(TileEntityTemperature::new, HEATER.get(), CHILLER.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);

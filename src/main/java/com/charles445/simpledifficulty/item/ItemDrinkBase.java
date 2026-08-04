@@ -26,7 +26,7 @@ public abstract class ItemDrinkBase extends Item {
     public abstract float getDirtyChance(ItemStack stack);
 
     public ItemDrinkBase(Properties properties) {
-        super(properties.durability(0).stacksTo(8));
+        super(properties.stacksTo(8)); 
     }
 
     public void runSecondaryEffect(PlayerEntity player, ItemStack stack) {

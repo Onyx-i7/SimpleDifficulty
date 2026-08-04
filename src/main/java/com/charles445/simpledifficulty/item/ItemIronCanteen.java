@@ -16,7 +16,7 @@ public class ItemIronCanteen extends ItemCanteen {
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
 
     public ItemIronCanteen(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
 
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
             if (stack.getItem() instanceof IItemCanteen) {

@@ -51,7 +51,7 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
 
     @Override
     public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
-        if (this.allowdedIn(tab)) {
+        if (this.isInCreativeTab(tab)) {
             ItemStack emptyCanteen = new ItemStack(this, 1);
             createTypeTag(emptyCanteen);
             setCanteenEmpty(emptyCanteen);

@@ -4,6 +4,7 @@ import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.block.BlockCampfire;
 import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.util.SoundUtil;
+import com.charles445.simpledifficulty.register.RegisterBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ExperienceOrbEntity;
@@ -45,7 +46,7 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
     private int timer = 0;
 
     public TileEntitySpit() {
-        super(RegisterTileEntities.SPIT_TILE_ENTITY.get()); // Will need RegisterTileEntities class
+        super(RegisterBlocks.SPIT_TILE_ENTITY.get());
         items = new ItemHandler(ModConfig.SERVER.campfireSpitSize.get());
     }
 
@@ -162,7 +163,7 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
                 }
             }
 
-            if (isBlacklisted == ModConfig.SERVER.campfireSpitBlacklistIsWhitelist.get()) {
+            java.util.List<? extends String> spitBlacklist = ModConfig.SERVER.campfireSpitBlacklist.get(); {
                 for (int i = 0; i < items.getSlots(); i++) {
                     if (items.getStackInSlot(i).isEmpty()) {
                         items.insertItem(i, new ItemStack(heldItemStack.getItem(), 1), false);
