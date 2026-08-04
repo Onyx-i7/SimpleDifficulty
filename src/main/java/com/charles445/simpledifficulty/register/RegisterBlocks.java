@@ -10,13 +10,15 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.material.Material;
 
 public class RegisterBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, SimpleDifficulty.MODID);
     public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, SimpleDifficulty.MODID);
 
     public static final RegistryObject<Block> CAMPFIRE = BLOCKS.register("campfire", 
-        () -> new BlockCampfire(AbstractBlock.Properties.create(Material.WOOD)));
+        () -> new BlockCampfire(AbstractBlock.Properties.of(Material.WOOD).strength(2.0f)));
     public static final RegistryObject<Block> RAIN_COLLECTOR = BLOCKS.register("rain_collector", BlockRainCollector::new);
     public static final RegistryObject<Block> HEATER = BLOCKS.register("heater", () -> new BlockTemperature(1.0f));
     public static final RegistryObject<Block> CHILLER = BLOCKS.register("chiller", () -> new BlockTemperature(-1.0f));

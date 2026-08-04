@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.LightType;
 
 import java.util.Random;
 
@@ -26,10 +27,10 @@ public class BlockIceBasic extends Block {
     @Override
     public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity te, ItemStack stack) {
         player.awardStat(Stats.BLOCK_MINED.get(this));
-        player.addExhaustion(0.005F);
+        player.getFoodData().addExhaustion(0.005F);
 
         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
-            spawnAsEntity(world, pos, new ItemStack(this));
+            Block.popResource(world, pos, new ItemStack(this));
         } else {
             if (world.dimensionType().isUltraWarm()) {
                 world.removeBlock(pos, false);
@@ -50,7 +51,7 @@ public class BlockIceBasic extends Block {
     public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand) {
         if (world.isClientSide) return;
 
-        Biome biome = world.getBiome(pos).value();
+        Biome biome = world.getBiome(pos);
         float f = biome.getTemperature(pos);
 
         f = com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge.getTemperatureSafe(world, biome, pos);

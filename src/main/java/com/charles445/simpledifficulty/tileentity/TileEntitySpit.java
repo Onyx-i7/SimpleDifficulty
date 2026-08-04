@@ -111,16 +111,16 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
     @Nullable
     private ItemStack getCookingResult(ItemStack stack) {
         if (this.level == null) return ItemStack.EMPTY;
-        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, stack, this.level)
-                .map(recipe -> recipe.assemble(new net.minecraft.inventory.Inventory(stack)))
-                .orElse(ItemStack.EMPTY);
+        // En lugar de pasar ItemStack directamente, envuélvelo en un Inventory:
+        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, 
+            new net.minecraft.inventory.Inventory(stack), this.level)
     }
 
     private float getCookingExperience(ItemStack stack) {
         if (this.level == null) return 0.0f;
-        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, stack, this.level)
-                .map(recipe -> recipe.getExperience())
-                .orElse(0.0f);
+        // En lugar de pasar ItemStack directamente, envuélvelo en un Inventory:
+        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, 
+            new net.minecraft.inventory.Inventory(stack), this.level)
     }
 
     private boolean playWorldSound(World world, BlockPos pos, boolean deposit) {
@@ -154,7 +154,7 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
         if (!withdrewToHand && isCookable(heldItemStack)) {
             String heldItemName = heldItemStack.getItem().getRegistryName().toString();
             boolean isBlacklisted = false;
-            java.util.List<? extends String> spitBlacklist = ModConfig.SERVER.campfireSpitBlacklist.get();
+            java.util.List<?> spitBlacklist = ModConfig.SERVER.campfireSpitBlacklist.get();
 
             for (String s : spitBlacklist) {
                 if (s.equals(heldItemName)) {
@@ -216,7 +216,7 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
         if (stack.isEmpty()) return false;
         if (this.level == null) return false;
         ItemStack result = getCookingResult(stack);
-        return !result.isEmpty() && result.getItem().isFood();
+        return !result.isEmpty() && result.getItem().isEdible();
     }
 
     private boolean isCooked(ItemStack stack) {

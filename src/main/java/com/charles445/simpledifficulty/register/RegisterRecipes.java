@@ -48,15 +48,9 @@ public class RegisterRecipes {
         });
     }
 
-    private static void registerPotionMixes() {
-        // Awkward to normal
-        PotionBrewing.addMix(Potions.AWKWARD, SDItems.ice_chunk.get(), SDPotions.cold_resist_type.get());
-        PotionBrewing.addMix(Potions.AWKWARD, SDItems.magma_chunk.get(), SDPotions.heat_resist_type.get());
-
-        // Normal to long
-        PotionBrewing.addMix(SDPotions.cold_resist_type.get(), Items.REDSTONE, SDPotions.long_cold_resist_type.get());
-        PotionBrewing.addMix(SDPotions.heat_resist_type.get(), Items.REDSTONE, SDPotions.long_heat_resist_type.get());
-    }
+    // private static void registerPotionMixes() {
+    //      // TODO: Implement using JSON or reflection
+    // }
 
     private static void registerCustomBrewingRecipes() {
         // Awkward to normal

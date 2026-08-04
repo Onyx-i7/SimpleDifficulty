@@ -31,11 +31,13 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Direction;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
 
 public class BlockRainCollector extends Block {
-    public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_3;
+    public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_1_8;
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
     public BlockRainCollector(Properties properties) {
@@ -117,7 +119,7 @@ public class BlockRainCollector extends Block {
                     if (!player.isCreative()) {
                         if (itemstack.isEmpty()) {
                             player.setItemInHand(hand, bucket);
-                        } else if (!player.getInventory().add(bucket)) {
+                        } else if (!player.getInventory.add(bucket)) {
                             player.drop(bucket, false);
                         }
                     }
@@ -133,7 +135,7 @@ public class BlockRainCollector extends Block {
                     
                     if (itemstack.isEmpty()) {
                         player.setItemInHand(hand, waterBottle);
-                    } else if (!player.getInventory().add(waterBottle)) {
+                    } else if (!player.getInventory.add(waterBottle)) {
                         player.drop(waterBottle, false);
                     } else if (player instanceof ServerPlayerEntity) {
                         ((ServerPlayerEntity) player).getInventory().setChanged();
@@ -162,7 +164,7 @@ public class BlockRainCollector extends Block {
     }
     
     public void setWaterLevel(World world, BlockPos pos, BlockState state, int level) {
-        world.setBlock(pos, state.setValue(LEVEL, Mth.clamp(level, 0, 3)), 3);
+        world.setBlock(pos, state.setValue(LEVEL, MathHelper.clamp(level, 0, 3)), 3);
     }
     
     @Override

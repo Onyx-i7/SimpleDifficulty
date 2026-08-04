@@ -20,7 +20,7 @@ import net.minecraft.world.gen.Heightmap;
 public class TileEntityTemperature extends TileEntity implements ITemperatureTileEntity {
 
     public TileEntityTemperature() {
-        super(RegisterTileEntities.TEMPERATURE_TILE_ENTITY.get()); // Will need RegisterTileEntities class
+        super(com.charles445.simpledifficulty.register.RegisterBlocks.TEMPERATURE_TILE_ENTITY.get());
     }
 
     public TileEntityTemperature(TileEntityType<?> type) {
@@ -118,7 +118,7 @@ public class TileEntityTemperature extends TileEntity implements ITemperatureTil
         }
 
         // Check precipitation height
-        int precipitationHeight = level.getHeight(Heightmap.Type.MOTION_BLOCKING, pos).getY();
+        int precipitationHeight = level.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ());
         if (precipitationHeight > pos.getY()) {
             return false; // Protected (something above)
         }

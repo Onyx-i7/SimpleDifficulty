@@ -17,14 +17,6 @@ public class ItemIronCanteen extends ItemCanteen {
 
     public ItemIronCanteen(Properties properties) {
         super(properties.stacksTo(1));
-
-        addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
-            if (stack.getItem() instanceof IItemCanteen) {
-                IItemCanteen canteen = (IItemCanteen) stack.getItem();
-                return !canteen.isCanteenEmpty(stack) ? 1.0f : 0.0f;
-            }
-            return 0.0f;
-        });
     }
 
     @Override

@@ -122,18 +122,18 @@ public class TemperatureCapability implements ITemperatureCapability {
             TemperatureEnum tempEnum = getTemperatureEnum();
             if (tempEnum == TemperatureEnum.BURNING) {
                 if (TemperatureEnum.BURNING.getMiddle() < getTemperatureLevel() 
-                        && !player.hasEffect(SDPotions.HEAT_RESIST.get()) 
+                        && !player.hasEffect(SDPotions.heat_resist.get()) 
                         && !player.isSpectator() 
                         && !player.isCreative()) {
-                    applyTemperatureEffect(player, SDPotions.HYPERTHERMIA.get(), SDDamageSources.HYPERTHERMIA);
+                    applyTemperatureEffect(player, SDPotions.hyperthermia.get(), SDDamageSources.HYPERTHERMIA);
                     appliedEffect = true;
                 }
             } else if (tempEnum == TemperatureEnum.FREEZING) {
                 if (TemperatureEnum.FREEZING.getMiddle() >= getTemperatureLevel() 
-                        && !player.hasEffect(SDPotions.COLD_RESIST.get()) 
+                        && !player.hasEffect(SDPotions.cold_resist.get()) 
                         && !player.isSpectator() 
                         && !player.isCreative()) {
-                    applyTemperatureEffect(player, SDPotions.HYPOTHERMIA.get(), SDDamageSources.HYPOTHERMIA);
+                    applyTemperatureEffect(player, SDPotions.hypothermia.get(), SDDamageSources.HYPOTHERMIA);
                     appliedEffect = true;
                 }
             }

@@ -30,7 +30,8 @@ import java.util.Random;
 public class BlockFluidBasic extends FlowingFluidBlock {
     private final String iceBlock;
 
-    public BlockFluidBasic(Fluid fluid, AbstractBlock.Properties properties, String iceBlock) {
+    // El constructor debe aceptar Supplier:
+    public BlockFluidBasic(Supplier<? extends FlowingFluid> fluid, AbstractBlock.Properties properties) {
         super(fluid, properties);
         this.iceBlock = iceBlock;
     }

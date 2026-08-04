@@ -35,7 +35,7 @@ public class ItemJuice extends ItemDrinkBase {
 
     @Override
     public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
-        if (this.isInCreativeTab(tab)) {
+        if (this.getItemCategory() == tab) {
             for (JuiceEnum juice : JUICE_VALUES) {
                 ItemStack stack = new ItemStack(this, 1);
                 setJuiceType(stack, juice);

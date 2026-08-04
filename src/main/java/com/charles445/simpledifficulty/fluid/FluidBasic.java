@@ -68,7 +68,7 @@ public abstract class FluidBasic extends ForgeFlowingFluid {
     }
 
     @Override
-    protected net.minecraft.util.math.vector.Vector3d getFlow(net.minecraft.world.IBlockReader world, 
+    public net.minecraft.util.math.vector.Vector3d getFlow(net.minecraft.world.IBlockReader world, 
             net.minecraft.util.math.BlockPos pos, FluidState state) {
         return net.minecraft.util.math.vector.Vector3d.ZERO;
     }
@@ -84,7 +84,7 @@ public abstract class FluidBasic extends ForgeFlowingFluid {
     }
 
     @Override
-    protected int getTickDelay(net.minecraft.world.IWorldReader world) {
+    public int getTickDelay(net.minecraft.world.IWorldReader world) {
         return 5;
     }
 

@@ -20,14 +20,6 @@ public class ItemDragonCanteen extends ItemCanteen {
 
     public ItemDragonCanteen(Properties properties) {
         super(properties.stacksTo(1));
-
-        addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
-            if (stack.getItem() instanceof IItemCanteen) {
-                IItemCanteen canteen = (IItemCanteen) stack.getItem();
-                return !canteen.isCanteenEmpty(stack) ? 1.0f : 0.0f;
-            }
-            return 0.0f;
-        });
     }
 
     @Override
@@ -51,7 +43,7 @@ public class ItemDragonCanteen extends ItemCanteen {
 
     @Override
     public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
-        if (this.isInCreativeTab(tab)) {
+        if (this.getItemCategory() == tab) {
             ItemStack emptyCanteen = new ItemStack(this, 1);
             createTypeTag(emptyCanteen);
             setCanteenEmpty(emptyCanteen);

@@ -25,25 +25,6 @@ public class ItemThermometer extends Item {
 
     public ItemThermometer(Properties properties) {
         super(properties);
-
-        this.addPropertyOverride(new ResourceLocation("temperature"), (stack, world, entity) -> {
-            boolean hasEntity = pendingEntity != null;
-            Entity entity = hasEntity ? pendingEntity : stack.getFrame();
-
-            if (world == null && entity != null) {
-                world = entity.level;
-            }
-
-            if (world == null || entity == null) {
-                return 0.0f;
-            }
-
-            if (QuickConfig.isTemperatureEnabled() && ModConfig.CLIENT.enableThermometer.get()) {
-                return wobble(world, entity, stack.hashCode());
-            }
-
-            return 0.0f;
-        });
     }
 
     protected static void audit(long worldTime) {
