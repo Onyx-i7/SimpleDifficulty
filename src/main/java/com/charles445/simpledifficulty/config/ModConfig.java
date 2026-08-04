@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(modid = SimpleDifficulty.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -37,7 +38,7 @@ public class ModConfig {
 
     // Automatically syncs config values to the API whenever the config is loaded or changed
     @SubscribeEvent
-    public static void onModConfigEvent(final ModConfig.ModConfigEvent event) {
+    public static void onModConfigEvent(final ModConfigEvent event) {
         if (event.getConfig().getModId().equals(SimpleDifficulty.MODID)) {
             sendLocalClientConfigToAPI();
             sendLocalServerConfigToAPI();
