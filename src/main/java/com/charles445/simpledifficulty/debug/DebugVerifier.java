@@ -44,8 +44,8 @@ public class DebugVerifier {
         // Note: In 1.16.5, armor materials are no longer in a map, they're direct instances
 
         // Fluids
-        if (!SDFluids.fluidBlocks.isEmpty()) {
-            test(SDFluids.blockPurifiedWater, SDFluids.fluidBlocks.values().iterator().next());
+        if (!SDFluids.fluids.isEmpty()) {
+            test(SDFluids.purifiedWater, SDFluids.fluids.values().iterator().next());
         } else {
             printFailure(" empty keyset ", SDFluids.blockPurifiedWater, "fluidBlocks");
         }

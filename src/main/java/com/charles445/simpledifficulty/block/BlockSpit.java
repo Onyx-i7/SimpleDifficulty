@@ -34,7 +34,6 @@ public class BlockSpit extends Block {
     }
 
     @Nullable
-    @Override
     public TileEntity newBlockEntity(IBlockReader world) {
         return new TileEntitySpit();
     }

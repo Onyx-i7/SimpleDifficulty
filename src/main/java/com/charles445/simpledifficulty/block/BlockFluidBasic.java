@@ -36,6 +36,10 @@ public class BlockFluidBasic extends FlowingFluidBlock {
         this.iceBlock = iceBlock;
     }
 
+    protected ItemStack getBottleResult() {
+        return PotionUtils.setPotion(new ItemStack(net.minecraft.item.Items.POTION), Potions.WATER);
+    }
+
     @Override
     public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
@@ -55,10 +59,6 @@ public class BlockFluidBasic extends FlowingFluidBlock {
             }
         }
         return ActionResultType.PASS;
-    }
-
-    protected ItemStack getBottleResult() {
-        return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
     }
 
     @Override

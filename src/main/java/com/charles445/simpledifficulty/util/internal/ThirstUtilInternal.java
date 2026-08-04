@@ -216,12 +216,12 @@ public class ThirstUtilInternal implements IThirstUtil {
 
     @Override
     public ItemStack createPurifiedWaterBucket() {
-        return FluidUtil.getFilledBucket(new FluidStack(SDFluids.purifiedWater.get(), FluidAttributes.BUCKET_VOLUME));
+        return FluidUtil.getFilledBucket(new FluidStack((Fluid) SDFluids.purifiedWater.get(), FluidAttributes.BUCKET_VOLUME));
     }
 
     @Override
     public ItemStack createSaltWaterBucket() {
-        return FluidUtil.getFilledBucket(new FluidStack(SDFluids.saltWater.get(), FluidAttributes.BUCKET_VOLUME));
+        return FluidUtil.getFilledBucket(new FluidStack((Fluid) SDFluids.saltWater.get(), FluidAttributes.BUCKET_VOLUME));
     }
 
     @Override

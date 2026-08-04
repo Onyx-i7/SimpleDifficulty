@@ -19,4 +19,11 @@ public abstract class ClientCommandBase {
     public void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(getCommandBuilder());
     }
+
+    @Override
+    public com.mojang.brigadier.builder.LiteralArgumentBuilder<net.minecraft.command.CommandSource> getCommandBuilder() {
+        return com.mojang.brigadier.builder.LiteralArgumentBuilder.<net.minecraft.command.CommandSource>literal(getName())
+                .then(com.mojang.brigadier.builder.RequiredArgumentBuilder.<net.minecraft.command.CommandSource, String>argument("text", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+                        .executes(this::executeCopy));
+    }
 }

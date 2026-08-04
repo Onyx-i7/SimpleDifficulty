@@ -83,12 +83,12 @@ public class RegisterRecipes {
     }
 
     private static void registerPotionRecipe(Item itemIn, Potion itemInPotionType, 
-                                          Item ingredient, 
-                                          Item itemOut, Potion itemOutPotionType) {
+                                      Item ingredient, 
+                                      Item itemOut, Potion itemOutPotionType) {
         BrewingRecipeRegistry.addRecipe(
                 new FixedBrewingRecipe(
-                        toPotion(new ItemStack(itemIn), itemInPotionType),
-                        new ItemStack(ingredient),
+                        Ingredient.of(toPotion(new ItemStack(itemIn), itemInPotionType)),
+                        Ingredient.of(new ItemStack(ingredient)),
                         toPotion(new ItemStack(itemOut), itemOutPotionType)
                 )
         );

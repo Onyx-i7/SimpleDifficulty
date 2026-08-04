@@ -5,13 +5,13 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.common.brewing.BrewingRecipe;
 
 public class FixedBrewingRecipe extends BrewingRecipe {
-    public FixedBrewingRecipe(ItemStack input, Ingredient ingredient, ItemStack output) {
+    public FixedBrewingRecipe(Ingredient input, Ingredient ingredient, ItemStack output) {
         super(input, ingredient, output);
     }
 
     @Override
     public boolean isInput(ItemStack stack) {
-        return super.isInput(stack) && ItemStack.tagMatches(getInput(), stack);
+        return super.isInput(stack) && ItemStack.tagMatches(getInput().getItems()[0], stack);
     }
 
     @Override

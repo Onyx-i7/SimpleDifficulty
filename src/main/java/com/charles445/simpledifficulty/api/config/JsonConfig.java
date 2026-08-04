@@ -166,7 +166,7 @@ public class JsonConfig {
      */
     public static void registerConsumableTemperature(String group, ItemStack stack, float temperature, int duration) {
         String registryName = stack.getItem().getRegistryName().toString();
-        registerConsumableTemperature(group, registryName, temperature, duration, new JsonItemIdentity(-1));
+        registerConsumableTemperature(group, registryName, temperature, duration, new JsonItemIdentity());
     }
 
     /**
@@ -209,7 +209,7 @@ public class JsonConfig {
      */
     public static void registerConsumableThirst(ItemStack stack, int amount, float saturation, float thirstyChance) {
         String registryName = stack.getItem().getRegistryName().toString();
-        registerConsumableThirst(registryName, amount, saturation, thirstyChance, new JsonItemIdentity(-1));
+        registerConsumableThirst(registryName, amount, saturation, thirstyChance, new JsonItemIdentity());
     }
 
     /**
@@ -250,7 +250,7 @@ public class JsonConfig {
      */
     public static void registerHeldItem(ItemStack stack, float temperature) {
         String registryName = stack.getItem().getRegistryName().toString();
-        registerHeldItem(registryName, temperature, new JsonItemIdentity(-1));
+        registerHeldItem(registryName, temperature, new JsonItemIdentity());
     }
 
     /**

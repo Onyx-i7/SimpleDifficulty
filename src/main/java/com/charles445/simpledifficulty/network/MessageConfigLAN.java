@@ -54,16 +54,16 @@ public class MessageConfigLAN {
             context.enqueueWork(() -> {
                 ServerPlayerEntity sender = context.getSender();
                 if (sender != null) {
-                    // Check if operating on a physical client (Integrated Server / LAN host)
-                    boolean isClientPhysical = context.getDirection().getReceptionSide().isClient();
-
-                    // Security check: Verify the sender is the LAN host or has OP permissions
                     boolean isHost = false;
                     if (ServerLifecycleHooks.getCurrentServer() != null) {
-                        boolean isHost = ServerLifecycleHooks.getCurrentServer().isSingleplayer();
+                        isHost = ServerLifecycleHooks.getCurrentServer().isSingleplayer();
                     }
 
                     boolean hasPermission = isHost || sender.hasPermissions(2);
+                    
+                    if (hasPermission) {
+                        ModConfig.sendServerConfigToAllPlayers();
+                    }
                 }
             });
         }
