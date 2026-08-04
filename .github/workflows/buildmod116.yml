@@ -1,8 +1,8 @@
-name: Build SimpleDifficulty Mod
+name: Build Mod for 1.16.5
 
 on:
   push:
-    branches: [ 'main', 'master', 'testing' ]
+    branches: [ '1.16.5-development' ]
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v5.6.0
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '8'
           cache: 'gradle'
 
       - name: Grant execute permission for gradlew
