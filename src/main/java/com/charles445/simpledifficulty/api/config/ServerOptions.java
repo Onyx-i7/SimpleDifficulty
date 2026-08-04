@@ -1,38 +1,38 @@
 package com.charles445.simpledifficulty.api.config;
 
-public enum ServerOptions implements IConfigOption
-{
-	/*Boolean*/	DEBUG			("debug"),
-	/*Boolean*/	THIRST_ENABLED	("thirstEnabled"),
-	/*Boolean*/ THIRST_DRINK_BLOCKS ("thirstDrinkBlocks"),
-	/*Boolean*/ THIRST_DRINK_RAIN ("thirstDrinkRain"),
-	/*Boolean*/ PEACEFUL_DANGER ("peacefulDanger"),
-	/*Boolean*/ TEMPERATURE_ENABLED ("temperatureEnabled"),
-	/*Boolean*/ TEMPERATURE_TE_ENABLED ("temperatureTEEnabled"),
-	/*Integer*/ CANTEEN_DOSES ("canteenDoses"),
-	/*Boolean*/ STRICT_HEATERS ("strictHeaters"),
-	/*Integer*/ IRON_CANTEEN_DOSES ("ironCanteenDoses"),
-	/*Integer*/ DRAGON_CANTEEN_DOSES ("dragonCanteenDoses"),
-	/*Boolean*/ INFINITE_PURIFIED_WATER ("infinitePurifiedWater"),
-	/*Boolean*/ PURIFIED_WATER_OPACITY ("purifiedWaterOpacity"),
-	/*Double*/  THIRST_EXHAUSTION_MULTIPLIER ("thirstExhaustionMultiplier"),
-	/*Boolean*/ SALT_WATER_THIRST ("saltWaterThirst");	
-	
-	String name;
-	
-	private ServerOptions(String name)
-	{
-		this.name=name;
-	}
-	
-	@Override
-	public String getName()
-	{
-		return name;
-	}
-	
-	public String toString()
-	{
-		return this.getName();
-	}
+/**
+ * Enum defining all server-side configuration options.
+ */
+public enum ServerOptions implements IConfigOption {
+    DEBUG("debug"),
+    THIRST_ENABLED("thirstEnabled"),
+    THIRST_DRINK_BLOCKS("thirstDrinkBlocks"),
+    THIRST_DRINK_RAIN("thirstDrinkRain"),
+    PEACEFUL_DANGER("peacefulDanger"),
+    TEMPERATURE_ENABLED("temperatureEnabled"),
+    TEMPERATURE_TE_ENABLED("temperatureTEEnabled"),
+    CANTEEN_DOSES("canteenDoses"),
+    STRICT_HEATERS("strictHeaters"),
+    IRON_CANTEEN_DOSES("ironCanteenDoses"),
+    DRAGON_CANTEEN_DOSES("dragonCanteenDoses"),
+    INFINITE_PURIFIED_WATER("infinitePurifiedWater"),
+    PURIFIED_WATER_OPACITY("purifiedWaterOpacity"),
+    THIRST_EXHAUSTION_MULTIPLIER("thirstExhaustionMultiplier"),
+    SALT_WATER_THIRST("saltWaterThirst");
+
+    private final String name;
+
+    ServerOptions(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

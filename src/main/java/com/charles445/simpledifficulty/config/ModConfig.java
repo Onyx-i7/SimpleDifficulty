@@ -1,587 +1,283 @@
 package com.charles445.simpledifficulty.config;
 
-
 import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.api.config.ClientConfig;
 import com.charles445.simpledifficulty.api.config.ClientOptions;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
-import com.charles445.simpledifficulty.config.compat.ConfigServerCompatibility;
-import com.charles445.simpledifficulty.network.MessageConfigLAN;
-import com.charles445.simpledifficulty.network.MessageUpdateConfig;
-import com.charles445.simpledifficulty.network.PacketHandler;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.config.ModConfig.Type;
+import org.apache.commons.lang3.tuple.Pair;
 
-@Config(modid = SimpleDifficulty.MODID)
-public class ModConfig 
-{
-	@Config.Comment("Client configuration")
-	@Config.Name("Client")
-	public static final ConfigClientConfig client = new ConfigClientConfig();
-	
-	@Config.Comment("Server configuration")
-	@Config.Name("Server")
-	public static final ConfigServerConfig server = new ConfigServerConfig();
-	
-	//TODO Lang
-	
-	public static class ConfigServerConfig
-	{
-		@Config.Comment("Built-in mod compatibility options")
-		@Config.Name("Compatibility")
-		public final ConfigServerCompatibility compatibility = new ConfigServerCompatibility();
-		
-		@Config.Comment("Miscellaneous gameplay configurations")
-		@Config.Name("Miscellaneous")
-		public final ConfigMiscellaneous miscellaneous = new ConfigMiscellaneous();
-		
-		@Config.Comment("Temperature related configurations")
-		@Config.Name("Temperature")
-		public final ConfigTemperature temperature = new ConfigTemperature();
-		
-		@Config.Comment("Thirst related configurations")
-		@Config.Name("Thirst")
-		public final ConfigThirst thirst = new ConfigThirst();
-		
-		///
-		/// Server Options
-		///
-		@Config.Comment("Whether thirst is enabled.")
-		@Config.Name("ThirstEnabled")
-		public boolean thirstEnabled = true;
-		
-		@Config.Comment("Whether the player is allowed to drink from normal water blocks.")
-		@Config.Name("ThirstDrinkBlocks")
-		public boolean thirstDrinkBlocks = true;
-		
-		@Config.Comment("Whether the player is allowed to drink from the rain.")
-		@Config.Name("ThirstDrinkRain")
-		public boolean thirstDrinkRain = true;
-		
-		@Config.Comment("Whether the mod should be dangerous on Peaceful difficulty.")
-		@Config.Name("PeacefulDanger")
-		public boolean peacefulDanger = false;
-		
-		@Config.Comment("Whether temperature is enabled.")
-		@Config.Name("TemperatureEnabled")
-		public boolean temperatureEnabled = true;
-		
-		@Config.Comment("Whether temperature tile entities are enabled.")
-		@Config.Name("TemperatureTileEntities")
-		public boolean temperatureTEEnabled = true;
-		
-		@Config.Comment("Maximum number of doses in a canteen")
-		@Config.Name("CanteenDoses")
-		@Config.RangeInt(min=1)
-		public int canteenDoses = 3;
-		
-		@Config.Comment("Whether heaters and chillers only work indoors")
-		@Config.Name("StrictHeaters")
-		public boolean strictHeaters = true;
-		
-		@Config.Comment("Maximum number of doses in an iron canteen")
-		@Config.Name("IronCanteenDoses")
-		@Config.RangeInt(min=1)
-		public int ironCanteenDoses = 8;
+@Mod.EventBusSubscriber(modid = SimpleDifficulty.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class ModConfig {
+    public static final ForgeConfigSpec CLIENT_SPEC;
+    public static final ForgeConfigSpec SERVER_SPEC;
 
-		@Config.Comment("Maximum number of doses in a dragon canteen")
-		@Config.Name("DragonCanteenDoses")
-		@Config.RangeInt(min=1)
-		public int dragonCanteenDoses = 30;
-		
-		@Config.Comment("Whether purified water blocks are infinite")
-		@Config.Name("Infinite Purified Water")
-		public boolean infinitePurifiedWater = false;
+    public static final ClientConfigBuilder CLIENT;
+    public static final ServerConfigBuilder SERVER;
 
-		@Config.Comment("Make Purified Water only reduce light level by 1 per Y-level, instead of 3.")
-		@Config.Name("Brighter Purified Water")
-		public boolean purifiedWaterOpacity = false;
+    static {
+        final Pair<ClientConfigBuilder, ForgeConfigSpec> clientSpecPair = new ForgeConfigSpec.Builder().configure(ClientConfigBuilder::new);
+        CLIENT = clientSpecPair.getLeft();
+        CLIENT_SPEC = clientSpecPair.getRight();
 
-		@Config.Comment("Spams chat with debug messages, do not enable this unless you are testing!")
-		@Config.Name("DebugMode")
-		public boolean debug = false;
-		
-		public class ConfigMiscellaneous
-		{
-			//Not synchronized with clients
-			@Config.Comment("Campfire has a 1/X chance to lose fuel when ticked (default is 2, a 1/2 chance")
-			@Config.Name("CampfireDecayChance")
-			@Config.RangeInt(min=1)
-			public int campfireDecayChance = 2;
-			
-			@Config.Comment("Campfire has a 1/X chance to ignite with a stick (default is 5, a 1/5 chance")
-			@Config.Name("CampfireStickIgniteChance")
-			@Config.RangeInt(min=1)
-			public int campfireStickIgniteChance = 5;
-			
-			@Config.Comment("How many seconds it takes for a campfire spit to cook food")
-			@Config.Name("CampfireSpitDelay")
-			@Config.RangeInt(min=1)
-			public int campfireSpitDelay = 35;
-			
-			@Config.Comment("How many pieces of food can fit on a campfire spit (any existing spits won't change size)")
-			@Config.Name("CampfireSpitSize")
-			@Config.RangeInt(min=1, max=10)
-			public int campfireSpitSize = 3;
-			
-			@Config.Comment("Should cooking food on a campfire spit give experience like a furnace")
-			@Config.Name("CampfireSpitExperience")
-			public boolean campfireSpitExperience = true;
-			
-			@Config.Comment("Blacklisted items in the campfire spit (ex. minecraft:beef")
-			@Config.Name("CampfireSpitBlacklist")
-			public String[] campfireSpitBlacklist = new String[0];
-			
-			@Config.Comment("Whether the campfire spit blacklist is a whitelist instead")
-			@Config.Name("CampfireSpitBlacklistIsWhitelist")
-			public boolean campfireSpitBlacklistIsWhitelist = false;
-			
-			@Config.Comment("Whether Golden Apple Juice gives the golden apple effect")
-			@Config.Name("GoldenAppleJuiceEffect")
-			public boolean goldenAppleJuiceEffect = true;
-			
-			@Config.Comment("Whether Ice Blocks drop Ice Chunks")
-			@Config.Name("IceDropsChunks")
-			public boolean iceDropsChunks = true;
-			
-			@Config.Comment("Whether Magma Blocks drop Magma Chunks")
-			@Config.Name("MagmaDropsChunks")
-			public boolean magmaDropsChunks = true;
-			
-			@Config.Comment("Chance for rain collector to fill (1/n chance, default is 6")
-			@Config.Name("RainCollectorFillChance")
-			@Config.RangeInt(min=1)
-			public int rainCollectorFillChance = 6;
-			
-			@Config.Comment("Whether to register the cooling and heating enchantments")
-			@Config.Name("RegisterEnchantments")
-			@Config.RequiresMcRestart
-			public boolean registerEnchantments = true;
-			
-			@Config.Comment("Duration of short heat/cold resistance potions, in ticks")
-			@Config.Name("ResistancePotionDurationShort")
-			@Config.RequiresMcRestart
-			@Config.RangeInt(min=1)
-			public int resistancePotionDurationShort = 1200;
-			
-			@Config.Comment("Duration of long heat/cold resistance potions, in ticks")
-			@Config.Name("ResistancePotionDurationLong")
-			@Config.RequiresMcRestart
-			@Config.RangeInt(min=1)
-			public int resistancePotionDurationLong = 2400;
-			
-			@Config.Comment("How often player temperature and thirst are regularly synced, in ticks")
-			@Config.Name("RoutinePacketDelay")
-			@Config.RangeInt(min=0)
-			public int routinePacketDelay = 30;
-		}
-		
-		public class ConfigTemperature
-		{
-			//Not synchronized with clients
-			//TODO it probably should be though, because of thermometers and such
-			
-			@Config.Comment("Altitude Temperature Multiplier - How strongly altitude affects temperature")
-			@Config.Name("AltitudeMultiplier")
-			@Config.RangeInt
-			public int altitudeMultiplier = 3;
-			
-			@Config.Comment("Biome Temperature Multiplier - The maximum temperature change in any biome")
-			@Config.Name("BiomeMultiplier")
-			@Config.RangeInt
-			public int biomeMultiplier = 10;
-			
-			@Config.Comment("Underground Effect - Whether being deep underground reduces some surface temperature effects")
-			@Config.Name("UndergroundEffect")
-			public boolean undergroundEffect = true;
-			
-			@Config.Comment("Underground Effect Cutoff - Y Level where surface temperature effects do nothing")
-			@Config.Name("UndergroundEffectCutoff")
-			@Config.RangeInt(min=0, max=64)
-			public int undergroundEffectCutoff = 30;
-			
-			@Config.Comment("Time Temperature Multiplier - How strongly time affects temperature")
-			@Config.Name("TimeMultiplier")
-			@Config.RangeInt
-			public int timeMultiplier = 3;
-			
-			@Config.Comment("Time Temperature Day - Whether time changes temperature during the day")
-			@Config.Name("TimeTemperatureDay")
-			public boolean timeTemperatureDay = true;
-			
-			@Config.Comment("Time Temperature Night - Whether time changes temperature during the night")
-			@Config.Name("TimeTemperatureNight")
-			public boolean timeTemperatureNight = true;
-			
-			@Config.Comment("Time Temperature Shade - Effect of shade on time temperature, only applies when time temperature is hot")
-			@Config.Name("TimeTemperatureShade")
-			public int timeTemperatureShade = -2;
-			
-			@Config.Comment("Time Biome Temperature Multiplier - How strongly different biomes effect day/night temperature")
-			@Config.Name("TimeBiomeMultiplier")
-			@Config.RangeDouble(min=1.0,max=1000000.0)
-			public double timeBiomeMultiplier = 1.25d;
+        final Pair<ServerConfigBuilder, ForgeConfigSpec> serverSpecPair = new ForgeConfigSpec.Builder().configure(ServerConfigBuilder::new);
+        SERVER = serverSpecPair.getLeft();
+        SERVER_SPEC = serverSpecPair.getRight();
+    }
 
-			@Config.Comment("Snow Temperature Value - Effect of snowfall on temperature")
-			@Config.Name("SnowValue")
-			@Config.RangeInt
-			public int snowValue = -10;
-			
-			@Config.Comment("Sprinting Temperature Value - Effect of sprinting on temperature")
-			@Config.Name("SprintingValue")
-			@Config.RangeInt
-			public int sprintingValue = 3;
-			
-			@Config.Comment("Wet Temperature Value - Effect of being wet on temperature")
-			@Config.Name("WetValue")
-			@Config.RangeInt
-			public int wetValue = -7;
-			
-			@Config.Comment("Temperature Max Speed - Maximum time in ticks for a player temperature change")
-			@Config.Name("TemperatureTickMax")
-			@Config.RangeInt(min=20)
-			public int temperatureTickMax = 400;
-			
-			@Config.Comment("Temperature Min Speed - Minimum time in ticks for a player temperature change")
-			@Config.Name("TemperatureTickMin")
-			@Config.RangeInt(min=20)
-			public int temperatureTickMin = 20;
-			
-			@Config.Comment("TemperatureTickDangerBoost - How much faster in ticks temperature changes happen when escaping dangerous temperatures")
-			@Config.Name("TemperatureTickDangerBoost")
-			@Config.RangeInt(min=0)
-			public int temperatureTickDangerBoost = 60;
-			
-			@Config.Comment("Enchantment Temperature Change - Effect of temperature enchantments")
-			@Config.Name("EnchantmentTemperature")
-			@Config.RangeInt
-			public int enchantmentTemperature = 1;
-			
-			@Config.Comment("Heater Temperature Change - Strength of heaters / chillers")
-			@Config.Name("HeaterTemperature")
-			@Config.RangeInt(min=-1000000, max=1000000)
-			public int heaterTemperature = 10;
-			
-			@Config.Comment("Heater Full Power Range - Distance where a heater / chiller starts to lose strength")
-			@Config.Name("HeaterFullPowerRange")
-			@Config.RangeDouble(min=0, max=50)
-			public double heaterFullPowerRange = 16.0d;
-			
-			@Config.Comment("Heater Max Range - Distance where a heater / chiller has no effect")
-			@Config.Name("HeaterMaxRange")
-			@Config.RangeDouble(min=0, max=50)
-			public double heaterMaxRange = 32.0d;
-			
-			@Config.Comment("Blocks Tiles Separate - Whether blocks and tile entities should have temperature calculated separately, for example, if this is set to true heaters and campfires will both add their heat individually")
-			@Config.Name("BlocksTilesSeparate")
-			public boolean blocksTilesSeparate = true;
-			
-			@Config.Comment("Stacking Temperature - Whether multiple blocks in a vicinity should combine their effect")
-			@Config.Name("StackingTemperature")
-			public boolean stackingTemperature = true;
-			
-			@Config.Comment("Stacking Temperature Limit - How much more extreme block temperature can be from stacking temperature")
-			@Config.Name("StackingTemperatureLimit")
-			@Config.RangeDouble(min=0, max = 1000000)
-			public double stackingTemperatureLimit = 3;
-			
-			@Config.Comment("Temperature Damage Scaling - Extra damage from hyperthermia and hypothermia over time")
-			@Config.Name("TemperatureDamageScaling")
-			@Config.RangeDouble(min=0.0)
-			public double temperatureDamageScaling = 0.0d;
-			
-			@Config.Comment("TemperatureDamageDuration - Duration in ticks of hypothermia and hyperthermia")
-			@Config.Name("TemperatureDamageDuration")
-			@Config.RangeInt(min=0)
-			public int temperatureDamageDuration = 400;
-			
-			
-		}
-		public class ConfigThirst
-		{
-			//Not synchronized with clients
-			//Shouldn't need to be either, the thirst server sync is aggressive
+    public static void register() {
+        ModLoadingContext.get().registerConfig(Type.CLIENT, CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(Type.SERVER, SERVER_SPEC);
+    }
 
-			@Config.Comment("Global Thirst Exhaustion Multiplier - Multiplies all thirst exhaustion values (1.0 = default, 2.0 = twice as fast, 0.0 = disabled)")
-			@Config.Name("ThirstExhaustionMultiplier")
-			@Config.RangeDouble(min=0.0)
-			public double thirstExhaustionMultiplier = 1.0d;
-			
-			@Config.Comment("Thirst Exhaustion Limit - How exhausted the player must get before they lose thirst.")
-			@Config.Name("ThirstExhaustionLimit")
-			@Config.RangeDouble(min=1.0)
-			public double thirstExhaustionLimit = 4.0d;
-			
-			@Config.Comment("Thirsty Strength - Strength of the Thirsty Effect")
-			@Config.Name("ThirstyStrength")
-			@Config.RangeDouble(min=0.0)
-			public double thirstyStrength = 0.025d;
-			
-			@Config.Comment("Thirst Attacking - How exhausting attacking enemies is")
-			@Config.Name("ThirstAttacking")
-			@Config.RangeDouble(min=0.0)
-			public double thirstAttacking = 0.3d;
-			
-			@Config.Comment("Thirst Break Block - How exhausting breaking blocks is")
-			@Config.Name("ThirstBreakBlock")
-			@Config.RangeDouble(min=0.0)
-			public double thirstBreakBlock = 0.025d;
-			
-			@Config.Comment("Thirst Sprint Jump - How exhausting jumping while sprinting is")
-			@Config.Name("ThirstSprintJump")
-			@Config.RangeDouble(min=0.0)
-			public double thirstSprintJump = 0.8d;
-			
-			@Config.Comment("Thirst Jump - How exhausting jumping without sprinting is")
-			@Config.Name("ThirstJump")
-			@Config.RangeDouble(min=0.0)
-			public double thirstJump = 0.2d;
-			
-			@Config.Comment("Thirst Base Movement - How exhausting any kind of movement is")
-			@Config.Name("ThirstBaseMovement")
-			@Config.RangeDouble(min=0.0)
-			public double thirstBaseMovement = 0.01d;
-			
-			@Config.Comment("Thirst Swimming Movement - How exhausting swimming movement is")
-			@Config.Name("ThirstSwimmingMovement")
-			@Config.RangeDouble(min=0.0)
-			public double thirstSwimmingMovement = 0.015d;
-			
-			@Config.Comment("Thirst Sprinting Movement - How exhausting sprinting movement is")
-			@Config.Name("ThirstSprintingMovement")
-			@Config.RangeDouble(min=0.0)
-			public double thirstSprintingMovement = 0.1d;
-			
-			@Config.Comment("Thirst Walking Movement - How exhausting walking movement is")
-			@Config.Name("ThirstWalkingMovement")
-			@Config.RangeDouble(min=0.0)
-			public double thirstWalkingMovement = 0.01d;
+    // Automatically syncs config values to the API whenever the config is loaded or changed
+    @SubscribeEvent
+    public static void onModConfigEvent(final ModConfig.ModConfigEvent event) {
+        if (event.getConfig().getModId().equals(SimpleDifficulty.MODID)) {
+            sendLocalClientConfigToAPI();
+            sendLocalServerConfigToAPI();
+        }
+    }
 
-			@Config.Comment("Whether the player can get parasites from drinking unclean water")
-			@Config.Name("ThirstParasites")
-			public boolean thirstParasites = false;
-			
-			@Config.Comment("The chance of parasites from drinking unclean water")
-			@Config.Name("ThirstParasitesChance")
-			@Config.RangeDouble(min=0.0, max=1.0)
-			public double thirstParasitesChance = 0.04d;
-			
-			@Config.Comment("The duration parasites last")
-			@Config.Name("ThirstParasitesDuration")
-			@Config.RangeInt(min=1)
-			public int thirstParasitesDuration = 1200;
-			
-			@Config.Comment("How strongly parasites make a player hungry (0.005 is same speed as hunger, 0 to disable")
-			@Config.Name("ThirstParasitesHunger")
-			@Config.RangeDouble(min=0.0)
-			public double thirstParasitesHunger = 0.02d;
-			
-			@Config.Comment("The chance a player takes damage from parasites (1 is poison speed, 0 to disable)")
-			@Config.Name("ThirstParasitesDamage")
-			@Config.RangeDouble(min=0.0, max=1.0)
-			public double thirstParasitesDamage = 0.2d;
-			
-			@Config.Comment("Thirst Damage Scaling - Extra damage from dehydration over time")
-			@Config.Name("ThirstDamageScaling")
-			@Config.RangeDouble(min=0.0)
-			public double thirstDamageScaling = 0.0d;
-			
-			@Config.Comment("Whether drinking salt water (from oceans/large bodies) causes the Thirsty effect. If false, it acts like normal fresh water.")
-			@Config.Name("SaltWaterThirst")
-			public boolean saltWaterThirst = true;
+    public static class ClientConfigBuilder {
+        public final ForgeConfigSpec.BooleanValue enableThermometer;
+        public final ForgeConfigSpec.BooleanValue hudThermometer;
+        public final ForgeConfigSpec.IntValue hudThermometerX;
+        public final ForgeConfigSpec.IntValue hudThermometerY;
+        public final ForgeConfigSpec.IntValue thirstOffsetX;
+        public final ForgeConfigSpec.IntValue thirstOffsetY;
+        public final ForgeConfigSpec.BooleanValue alternateTemp;
+        public final ForgeConfigSpec.BooleanValue drawThirstSaturation;
+        public final ForgeConfigSpec.BooleanValue clientdebug;
+        public final ForgeConfigSpec.BooleanValue temperatureReadout;
+        public final ForgeConfigSpec.BooleanValue classicHUDTemperature;
+        public final ForgeConfigSpec.BooleanValue classicHUDThirst;
+        public final ForgeConfigSpec.BooleanValue heaterParticles;
 
-			
-		}
-	}
-	
-	///
-	/// Client Options
-	///
-	
-	public static class ConfigClientConfig {
-		@Config.Comment("Thermometer Configuration")
-		@Config.Name("Thermometer")
-		public final ConfigClientThermometer thermometer = new ConfigClientThermometer();
-		
-		@Config.Comment("HUD Positioning Configuration - Allows fine-tuning of element positions")
-		@Config.Name("HUD Positioning")
-		public final ConfigClientHUD hudPositioning = new ConfigClientHUD();
-		
-		@Config.Comment("Whether the alternate temperature display is enabled")
-		@Config.Name("AlternateTemperature")
-		public boolean alternateTemp = true;
-		
-		@Config.Comment("Whether to draw thirst saturation on the HUD")
-		@Config.Name("DrawThirstSaturation")
-		public boolean drawThirstSaturation = true;
-		
-		@Config.Comment("Debug mode for clients")
-		@Config.Name("Client DebugMode")
-		public boolean clientdebug = false;
-		
-		@Config.Comment("Debug temperature readout")
-		@Config.Name("TemperatureReadout")
-		public boolean temperatureReadout = false;
-		
-		@Config.Comment("Enables the classic temperature icon")
-		@Config.Name("ClassicHUDTemperature")
-		public boolean classicHUDTemperature = false;
-		
-		@Config.Comment("Enables the classic thirst bar")
-		@Config.Name("ClassicHUDThirst")
-		public boolean classicHUDThirst = false;
-		
-		@Config.Comment("Enables chiller and heater particles")
-		@Config.Name("HeaterParticles")
-		public boolean heaterParticles = true;
-		
-		public class ConfigClientThermometer
-		{
-			@Config.Comment("Whether thermometers display the correct temperature. Only disable this if you are trying to determine what's lagging.")
-			@Config.Name("EnableThermometer")
-			public boolean enableThermometer = true;
-			
-			@Config.Comment("Whether thermometers in your inventory will display on your HUD")
-			@Config.Name("HUDThermometer")
-			public boolean hudThermometer = true;
-			
-			@Config.Comment("How far left or right the Thermometer HUD is from the default position")
-			@Config.Name("XOffset")
-			public int hudThermometerX = 0;
-			
-			@Config.Comment("How far up or down the Thermometer HUD is from the default position")
-			@Config.Name("YOffset")
-			public int hudThermometerY = 0;
-		}
+        public ClientConfigBuilder(ForgeConfigSpec.Builder builder) {
+            builder.comment("Thermometer Configuration").push("Thermometer");
+            enableThermometer = builder.define("EnableThermometer", true);
+            hudThermometer = builder.define("HUDThermometer", true);
+            hudThermometerX = builder.defineInRange("XOffset", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            hudThermometerY = builder.defineInRange("YOffset", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            builder.pop();
 
-		public class ConfigClientHUD {
-			@Config.Comment("Horizontal offset for the Thirst HUD (positive = right, negative = left). Default is -1 for optimal alignment above the hunger bar")
-			@Config.Name("Thirst Offset X")
-			public int thirstOffsetX = -1;
+            builder.comment("HUD Positioning Configuration").push("HUD Positioning");
+            thirstOffsetX = builder.defineInRange("Thirst Offset X", -1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            thirstOffsetY = builder.defineInRange("Thirst Offset Y", 9, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            builder.pop();
 
-			@Config.Comment("Vertical offset for the Thirst HUD (positive = down, negative = up). Default is 9 for optimal alignment above the hunger bar")
-			@Config.Name("Thirst Offset Y")
-			public int thirstOffsetY = 9;
-		}
-	}
-	
-	///
-	/// Event Handler
-	///
-	
-	@Mod.EventBusSubscriber(modid = SimpleDifficulty.MODID)
-	private static class EventHandler
-	{
-		@SubscribeEvent
-		@SideOnly(Side.CLIENT)
-		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
-		{
-			if(event.getModID().equals(SimpleDifficulty.MODID))
-			{
-				ConfigManager.sync(SimpleDifficulty.MODID, Config.Type.INSTANCE);
-				sendLocalClientConfigToAPI();
-				
-				//Make sure there's a world running
-				if(event.isWorldRunning())
-				{
-					//Make new message
-					MessageConfigLAN message = new MessageConfigLAN();
-					
-					//Send to server
-					PacketHandler.instance.sendToServer(message);
-				}
-				else
-				{
-					//Title Screen
-					sendLocalServerConfigToAPI();
-				}
-			}
-		}
-	}
-	
-	//TODO proper hash mapping so adding new config is easier, but it's not very important
-	//It didn't work the first time I tried, that spurred on the creation of DebugVerify
-	
-	public static void sendLocalClientConfigToAPI() {
-		//TODO if it's client side, it doesn't need to be synchronized
-		//So it should just be referenced directly instead of using this hash map stuff?...
+            builder.comment("Client configuration").push("Client");
+            alternateTemp = builder.define("AlternateTemperature", true);
+            drawThirstSaturation = builder.define("DrawThirstSaturation", true);
+            clientdebug = builder.define("Client DebugMode", false);
+            temperatureReadout = builder.define("TemperatureReadout", false);
+            classicHUDTemperature = builder.define("ClassicHUDTemperature", false);
+            classicHUDThirst = builder.define("ClassicHUDThirst", false);
+            heaterParticles = builder.define("HeaterParticles", true);
+            builder.pop();
+        }
+    }
 
-		//Place in Client Config
-		
-		ClientConfig.instance.put(ClientOptions.DEBUG, client.clientdebug);
-		ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, client.drawThirstSaturation);
-		ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, client.thermometer.enableThermometer);
-		ClientConfig.instance.put(ClientOptions.ALTERNATE_TEMP, client.alternateTemp);
-		ClientConfig.instance.put(ClientOptions.HUD_THERMOMETER, client.thermometer.hudThermometer);
-		ClientConfig.instance.put(ClientOptions.HUD_THERMOMETERX, client.thermometer.hudThermometerX);
-		ClientConfig.instance.put(ClientOptions.HUD_THERMOMETERY, client.thermometer.hudThermometerY);
-		ClientConfig.instance.put(ClientOptions.TEMPERATURE_READOUT, client.temperatureReadout);
-		ClientConfig.instance.put(ClientOptions.CLASSICHUD_TEMPERATURE, client.classicHUDTemperature);
-		ClientConfig.instance.put(ClientOptions.CLASSICHUD_THIRST, client.classicHUDThirst);
-		ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, client.heaterParticles);
-		ClientConfig.instance.put(ClientOptions.THIRST_HUD_X, client.hudPositioning.thirstOffsetX);
-		ClientConfig.instance.put(ClientOptions.THIRST_HUD_Y, client.hudPositioning.thirstOffsetY);
-	}
-	
-	public static void sendLocalServerConfigToAPI()
-	{
-	    //Place in Server Config
-	    
-	    ServerConfig.instance.put(ServerOptions.DEBUG, server.debug);
-	    ServerConfig.instance.put(ServerOptions.THIRST_ENABLED, server.thirstEnabled);
-	    ServerConfig.instance.put(ServerOptions.THIRST_DRINK_BLOCKS, server.thirstDrinkBlocks);
-	    ServerConfig.instance.put(ServerOptions.THIRST_DRINK_RAIN, server.thirstDrinkRain);
-	    ServerConfig.instance.put(ServerOptions.PEACEFUL_DANGER, server.peacefulDanger);
-	    ServerConfig.instance.put(ServerOptions.TEMPERATURE_ENABLED, server.temperatureEnabled);
-	    ServerConfig.instance.put(ServerOptions.TEMPERATURE_TE_ENABLED, server.temperatureTEEnabled);
-	    ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, server.canteenDoses);
-	    ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, server.strictHeaters);
-	    ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
-	    ServerConfig.instance.put(ServerOptions.DRAGON_CANTEEN_DOSES, server.dragonCanteenDoses);
-	    ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
-	    ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
-	    ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
-	}
-	
-	private static MessageUpdateConfig getNewConfigMessage()
-	{
-	    NBTTagCompound compound = new NBTTagCompound();
-	    
-	    compound.setString(ServerOptions.DEBUG.getName(), ""+server.debug);
-	    compound.setString(ServerOptions.THIRST_ENABLED.getName(), ""+server.thirstEnabled);
-	    compound.setString(ServerOptions.THIRST_DRINK_BLOCKS.getName(), ""+server.thirstDrinkBlocks);
-	    compound.setString(ServerOptions.THIRST_DRINK_RAIN.getName(), ""+server.thirstDrinkRain);
-	    compound.setString(ServerOptions.PEACEFUL_DANGER.getName(), ""+server.peacefulDanger);
-	    compound.setString(ServerOptions.TEMPERATURE_ENABLED.getName(), ""+server.temperatureEnabled);
-	    compound.setString(ServerOptions.TEMPERATURE_TE_ENABLED.getName(), ""+server.temperatureTEEnabled);
-	    compound.setString(ServerOptions.CANTEEN_DOSES.getName(), ""+server.canteenDoses);
-	    compound.setString(ServerOptions.STRICT_HEATERS.getName(), ""+server.strictHeaters);
-	    compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), ""+server.ironCanteenDoses);
-	    compound.setString(ServerOptions.DRAGON_CANTEEN_DOSES.getName(), ""+server.dragonCanteenDoses);
-	    compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
-	    compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
-	    compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);
-	    
-	    return new MessageUpdateConfig(compound);
-	}
-	
-	public static void sendServerConfigToPlayer(EntityPlayerMP player)
-	{
-		SimpleDifficulty.logger.info("Sending Configuration to player: "+player.getName());
-		PacketHandler.instance.sendTo(getNewConfigMessage(), player);
-	}
-	
-	public static void sendServerConfigToAllPlayers()
-	{
-		SimpleDifficulty.logger.info("Sending Configuration to all players");
-		PacketHandler.instance.sendToAll(getNewConfigMessage());
-	}
+    public static class ServerConfigBuilder {
+        // General Server Options
+        public final ForgeConfigSpec.BooleanValue thirstEnabled;
+        public final ForgeConfigSpec.BooleanValue thirstDrinkBlocks;
+        public final ForgeConfigSpec.BooleanValue thirstDrinkRain;
+        public final ForgeConfigSpec.BooleanValue peacefulDanger;
+        public final ForgeConfigSpec.BooleanValue temperatureEnabled;
+        public final ForgeConfigSpec.BooleanValue temperatureTEEnabled;
+        public final ForgeConfigSpec.IntValue canteenDoses;
+        public final ForgeConfigSpec.BooleanValue strictHeaters;
+        public final ForgeConfigSpec.IntValue ironCanteenDoses;
+        public final ForgeConfigSpec.IntValue dragonCanteenDoses;
+        public final ForgeConfigSpec.BooleanValue infinitePurifiedWater;
+        public final ForgeConfigSpec.BooleanValue purifiedWaterOpacity;
+        public final ForgeConfigSpec.BooleanValue debug;
+
+        // Miscellaneous
+        public final ForgeConfigSpec.IntValue campfireDecayChance;
+        public final ForgeConfigSpec.IntValue campfireStickIgniteChance;
+        public final ForgeConfigSpec.IntValue campfireSpitDelay;
+        public final ForgeConfigSpec.IntValue campfireSpitSize;
+        public final ForgeConfigSpec.BooleanValue campfireSpitExperience;
+        public final ForgeConfigSpec.ConfigValue<? extends String> campfireSpitBlacklist; // Simplified for now
+        public final ForgeConfigSpec.BooleanValue campfireSpitBlacklistIsWhitelist;
+        public final ForgeConfigSpec.BooleanValue goldenAppleJuiceEffect;
+        public final ForgeConfigSpec.BooleanValue iceDropsChunks;
+        public final ForgeConfigSpec.BooleanValue magmaDropsChunks;
+        public final ForgeConfigSpec.IntValue rainCollectorFillChance;
+        public final ForgeConfigSpec.BooleanValue registerEnchantments;
+        public final ForgeConfigSpec.IntValue resistancePotionDurationShort;
+        public final ForgeConfigSpec.IntValue resistancePotionDurationLong;
+        public final ForgeConfigSpec.IntValue routinePacketDelay;
+
+        // Temperature
+        public final ForgeConfigSpec.IntValue altitudeMultiplier;
+        public final ForgeConfigSpec.IntValue biomeMultiplier;
+        public final ForgeConfigSpec.BooleanValue undergroundEffect;
+        public final ForgeConfigSpec.IntValue undergroundEffectCutoff;
+        public final ForgeConfigSpec.IntValue timeMultiplier;
+        public final ForgeConfigSpec.BooleanValue timeTemperatureDay;
+        public final ForgeConfigSpec.BooleanValue timeTemperatureNight;
+        public final ForgeConfigSpec.IntValue timeTemperatureShade;
+        public final ForgeConfigSpec.DoubleValue timeBiomeMultiplier;
+        public final ForgeConfigSpec.IntValue snowValue;
+        public final ForgeConfigSpec.IntValue sprintingValue;
+        public final ForgeConfigSpec.IntValue wetValue;
+        public final ForgeConfigSpec.IntValue temperatureTickMax;
+        public final ForgeConfigSpec.IntValue temperatureTickMin;
+        public final ForgeConfigSpec.IntValue temperatureTickDangerBoost;
+        public final ForgeConfigSpec.IntValue enchantmentTemperature;
+        public final ForgeConfigSpec.IntValue heaterTemperature;
+        public final ForgeConfigSpec.DoubleValue heaterFullPowerRange;
+        public final ForgeConfigSpec.DoubleValue heaterMaxRange;
+        public final ForgeConfigSpec.BooleanValue blocksTilesSeparate;
+        public final ForgeConfigSpec.BooleanValue stackingTemperature;
+        public final ForgeConfigSpec.DoubleValue stackingTemperatureLimit;
+        public final ForgeConfigSpec.DoubleValue temperatureDamageScaling;
+        public final ForgeConfigSpec.IntValue temperatureDamageDuration;
+
+        // Thirst
+        public final ForgeConfigSpec.DoubleValue thirstExhaustionMultiplier;
+        public final ForgeConfigSpec.DoubleValue thirstExhaustionLimit;
+        public final ForgeConfigSpec.DoubleValue thirstyStrength;
+        public final ForgeConfigSpec.DoubleValue thirstAttacking;
+        public final ForgeConfigSpec.DoubleValue thirstBreakBlock;
+        public final ForgeConfigSpec.DoubleValue thirstSprintJump;
+        public final ForgeConfigSpec.DoubleValue thirstJump;
+        public final ForgeConfigSpec.DoubleValue thirstBaseMovement;
+        public final ForgeConfigSpec.DoubleValue thirstSwimmingMovement;
+        public final ForgeConfigSpec.DoubleValue thirstSprintingMovement;
+        public final ForgeConfigSpec.DoubleValue thirstWalkingMovement;
+        public final ForgeConfigSpec.BooleanValue thirstParasites;
+        public final ForgeConfigSpec.DoubleValue thirstParasitesChance;
+        public final ForgeConfigSpec.IntValue thirstParasitesDuration;
+        public final ForgeConfigSpec.DoubleValue thirstParasitesHunger;
+        public final ForgeConfigSpec.DoubleValue thirstParasitesDamage;
+        public final ForgeConfigSpec.DoubleValue thirstDamageScaling;
+        public final ForgeConfigSpec.BooleanValue saltWaterThirst;
+
+        public ServerConfigBuilder(ForgeConfigSpec.Builder builder) {
+            builder.push("Server");
+            thirstEnabled = builder.define("ThirstEnabled", true);
+            thirstDrinkBlocks = builder.define("ThirstDrinkBlocks", true);
+            thirstDrinkRain = builder.define("ThirstDrinkRain", true);
+            peacefulDanger = builder.define("PeacefulDanger", false);
+            temperatureEnabled = builder.define("TemperatureEnabled", true);
+            temperatureTEEnabled = builder.define("TemperatureTileEntities", true);
+            canteenDoses = builder.defineInRange("CanteenDoses", 3, 1, Integer.MAX_VALUE);
+            strictHeaters = builder.define("StrictHeaters", true);
+            ironCanteenDoses = builder.defineInRange("IronCanteenDoses", 8, 1, Integer.MAX_VALUE);
+            dragonCanteenDoses = builder.defineInRange("DragonCanteenDoses", 30, 1, Integer.MAX_VALUE);
+            infinitePurifiedWater = builder.define("Infinite Purified Water", false);
+            purifiedWaterOpacity = builder.define("Brighter Purified Water", false);
+            debug = builder.define("DebugMode", false);
+            builder.pop();
+
+            builder.push("Miscellaneous");
+            campfireDecayChance = builder.defineInRange("CampfireDecayChance", 2, 1, Integer.MAX_VALUE);
+            campfireStickIgniteChance = builder.defineInRange("CampfireStickIgniteChance", 5, 1, Integer.MAX_VALUE);
+            campfireSpitDelay = builder.defineInRange("CampfireSpitDelay", 35, 1, Integer.MAX_VALUE);
+            campfireSpitSize = builder.defineInRange("CampfireSpitSize", 3, 1, 10);
+            campfireSpitExperience = builder.define("CampfireSpitExperience", true);
+            campfireSpitBlacklist = builder.defineList("CampfireSpitBlacklist", java.util.Collections.emptyList(), o -> true);
+            campfireSpitBlacklistIsWhitelist = builder.define("CampfireSpitBlacklistIsWhitelist", false);
+            goldenAppleJuiceEffect = builder.define("GoldenAppleJuiceEffect", true);
+            iceDropsChunks = builder.define("IceDropsChunks", true);
+            magmaDropsChunks = builder.define("MagmaDropsChunks", true);
+            rainCollectorFillChance = builder.defineInRange("RainCollectorFillChance", 6, 1, Integer.MAX_VALUE);
+            registerEnchantments = builder.define("RegisterEnchantments", true);
+            resistancePotionDurationShort = builder.defineInRange("ResistancePotionDurationShort", 1200, 1, Integer.MAX_VALUE);
+            resistancePotionDurationLong = builder.defineInRange("ResistancePotionDurationLong", 2400, 1, Integer.MAX_VALUE);
+            routinePacketDelay = builder.defineInRange("RoutinePacketDelay", 30, 0, Integer.MAX_VALUE);
+            builder.pop();
+
+            builder.push("Temperature");
+            altitudeMultiplier = builder.defineInRange("AltitudeMultiplier", 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            biomeMultiplier = builder.defineInRange("BiomeMultiplier", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            undergroundEffect = builder.define("UndergroundEffect", true);
+            undergroundEffectCutoff = builder.defineInRange("UndergroundEffectCutoff", 30, 0, 64);
+            timeMultiplier = builder.defineInRange("TimeMultiplier", 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            timeTemperatureDay = builder.define("TimeTemperatureDay", true);
+            timeTemperatureNight = builder.define("TimeTemperatureNight", true);
+            timeTemperatureShade = builder.defineInRange("TimeTemperatureShade", -2, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            timeBiomeMultiplier = builder.defineInRange("TimeBiomeMultiplier", 1.25d, 1.0d, 1000000.0d);
+            snowValue = builder.defineInRange("SnowValue", -10, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            sprintingValue = builder.defineInRange("SprintingValue", 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            wetValue = builder.defineInRange("WetValue", -7, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            temperatureTickMax = builder.defineInRange("TemperatureTickMax", 400, 20, Integer.MAX_VALUE);
+            temperatureTickMin = builder.defineInRange("TemperatureTickMin", 20, 20, Integer.MAX_VALUE);
+            temperatureTickDangerBoost = builder.defineInRange("TemperatureTickDangerBoost", 60, 0, Integer.MAX_VALUE);
+            enchantmentTemperature = builder.defineInRange("EnchantmentTemperature", 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            heaterTemperature = builder.defineInRange("HeaterTemperature", 10, -1000000, 1000000);
+            heaterFullPowerRange = builder.defineInRange("HeaterFullPowerRange", 16.0d, 0.0d, 50.0d);
+            heaterMaxRange = builder.defineInRange("HeaterMaxRange", 32.0d, 0.0d, 50.0d);
+            blocksTilesSeparate = builder.define("BlocksTilesSeparate", true);
+            stackingTemperature = builder.define("StackingTemperature", true);
+            stackingTemperatureLimit = builder.defineInRange("StackingTemperatureLimit", 3.0d, 0.0d, 1000000.0d);
+            temperatureDamageScaling = builder.defineInRange("TemperatureDamageScaling", 0.0d, 0.0d, Double.MAX_VALUE);
+            temperatureDamageDuration = builder.defineInRange("TemperatureDamageDuration", 400, 0, Integer.MAX_VALUE);
+            builder.pop();
+
+            builder.push("Thirst");
+            thirstExhaustionMultiplier = builder.defineInRange("ThirstExhaustionMultiplier", 1.0d, 0.0d, Double.MAX_VALUE);
+            thirstExhaustionLimit = builder.defineInRange("ThirstExhaustionLimit", 4.0d, 1.0d, Double.MAX_VALUE);
+            thirstyStrength = builder.defineInRange("ThirstyStrength", 0.025d, 0.0d, Double.MAX_VALUE);
+            thirstAttacking = builder.defineInRange("ThirstAttacking", 0.3d, 0.0d, Double.MAX_VALUE);
+            thirstBreakBlock = builder.defineInRange("ThirstBreakBlock", 0.025d, 0.0d, Double.MAX_VALUE);
+            thirstSprintJump = builder.defineInRange("ThirstSprintJump", 0.8d, 0.0d, Double.MAX_VALUE);
+            thirstJump = builder.defineInRange("ThirstJump", 0.2d, 0.0d, Double.MAX_VALUE);
+            thirstBaseMovement = builder.defineInRange("ThirstBaseMovement", 0.01d, 0.0d, Double.MAX_VALUE);
+            thirstSwimmingMovement = builder.defineInRange("ThirstSwimmingMovement", 0.015d, 0.0d, Double.MAX_VALUE);
+            thirstSprintingMovement = builder.defineInRange("ThirstSprintingMovement", 0.1d, 0.0d, Double.MAX_VALUE);
+            thirstWalkingMovement = builder.defineInRange("ThirstWalkingMovement", 0.01d, 0.0d, Double.MAX_VALUE);
+            thirstParasites = builder.define("ThirstParasites", false);
+            thirstParasitesChance = builder.defineInRange("ThirstParasitesChance", 0.04d, 0.0d, 1.0d);
+            thirstParasitesDuration = builder.defineInRange("ThirstParasitesDuration", 1200, 1, Integer.MAX_VALUE);
+            thirstParasitesHunger = builder.defineInRange("ThirstParasitesHunger", 0.02d, 0.0d, Double.MAX_VALUE);
+            thirstParasitesDamage = builder.defineInRange("ThirstParasitesDamage", 0.2d, 0.0d, 1.0d);
+            thirstDamageScaling = builder.defineInRange("ThirstDamageScaling", 0.0d, 0.0d, Double.MAX_VALUE);
+            saltWaterThirst = builder.define("SaltWaterThirst", true);
+            builder.pop();
+        }
+    }
+
+    public static void sendLocalClientConfigToAPI() {
+        ClientConfig.instance.put(ClientOptions.DEBUG, CLIENT.clientdebug.get());
+        ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, CLIENT.drawThirstSaturation.get());
+        ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, CLIENT.enableThermometer.get());
+        ClientConfig.instance.put(ClientOptions.ALTERNATE_TEMP, CLIENT.alternateTemp.get());
+        ClientConfig.instance.put(ClientOptions.HUD_THERMOMETER, CLIENT.hudThermometer.get());
+        ClientConfig.instance.put(ClientOptions.HUD_THERMOMETERX, CLIENT.hudThermometerX.get());
+        ClientConfig.instance.put(ClientOptions.HUD_THERMETERY, CLIENT.hudThermometerY.get());
+        ClientConfig.instance.put(ClientOptions.TEMPERATURE_READOUT, CLIENT.temperatureReadout.get());
+        ClientConfig.instance.put(ClientOptions.CLASSICHUD_TEMPERATURE, CLIENT.classicHUDTemperature.get());
+        ClientConfig.instance.put(ClientOptions.CLASSICHUD_THIRST, CLIENT.classicHUDThirst.get());
+        ClientConfig.instance.put(ClientOptions.HEATER_PARTICLES, CLIENT.heaterParticles.get());
+        ClientConfig.instance.put(ClientOptions.THIRST_HUD_X, CLIENT.thirstOffsetX.get());
+        ClientConfig.instance.put(ClientOptions.THIRST_HUD_Y, CLIENT.thirstOffsetY.get());
+    }
+
+    public static void sendLocalServerConfigToAPI() {
+        ServerConfig.instance.put(ServerOptions.DEBUG, SERVER.debug.get());
+        ServerConfig.instance.put(ServerOptions.THIRST_ENABLED, SERVER.thirstEnabled.get());
+        ServerConfig.instance.put(ServerOptions.THIRST_DRINK_BLOCKS, SERVER.thirstDrinkBlocks.get());
+        ServerConfig.instance.put(ServerOptions.THIRST_DRINK_RAIN, SERVER.thirstDrinkRain.get());
+        ServerConfig.instance.put(ServerOptions.PEACEFUL_DANGER, SERVER.peacefulDanger.get());
+        ServerConfig.instance.put(ServerOptions.TEMPERATURE_ENABLED, SERVER.temperatureEnabled.get());
+        ServerConfig.instance.put(ServerOptions.TEMPERATURE_TE_ENABLED, SERVER.temperatureTEEnabled.get());
+        ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, SERVER.canteenDoses.get());
+        ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, SERVER.strictHeaters.get());
+        ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, SERVER.ironCanteenDoses.get());
+        ServerConfig.instance.put(ServerOptions.DRAGON_CANTEEN_DOSES, SERVER.dragonCanteenDoses.get());
+        ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, SERVER.infinitePurifiedWater.get());
+        ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, SERVER.purifiedWaterOpacity.get());
+        ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, SERVER.saltWaterThirst.get());
+    }
 }

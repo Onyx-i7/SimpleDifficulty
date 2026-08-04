@@ -1,15 +1,23 @@
 package com.charles445.simpledifficulty.client.command;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
+/**
+ * Client command to copy a string to the system clipboard.
+ * Usage: /sdcopy <text>
+ */
 public class ClientCommandCopy extends ClientCommandBase {
 
     @Override
@@ -18,48 +26,34 @@ public class ClientCommandCopy extends ClientCommandBase {
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
-        return "/sdcopy <string>";
+    public LiteralArgumentBuilder<CommandSource> getCommandBuilder() {
+        return LiteralArgumentBuilder.<CommandSource>literal(getName())
+                .then(LiteralArgumentBuilder.<CommandSource>argument("text", StringArgumentType.greedyString())
+                        .executes(this::executeCopy));
     }
 
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args == null || args.length == 0) {
-            sender.sendMessage(new TextComponentString("Usage: " + getUsage(sender)));
-            return;
-        }
-
-        // Check if the world is remote (client-side execution check)
-        if (!sender.getEntityWorld().isRemote) {
-            sender.sendMessage(new TextComponentString("World was not remote, skipping copy execution!"));
-            return;
-        }
-
-        // Performance and Stability Fix: Guard against Headless environments to avoid AWT Toolkit crashes
-        if (GraphicsEnvironment.isHeadless()) {
-            sender.sendMessage(new TextComponentString("Cannot copy to clipboard: Headless environment detected."));
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (String s : args) {
-            sb.append(s).append(" ");
-        }
+    private int executeCopy(CommandContext<CommandSource> context) {
+        String text = StringArgumentType.getString(context, "text");
         
+        if (Minecraft.getInstance().level == null || !Minecraft.getInstance().level.isClientSide) {
+            context.getSource().sendSuccess(new StringTextComponent("World was not remote, skipping copy execution!"), false);
+            return 0;
+        }
+
+        if (GraphicsEnvironment.isHeadless()) {
+            context.getSource().sendSuccess(new StringTextComponent("Cannot copy to clipboard: Headless environment detected."), false);
+            return 0;
+        }
+
         try {
-            String result = sb.toString().trim();
-            StringSelection selection = new StringSelection(result);
+            StringSelection selection = new StringSelection(text);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(selection, null);
-            
-            sender.sendMessage(new TextComponentString("Copied to clipboard!"));
+            context.getSource().sendSuccess(new StringTextComponent("Copied to clipboard!"), false);
+            return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            sender.sendMessage(new TextComponentString("An error occurred while copying to the clipboard."));
+            context.getSource().sendSuccess(new StringTextComponent("An error occurred while copying to the clipboard."), false);
+            return 0;
         }
     }
 }

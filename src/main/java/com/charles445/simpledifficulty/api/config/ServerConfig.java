@@ -1,35 +1,32 @@
 package com.charles445.simpledifficulty.api.config;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
-public class ServerConfig extends ConfigBase
-{
-	
-	/*
-	 *	Server Configuration
-	 *
-	 *	Example Usage: 
-	 *	
-	 *	boolean serverDebug = ServerConfig.instance.getBoolean(ServerOptions.DEBUG);
-	 */
-	
-	public static ServerConfig instance = new ServerConfig();
-	
-	/**
-	 * (Don't use this!) <br>
-	 * Updates the ServerConfig instance with the values from the compound
-	 */
-	public void updateValues(NBTTagCompound compound)
-	{
-		for(String key : compound.getKeySet())
-		{
-			if(values.containsKey(key))
-			{
-				String newValue = compound.getString(key);
-				values.put(key, newValue);
-			}
-		}
-		
-		QuickConfig.updateValues();
-	}
+/**
+ * Server-side configuration holder.
+ * <p>
+ * Example Usage:
+ * <pre>
+ * boolean serverDebug = ServerConfig.instance.getBoolean(ServerOptions.DEBUG);
+ * </pre>
+ */
+public class ServerConfig extends ConfigBase {
+    public static final ServerConfig instance = new ServerConfig();
+
+    /**
+     * (Internal use only)
+     * Updates the ServerConfig instance with values from a CompoundNBT.
+     *
+     * @param compound The NBT compound containing configuration values.
+     */
+    public void updateValues(CompoundNBT compound) {
+        for (String key : compound.getAllKeys()) {
+            if (values.containsKey(key)) {
+                String newValue = compound.getString(key);
+                values.put(key, newValue);
+            }
+        }
+
+        QuickConfig.updateValues();
+    }
 }

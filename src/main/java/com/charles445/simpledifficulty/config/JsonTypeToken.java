@@ -12,48 +12,37 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-public class JsonTypeToken
-{
-	public static Type get(JsonFileName jcfn)
-	{
-		/* pre 3.0
-		switch(jcfn)
-		{
-			case armorTemperatures: 	return new TypeToken<Map<String, JsonTemperature>>(){}.getType();
-			case blockTemperatures: 	return new TypeToken<Map<String, List<JsonPropertyTemperature>>>(){}.getType();
-			case consumableTemperature: return new TypeToken<Map<String, List<JsonConsumableTemperatureMigrate>>>(){}.getType();
-			case consumableThirst: 		return new TypeToken<Map<String, List<JsonConsumableThirstMigrate>>>(){}.getType();
-			case fluidTemperatures: 	return new TypeToken<Map<String, JsonTemperature>>(){}.getType();
-			case heldItemTemperatures:	return new TypeToken<Map<String, List<JsonTemperatureMetadataMigrate>>>(){}.getType();
-			case materialTemperature: 	return new TypeToken<MaterialTemperature>(){}.getType();
-			default: return null;
-		}
-		*/
-		
-		//post 3.0 changes
-		
-		//consumableTemperature: JsonConsumableTemperatureMigrate -> JsonConsumableTemperature
-		//consumableThirst: JsonConsumableThirstMigrate -> JsonConsumableThirst
-		//heldItemTemperatures: JsonTemperatureMetadataMigrate -> JsonTemperatureIdentity
-		
-		switch(jcfn)
-		{
-			case armorTemperatures: 	return new TypeToken<Map<String, List<JsonTemperatureIdentity>>>(){}.getType();
-			case blockTemperatures: 	return new TypeToken<Map<String, List<JsonPropertyTemperature>>>(){}.getType();
-			case consumableTemperature: return new TypeToken<Map<String, List<JsonConsumableTemperature>>>(){}.getType();
-			case consumableThirst: 		return new TypeToken<Map<String, List<JsonConsumableThirst>>>(){}.getType();
-			case dimensionTemperature: 	return new TypeToken<Map<String, JsonTemperature>>(){}.getType();
-			case fluidTemperatures: 	return new TypeToken<Map<String, JsonTemperature>>(){}.getType();
-			case heldItemTemperatures:	return new TypeToken<Map<String, List<JsonTemperatureIdentity>>>(){}.getType();
-			case materialTemperature: 	return new TypeToken<MaterialTemperature>(){}.getType();
-			case extraItems: 			return new TypeToken<Map<String, ExtraItem>>(){}.getType();
-			
-			case armorTemperatures_MIGRATE: return new TypeToken<Map<String, JsonTemperature>>(){}.getType();
-			case consumableTemperature_MIGRATE: return new TypeToken<Map<String, List<JsonConsumableTemperatureMigrate>>>(){}.getType();
-			case consumableThirst_MIGRATE: return new TypeToken<Map<String, List<JsonConsumableThirstMigrate>>>(){}.getType();
-			case heldItemTemperatures_MIGRATE: return new TypeToken<Map<String, List<JsonTemperatureMetadataMigrate>>>(){}.getType();
-			
-			default: return null;
-		}
-	}
+/**
+ * Provides Gson TypeTokens for JSON serialization and deserialization.
+ * Used by JsonConfigInternal to properly handle generic types during JSON processing.
+ */
+public class JsonTypeToken {
+    
+    /**
+     * Gets the appropriate TypeToken for the specified JSON file.
+     *
+     * @param jcfn The JSON file name enum.
+     * @return The Type for the specified file, or null if not found.
+     */
+    public static Type get(JsonFileName jcfn) {
+        return switch (jcfn) {
+            case armorTemperatures -> new TypeToken<Map<String, List<JsonTemperatureIdentity>>>() {}.getType();
+            case blockTemperatures -> new TypeToken<Map<String, List<JsonPropertyTemperature>>>() {}.getType();
+            case consumableTemperature -> new TypeToken<Map<String, List<JsonConsumableTemperature>>>() {}.getType();
+            case consumableThirst -> new TypeToken<Map<String, List<JsonConsumableThirst>>>() {}.getType();
+            case dimensionTemperature -> new TypeToken<Map<String, JsonTemperature>>() {}.getType();
+            case fluidTemperatures -> new TypeToken<Map<String, JsonTemperature>>() {}.getType();
+            case heldItemTemperatures -> new TypeToken<Map<String, List<JsonTemperatureIdentity>>>() {}.getType();
+            case materialTemperature -> new TypeToken<MaterialTemperature>() {}.getType();
+            case extraItems -> new TypeToken<Map<String, ExtraItem>>() {}.getType();
+            
+            // Migration types (legacy support)
+            case armorTemperatures_MIGRATE -> new TypeToken<Map<String, JsonTemperature>>() {}.getType();
+            case consumableTemperature_MIGRATE -> new TypeToken<Map<String, List<JsonConsumableTemperatureMigrate>>>() {}.getType();
+            case consumableThirst_MIGRATE -> new TypeToken<Map<String, List<JsonConsumableThirstMigrate>>>() {}.getType();
+            case heldItemTemperatures_MIGRATE -> new TypeToken<Map<String, List<JsonTemperatureMetadataMigrate>>>() {}.getType();
+            
+            default -> null;
+        };
+    }
 }

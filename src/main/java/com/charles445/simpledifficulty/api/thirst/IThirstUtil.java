@@ -1,6 +1,6 @@
 package com.charles445.simpledifficulty.api.thirst;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
  * Addon developers can use these methods to simulate drinking, find water sources,
  * or create water buckets programmatically.
  * </p>
- *
  */
 public interface IThirstUtil {
 
@@ -22,7 +21,7 @@ public interface IThirstUtil {
      * @return A {@link ThirstEnumBlockPos} containing the water type and position, or {@code null} if no valid water source is found.
      */
     @Nullable
-    ThirstEnumBlockPos traceWater(EntityPlayer player);
+    ThirstEnumBlockPos traceWater(PlayerEntity player);
 
     /**
      * Applies the effects of drinking to a player, including a chance of getting parasites from dirty water.
@@ -32,7 +31,7 @@ public interface IThirstUtil {
      * @param saturation The amount of saturation to restore.
      * @param dirtyChance The probability (0.0f to 1.0f) of applying the parasites effect.
      */
-    void takeDrink(EntityPlayer player, int thirst, float saturation, float dirtyChance);
+    void takeDrink(PlayerEntity player, int thirst, float saturation, float dirtyChance);
 
     /**
      * Applies the effects of drinking clean water to a player (no parasite chance).
@@ -41,7 +40,7 @@ public interface IThirstUtil {
      * @param thirst The amount of thirst to restore.
      * @param saturation The amount of saturation to restore.
      */
-    void takeDrink(EntityPlayer player, int thirst, float saturation);
+    void takeDrink(PlayerEntity player, int thirst, float saturation);
 
     /**
      * Applies the effects of drinking based on a predefined {@link ThirstEnum} type.
@@ -49,7 +48,7 @@ public interface IThirstUtil {
      * @param player The player drinking.
      * @param type The type of water being consumed (determines thirst, saturation, and parasite chance).
      */
-    void takeDrink(EntityPlayer player, ThirstEnum type);
+    void takeDrink(PlayerEntity player, ThirstEnum type);
 
     /**
      * Creates an {@link ItemStack} of a purified water bucket.

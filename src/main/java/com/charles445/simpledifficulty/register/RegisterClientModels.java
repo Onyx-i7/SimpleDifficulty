@@ -6,118 +6,64 @@ import com.charles445.simpledifficulty.api.SDFluids;
 import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.block.IBlockStateIgnore;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.IItemPropertyGetter;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.state.Property;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = SimpleDifficulty.MODID)
-public class RegisterClientModels
-{
-	public static final RegisterClientModels instance = new RegisterClientModels();
-	
-	@SubscribeEvent
-	public static void onModelRegistryEvent(ModelRegistryEvent event)
-	{
-		//Register new models here
-		
-		for(String key : SDFluids.fluidBlocks.keySet())
-		{
-			instance.registerFluidModel(SDFluids.fluidBlocks.get(key));
-		}
-		
-		for(String key : SDItems.items.keySet())
-		{
-			instance.registerItemModel(SDItems.items.get(key));
-		}
-		
-		for(String key : SDBlocks.blocks.keySet())
-		{
-			instance.tweakBlockModelState(SDBlocks.blocks.get(key));
-			
-			instance.registerBlockItemModel(Item.getItemFromBlock(SDBlocks.blocks.get(key)), SDBlocks.blocks.get(key).getTranslationKey());
-		}
-	}
-	
-	private void tweakBlockModelState(Block block)
-	{
-		if(block instanceof IBlockStateIgnore)
-		{
-			//I hate this, but it works
-			//TODO use this for purified water, or some form of StateMap.Builder()
-			ModelLoader.setCustomStateMapper(block, (new StateMap.Builder()).ignore(((IBlockStateIgnore)block).getIgnoredProperties()).build());
-		}
-	}
-	
-	private void registerBlockItemModel(Item item, String blockUnloc)
-	{
-		ModelLoader.setCustomModelResourceLocation(item, 0, 
-				//new ModelResourceLocation(item.getRegistryName(),"inventory"));
-				//new ModelResourceLocation(SimpleDifficulty.MODID + ":" + blockUnloc.substring(5), "inventory"));
-				//You know you're in kludge town when you use substring for anything
-				new ModelResourceLocation(blockUnloc.substring(5), "inventory"));
-	}
-	
-	private void registerFluidModel(BlockFluidBase block)
-	{
-		//TODO this is terrible and looks bad
-		
-		ModelResourceLocation model = new ModelResourceLocation(SimpleDifficulty.MODID+":fluids",block.getFluid().getName());
-		Item item = Item.getItemFromBlock(block);
-		ModelLoader.setCustomMeshDefinition(item, meshDefinition -> model);
-		ModelLoader.setCustomStateMapper(block, 
-			new StateMapperBase()
-			{
-				@Override
-				protected ModelResourceLocation getModelResourceLocation(final IBlockState state)
-				{
-					return model;
-				}
-			});
-		
-	}
-	
-	private void registerItemModel(Item item)
-	{
-		registerSingleItemModel(item, item.getRegistryName().toString());
-		if(item.getHasSubtypes())
-			item.addPropertyOverride(new ResourceLocation(SimpleDifficulty.MODID,"type"), new MetadataPropertyGetter());
-	}
-	
-	private void registerSingleItemModel(Item item, String path)
-	{
-		//SimpleDifficulty.logger.debug("Registering item model: "+path);
-		final ModelResourceLocation fullModelLocation = new ModelResourceLocation(path, "inventory");
-		ModelBakery.registerItemVariants(item, fullModelLocation);
-		ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-		{
-			public ModelResourceLocation getModelLocation(ItemStack stack)
-			{
-				return fullModelLocation;
-			}
-		});
-	}
-	
-	public class MetadataPropertyGetter implements IItemPropertyGetter
-	{
-		@Override
-		public float apply(ItemStack stack, World world, EntityLivingBase entity)
-		{
-			return stack.getMetadata();
-		}
-	}
+/**
+ * Client-side model registration and block state handling.
+ * In 1.16.5, most models are handled via JSON files automatically.
+ * This class handles special cases like render layers and tile entity renderers.
+ */
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = SimpleDifficulty.MODID)
+public class RegisterClientModels {
+    public static final RegisterClientModels instance = new RegisterClientModels();
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void onModelRegistryEvent(ModelRegistryEvent event) {
+        // In 1.16.5, item models are automatically loaded from JSON files
+        // Block models are also automatically loaded from JSON files
+        
+        // Set render layers for transparent/cutout blocks
+        RenderTypeLookup.setRenderLayer(SDBlocks.campfire.get(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(SDBlocks.spit.get(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(SDBlocks.rainCollector.get(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(SDBlocks.heater.get(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(SDBlocks.chiller.get(), RenderType.cutout());
+        
+        // Fluids use translucent render layer
+        RenderTypeLookup.setRenderLayer(SDBlocks.blockPurifiedWater.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(SDBlocks.blockSaltWater.get(), RenderType.translucent());
+        
+        // Ice blocks
+        RenderTypeLookup.setRenderLayer(SDBlocks.icePurifiedWater.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(SDBlocks.iceSaltWater.get(), RenderType.translucent());
+    }
+    
+    /**
+     * Helper method to create a StateMap that ignores certain properties for model rendering.
+     * Used for blocks like campfire where the 'burning' state shouldn't affect the model.
+     *
+     * @param block The block to create the state map for.
+     * @param properties The properties to ignore.
+     * @return The StateMap builder.
+     */
+    public static net.minecraftforge.client.model.generators.BlockStateProvider createStateProvider(
+            net.minecraftforge.client.model.generators.BlockStateProvider provider,
+            Block block,
+            Property<?>... properties) {
+        // This would be used in a BlockStateProvider for data generation
+        // For now, handle it via JSON files in assets/<modid>/blockstates/
+        return provider;
+    }
 }

@@ -1,6 +1,6 @@
 package com.charles445.simpledifficulty.api.thirst;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ public class ThirstUtil {
      * @return A {@link ThirstEnumBlockPos} containing the water type and block position, or {@code null} if no valid water source is found within range.
      */
     @Nullable
-    public static ThirstEnumBlockPos traceWater(EntityPlayer player) {
+    public static ThirstEnumBlockPos traceWater(PlayerEntity player) {
         return internal.traceWater(player);
     }
 
@@ -40,7 +40,7 @@ public class ThirstUtil {
      * @param saturation The amount of saturation to restore.
      * @param thirstyChance The probability (0.0f to 1.0f) of applying the "Thirsty" effect.
      */
-    public static void takeDrink(EntityPlayer player, int thirst, float saturation, float thirstyChance) {
+    public static void takeDrink(PlayerEntity player, int thirst, float saturation, float thirstyChance) {
         internal.takeDrink(player, thirst, saturation, thirstyChance);
     }
 
@@ -51,7 +51,7 @@ public class ThirstUtil {
      * @param thirst The amount of thirst to restore.
      * @param saturation The amount of saturation to restore.
      */
-    public static void takeDrink(EntityPlayer player, int thirst, float saturation) {
+    public static void takeDrink(PlayerEntity player, int thirst, float saturation) {
         internal.takeDrink(player, thirst, saturation);
     }
 
@@ -61,7 +61,7 @@ public class ThirstUtil {
      * @param player The player drinking.
      * @param thirstEnum The type of water being consumed.
      */
-    public static void takeDrink(EntityPlayer player, ThirstEnum thirstEnum) {
+    public static void takeDrink(PlayerEntity player, ThirstEnum thirstEnum) {
         internal.takeDrink(player, thirstEnum);
     }
 

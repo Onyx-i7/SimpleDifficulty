@@ -1,6 +1,13 @@
 package com.charles445.simpledifficulty.api.config;
 
-public interface IConfigOption
-{
-	public String getName();
+/**
+ * Interface for configuration option identifiers.
+ */
+public interface IConfigOption {
+    /**
+     * Gets the string name of this configuration option.
+     *
+     * @return The option name.
+     */
+    String getName();
 }

@@ -1,15 +1,13 @@
 package com.charles445.simpledifficulty.api.config;
 
-public class ClientConfig extends ConfigBase
-{
-	
-	/*
-	 *	Client Configuration
-	 *
-	 *	Example Usage: 
-	 *	
-	 *	boolean clientDebug = ClientConfig.instance.getBoolean(ClientOptions.DEBUG);
-	 */
-	
-	public static ClientConfig instance = new ClientConfig();
+/**
+ * Client-side configuration holder.
+ * <p>
+ * Example Usage:
+ * <pre>
+ * boolean clientDebug = ClientConfig.instance.getBoolean(ClientOptions.DEBUG);
+ * </pre>
+ */
+public class ClientConfig extends ConfigBase {
+    public static final ClientConfig instance = new ClientConfig();
 }

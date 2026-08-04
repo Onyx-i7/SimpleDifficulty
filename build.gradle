@@ -1,118 +1,107 @@
 buildscript {
     repositories {
-        maven {
-            name = 'GTNH Maven'
-            url = 'https://nexus.gtnewhorizons.com/repository/public/'
-        }
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
-        gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.gtnewhorizons:retrofuturagradle:2.0.2'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
-apply plugin: 'com.gtnewhorizons.retrofuturagradle'
+apply plugin: 'maven-publish'
 
-version = "0.8.0"
-group = "com.charles445.simpledifficulty"
+version = '0.8.0'
+group = 'com.charles445.simpledifficulty'
+archivesBaseName = 'simpledifficulty'
 
-// Gradle 9 syntax
-base {
-    archivesName = 'SimpleDifficulty'
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-}
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
-    mcVersion = '1.12.2'
-    username = 'Developer'
+    mappings channel: 'official', version: '1.16.5'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'simpledifficulty'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
+            mods {
+                simpledifficulty {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'simpledifficulty'
+
+            mods {
+                simpledifficulty {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'simpledifficulty', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                simpledifficulty {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 repositories {
-    mavenCentral()
-    maven {
-        name = "SpongePowered"
-        url = "https://repo.spongepowered.org/repository/maven-public/"
-    }
-    maven {
-        name = 'CurseForge'
-        url = 'https://www.cursemaven.com'
-    }
-    maven {
-        name = 'CleanroomMC'
-        url = 'https://maven.cleanroommc.com'
-    }
-    maven {
-        name = 'Fluidlogged API'
-        url = 'https://jitpack.io'
-    }
+    maven { url = "https://www.cursemaven.com" }
 }
 
 dependencies {
-    def mixin = 'zone.rong:mixinbooter:11.12'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    modUtils.enableMixins(mixin)
-    
-    implementation (mixin) {
-        transitive = false
-    }
-    annotationProcessor mixin
-    
-    // Streams
-    implementation rfg.deobf('curse.maven:streams-229769:3109315')
-    implementation rfg.deobf('curse.maven:farseek-229708:3093852')
-
-    // Serene Seasons
-    compileOnly rfg.deobf('curse.maven:sereneseasons-291874:2799213')
-
-    // Dynamic Trees
-    compileOnly rfg.deobf('curse.maven:DynamicTrees-252818:3812473')
-
-    // Inspirations
-    compileOnly rfg.deobf('curse.maven:inspirations-284007:2843007')
-
-    // Fluidlogged API
-    implementation rfg.deobf('com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT')
-
-    // Traveler's Backpack
-    implementation rfg.deobf('curse.maven:travelers-backpack-321117:3150850')
+    // TODO: 1.16.5 versions of these mods will be uncommented later
+    // implementation fg.deobf("curse.maven:serene-seasons-291874:...")
+    // implementation fg.deobf("curse.maven:travelers-backpack-321117:...")
 }
 
-tasks.named('processResources', ProcessResources).configure {
-    def replaceProperties = [
-        version: project.version.toString(),
-        'project.version': project.version.toString()
-    ]
-    inputs.properties replaceProperties
-
-    filesMatching(['mcmod.info', 'pack.mcmeta']) {
-        expand(replaceProperties)
-    }
+mixin {
+    add sourceSets.main, "mixins.simpledifficulty.refmap.json"
+    config "mixins.simpledifficulty.json"
 }
 
-
-tasks.register('apiJar', Jar) {
-    archiveClassifier.set('api')
-    from(sourceSets.main.allJava) {
-        include 'com/charles445/simpledifficulty/api/**'
-    }
-}
-
-artifacts {
-    archives apiJar
-}
-
-tasks.named('jar', Jar).configure {
+jar {
     manifest {
         attributes([
-            'FMLCorePluginContainsFMLMod': 'com.charles445.simpledifficulty.SimpleDifficulty',
-            'ForceLoadAsMod': 'true'
+            "Specification-Title": "simpledifficulty",
+            "Specification-Vendor": "charles445",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version,
+            "Implementation-Vendor" :"charles445",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
+
+jar.finalizedBy('reobfJar')

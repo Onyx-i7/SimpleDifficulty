@@ -1,6 +1,8 @@
 package com.charles445.simpledifficulty.api;
 
+import com.charles445.simpledifficulty.register.RegisterEnchantments;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraftforge.fml.RegistryObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,24 +10,20 @@ import java.util.Map;
 /**
  * Registry class for all SimpleDifficulty enchantments.
  * <p>
- * This class holds references to all enchantments added by the mod. These fields are initialized
- * during the mod's registration phase (preInit) and should not be modified by addons.
+ * This class holds references to all enchantments added by the mod.
+ * <b>Important:</b> Always call {@code .get()} to retrieve the actual Enchantment instance in-game.
  * </p>
- *
  */
 public class SDEnchantments {
 
     /**
-     * A map of all registered SimpleDifficulty enchantments, keyed by their registry name.
-     * <p>
-     * This map is populated during mod initialization and can be used by addons to
-     * iterate over or look up specific enchantments by name.
-     * </p>
-     * <p>
-     * <b>Do not modify this map directly.</b> It is intended for read-only access.
-     * </p>
+     * Map of all registered SimpleDifficulty enchantments, keyed by their registry name.
+     * Useful for iterating over all mod enchantments.
      */
-    public static final Map<String, Enchantment> enchantments = new LinkedHashMap<>();
+    public static final Map<String, RegistryObject<Enchantment>> enchantments = new LinkedHashMap<String, RegistryObject<Enchantment>>() {{
+        put("chilling", RegisterEnchantments.CHILLING);
+        put("heating", RegisterEnchantments.HEATING);
+    }};
 
     /**
      * The chilling enchantment. Applied to armor to reduce the wearer's body temperature.
@@ -33,7 +31,7 @@ public class SDEnchantments {
      * Useful for surviving in hot biomes or near heat sources like campfires and heaters.
      * </p>
      */
-    public static Enchantment chilling;
+    public static final RegistryObject<Enchantment> chilling = RegisterEnchantments.CHILLING;
 
     /**
      * The heating enchantment. Applied to armor to increase the wearer's body temperature.
@@ -41,5 +39,5 @@ public class SDEnchantments {
      * Useful for surviving in cold biomes or near cold sources like chillers.
      * </p>
      */
-    public static Enchantment heating;
+    public static final RegistryObject<Enchantment> heating = RegisterEnchantments.HEATING;
 }

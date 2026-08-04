@@ -3,66 +3,64 @@ package com.charles445.simpledifficulty.block;
 import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import com.charles445.simpledifficulty.handler.FluidHandler;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.Random;
 
-import static com.charles445.simpledifficulty.handler.FluidHandler.canMix;
-import static com.charles445.simpledifficulty.handler.FluidHandler.scheduleMixing;
-
 public class BlockFluidBasicMixable extends BlockFluidBasic {
-    public BlockFluidBasicMixable(Fluid fluid, Material material, String iceBlock) {
-        super(fluid, material, iceBlock);
+    public BlockFluidBasicMixable(Fluid fluid, Properties properties, String iceBlock) {
+        super(fluid, properties, iceBlock);
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
-        super.updateTick(world, pos, state, random);
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.tick(state, world, pos, random);
         
-        if (world.isRemote) return;
+        if (world.isClientSide) return;
 
-        if (canMix(pos, world)) {
-            scheduleMixing(world, pos);
+        if (FluidHandler.canMix(pos, world)) {
+            FluidHandler.scheduleMixing(world, pos);
         }
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighbourPos) {
-        if (world.isRemote) return;
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        if (world.isClientSide) return;
         
-        if (!world.isBlockLoaded(pos)) return;
+        if (!world.isLoaded(pos)) return;
         
-        world.scheduleUpdate(pos, this, tickRate);
+        world.scheduleTick(pos, this, 5);
         
-        if (canMix(pos, world)) {
-            scheduleMixing(world, pos);
+        if (FluidHandler.canMix(pos, world)) {
+            FluidHandler.scheduleMixing(world, pos);
         }
     }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        if (world.isRemote) return;
+    public void onPlace(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (world.isClientSide) return;
 
-        world.scheduleUpdate(pos, this, tickRate);
+        world.scheduleTick(pos, this, 5);
         
-        if (canMix(pos, world)) {
-            scheduleMixing(world, pos);
+        if (FluidHandler.canMix(pos, world)) {
+            FluidHandler.scheduleMixing(world, pos);
         }
     }
 
     @Override
-    public int getLightOpacity(IBlockState state) {
+    public int getLightBlock(BlockState state, IBlockReader world, BlockPos pos) {
         return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
     }
 
     @Override
     protected ItemStack getBottleResult() {
-        return new ItemStack(SDItems.purifiedWaterBottle);
+        return new ItemStack(SDItems.purifiedWaterBottle.get());
     }
 }

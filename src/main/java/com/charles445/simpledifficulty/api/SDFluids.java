@@ -1,81 +1,44 @@
 package com.charles445.simpledifficulty.api;
 
-import com.charles445.simpledifficulty.block.BlockFluidBasic;
-import com.charles445.simpledifficulty.block.BlockFluidBasicMixable;
-import net.minecraftforge.fluids.Fluid;
+import com.charles445.simpledifficulty.register.RegisterFluids;
+import com.charles445.simpledifficulty.register.RegisterBlocks;
+import com.charles445.simpledifficulty.register.RegisterItems;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.fluid.FlowingFluid;
+import net.minecraft.item.Item;
+import net.minecraftforge.fml.RegistryObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Registry class for all SimpleDifficulty fluids and their corresponding blocks.
+ * Registry class for SimpleDifficulty fluids, their blocks, and bucket items.
  * <p>
- * This class holds references to all fluids added by the mod. These fields are initialized
- * during the mod's registration phase (preInit) and should not be modified by addons.
+ * <b>Important 1.16.5 change:</b> In 1.16+, Fluids and their Block representations are separate registries.
+ * A fluid is registered as a {@link FlowingFluid}, and its world representation as a {@link FlowingFluidBlock}.
  * </p>
- * <p>
- * <b>Note:</b> The {@code fluids} map contains the {@link Fluid} instances (used for fluid containers,
- * tanks, etc.), while the {@code fluidBlocks} map contains the actual world blocks that represent
- * these fluids in the world.
- * </p>
- *
  */
 public class SDFluids {
 
-    /**
-     * A map of all registered SimpleDifficulty fluids, keyed by their registry name.
-     * <p>
-     * This map contains {@link Fluid} instances that can be used with fluid containers,
-     * tanks, and other fluid-handling systems.
-     * </p>
-     * <p>
-     * <b>Do not modify this map directly.</b> It is intended for read-only access.
-     * </p>
-     */
-    public static final Map<String, Fluid> fluids = new LinkedHashMap<>();
+    public static final Map<String, RegistryObject<FlowingFluid>> fluids = new LinkedHashMap<String, RegistryObject<FlowingFluid>>() {{
+        put("purifiedwater", RegisterFluids.PURIFIED_WATER);
+        put("saltwater", RegisterFluids.SALT_WATER);
+    }};
 
-    /**
-     * A map of all registered SimpleDifficulty fluid blocks, keyed by their registry name.
-     * <p>
-     * This map contains the actual world blocks that represent these fluids in the world.
-     * These blocks handle rendering, physics, and interactions with other blocks.
-     * </p>
-     * <p>
-     * <b>Do not modify this map directly.</b> It is intended for read-only access.
-     * </p>
-     */
-    public static final Map<String, BlockFluidBasic> fluidBlocks = new LinkedHashMap<>();
+    public static final Map<String, RegistryObject<FlowingFluidBlock>> fluidBlocks = new LinkedHashMap<String, RegistryObject<FlowingFluidBlock>>() {{
+        put("purifiedwater", RegisterFluids.BLOCK_PURIFIED_WATER);
+        put("saltwater", RegisterFluids.BLOCK_SALT_WATER);
+    }};
 
-    /**
-     * The purified water fluid. Safe to drink and provides hydration.
-     * <p>
-     * Can be obtained from rain collectors or by melting purified water ice.
-     * </p>
-     */
-    public static Fluid purifiedWater;
+    // Fluids
+    public static final RegistryObject<FlowingFluid> purifiedWater = RegisterFluids.PURIFIED_WATER;
+    public static final RegistryObject<FlowingFluid> saltWater = RegisterFluids.SALT_WATER;
 
-    /**
-     * The salt water fluid. Unsafe to drink directly (causes thirst).
-     * <p>
-     * Found in ocean biomes and can be desalinated to obtain purified water.
-     * </p>
-     */
-    public static Fluid saltWater;
+    // Fluid Blocks
+    public static final RegistryObject<FlowingFluidBlock> blockPurifiedWater = RegisterFluids.BLOCK_PURIFIED_WATER;
+    public static final RegistryObject<FlowingFluidBlock> blockSaltWater = RegisterFluids.BLOCK_SALT_WATER;
 
-    /**
-     * The purified water fluid block. Represents purified water in the world.
-     * <p>
-     * This is a {@link BlockFluidBasicMixable}, meaning it can mix with other fluids
-     * (e.g., salt water mixing to create brine or other combinations).
-     * </p>
-     */
-    public static BlockFluidBasicMixable blockPurifiedWater;
-
-    /**
-     * The salt water fluid block. Represents salt water in the world.
-     * <p>
-     * This is a standard {@link BlockFluidBasic} that does not have special mixing behavior.
-     * </p>
-     */
-    public static BlockFluidBasic blockSaltWater;
+    // Bucket Items (if handled separately)
+    public static final RegistryObject<Item> purifiedWaterBucket = RegisterItems.PURIFIED_WATER_ITEM;
+    public static final RegistryObject<Item> saltWaterBucket = RegisterItems.SALT_WATER_ITEM;
 }

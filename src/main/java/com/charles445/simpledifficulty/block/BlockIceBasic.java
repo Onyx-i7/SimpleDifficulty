@@ -1,104 +1,81 @@
 package com.charles445.simpledifficulty.block;
 
 import com.charles445.simpledifficulty.api.SDFluids;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockIce;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Random;
 
-public class BlockIceBasic extends BlockIce {
+public class BlockIceBasic extends Block {
     private final String waterBlock;
 
-    public BlockIceBasic(String waterBlock) {
-        this.setSoundType(SoundType.GLASS);
-        this.setHardness(0.5F);
-        this.setLightOpacity(3);
+    public BlockIceBasic(Properties properties, String waterBlock) {
+        super(properties);
         this.waterBlock = waterBlock;
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        player.addStat(Objects.requireNonNull(StatList.getBlockStats(this)));
+    public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity te, ItemStack stack) {
+        player.awardStat(Stats.BLOCK_MINED.get(this));
         player.addExhaustion(0.005F);
 
-        if (this.canSilkHarvest(worldIn, pos, state, player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
-            java.util.List<ItemStack> items = new java.util.ArrayList<>();
-            items.add(this.getSilkTouchDrop(state));
-
-            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0f, true, player);
-            for (ItemStack is : items) {
-                spawnAsEntity(worldIn, pos, is);
-            }
+        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
+            spawnAsEntity(world, pos, new ItemStack(this));
         } else {
-            if (worldIn.provider.doesWaterVaporize()) {
-                worldIn.setBlockToAir(pos);
+            if (world.dimensionType().isUltraWarm()) {
+                world.removeBlock(pos, false);
                 return;
             }
 
-            int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-            harvesters.set(player);
-            this.dropBlockAsItem(worldIn, pos, state, i);
-            harvesters.set(null);
-            Material material = worldIn.getBlockState(pos.down()).getMaterial();
-
-            if (material.blocksMovement() || material.isLiquid()) {
-                worldIn.setBlockState(pos, getFluidStateSafe());
+            int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack);
+            dropExperience(world, pos, 0);
+            
+            BlockState downState = world.getBlockState(pos.below());
+            if (downState.getMaterial().blocksMotion() || downState.getMaterial().isLiquid()) {
+                world.setBlock(pos, getFluidStateSafe(), 3);
             }
         }
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        if (worldIn.isRemote) return; // Extra security on client threads
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand) {
+        if (world.isClientSide) return;
 
-        Biome biome = worldIn.getBiome(pos);
+        Biome biome = world.getBiome(pos).value();
         float f = biome.getTemperature(pos);
 
-        if (Loader.isModLoaded("sereneseasons")) {
-            f = com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge.getTemperatureSafe(worldIn, biome, pos);
-        }
+        f = com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge.getTemperatureSafe(world, biome, pos);
 
-        if (f > 0.15F && worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11 - this.getDefaultState().getLightOpacity()) {
-            this.turnIntoWater(worldIn, pos);
+        if (f > 0.15F && world.getBrightness(LightType.BLOCK_LIGHT, pos) > 11 - state.getLightBlock(world, pos)) {
+            turnIntoWater(world, pos);
         }
     }
 
-    @Override
-    protected void turnIntoWater(World worldIn, BlockPos pos) {
-        if (worldIn.provider.doesWaterVaporize()) {
-            worldIn.setBlockToAir(pos);
+    private void turnIntoWater(World world, BlockPos pos) {
+        if (world.dimensionType().isUltraWarm()) {
+            world.removeBlock(pos, false);
         } else {
-            this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
-            IBlockState fluidState = getFluidStateSafe();
-            worldIn.setBlockState(pos, fluidState);
-            worldIn.neighborChanged(pos, fluidState.getBlock(), pos);
+            BlockState fluidState = getFluidStateSafe();
+            world.setBlock(pos, fluidState, 3);
+            world.neighborChanged(pos, fluidState.getBlock(), pos);
         }
     }
 
-    private IBlockState getFluidStateSafe() {
+    private BlockState getFluidStateSafe() {
         if (SDFluids.fluidBlocks.containsKey(waterBlock)) {
-            Block block = SDFluids.fluidBlocks.get(waterBlock);
-            if (block != null) {
-                return block.getDefaultState();
-            }
+             Block block = SDFluids.fluidBlocks.get(waterBlock);
+             if (block != null) {
+                 return block.defaultBlockState();
+             }
         }
-        return Blocks.WATER.getDefaultState();
+        return Blocks.WATER.defaultBlockState();
     }
 }

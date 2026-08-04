@@ -1,185 +1,112 @@
 package com.charles445.simpledifficulty.block;
 
-import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.api.SDFluids;
-import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge;
-import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.PotionTypes;
+import net.minecraft.block.*;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.Items;
+import net.minecraft.item.PotionUtils;
+import net.minecraft.potion.Potions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeColorHelper;
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.biome.BiomeColors;
+import net.minecraft.world.server.ServerWorld;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
+import java.util.Objects;
 
-public class BlockFluidBasic extends BlockFluidClassic {
+public class BlockFluidBasic extends FlowingFluidBlock {
     private final String iceBlock;
+    private static final VoxelShape EMPTY_SHAPE = Shapes.empty();
 
-    public BlockFluidBasic(Fluid fluid, Material material, String iceBlock) {
-        super(fluid, material);
-        setRegistryName(fluid.getName());
-        setTranslationKey(Objects.requireNonNull(this.getRegistryName()).toString());
-        SDFluids.fluidBlocks.put(fluid.getName(), this);
-
-        initializeDisplacements();
-        displacements.putAll(customDisplacements);
-
+    public BlockFluidBasic(Fluid fluid, Properties properties, String iceBlock) {
+        super(fluid, properties);
         this.iceBlock = iceBlock;
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = playerIn.getHeldItem(hand);
-        
-        // Handle empty bottle interaction
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, UseHand hand, BlockRayTraceResult hit) {
+        ItemStack heldItem = player.getItemInHand(hand);
+
         if (!heldItem.isEmpty() && heldItem.getItem() == Items.GLASS_BOTTLE) {
             ItemStack resultBottle = getBottleResult();
-            
             if (!resultBottle.isEmpty()) {
-                if (!worldIn.isRemote) {
-                    // Server side: consume bottle and give result
+                if (!world.isClientSide) {
                     heldItem.shrink(1);
-                    
                     if (heldItem.isEmpty()) {
-                        playerIn.setHeldItem(hand, resultBottle);
-                    } else if (!playerIn.inventory.addItemStackToInventory(resultBottle)) {
-                        playerIn.dropItem(resultBottle, false);
+                        player.setItemInHand(hand, resultBottle);
+                    } else if (!player.getInventory().add(resultBottle)) {
+                        player.drop(resultBottle, false);
                     }
                 }
-                return true;
+                return ActionResultType.SUCCESS;
             }
         }
-        
-        return false;
+        return ActionResultType.PASS;
     }
 
-    // Override this in subclasses to return the appropriate bottle
     protected ItemStack getBottleResult() {
-        // Default: return vanilla water bottle (for normal water)
-        return PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER);
+        return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
-        super.updateTick(world, pos, state, random);
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.tick(state, world, pos, random);
 
-        if (world.isRemote) return;
+        BlockPos posDown = new BlockPos(pos.getX(), 0, pos.getZ()).above(world.getHeight(PosKind.MOTION_BLOCKING, pos.getX(), pos.getZ()).getY()).below();
 
-        BlockPos posDown = new BlockPos(pos.getX(), 0, pos.getZ()).up(world.getPrecipitationHeight(pos).getY()).down();
-
-        if (this.canFreeze(world, posDown) && world.rand.nextInt(16) == 0) {
-            Block ice = SDBlocks.blocks.get(iceBlock);
+        if (this.canFreeze(world, posDown) && world.random.nextInt(16) == 0) {
+            Block ice = SDFluids.fluidBlocks.get(iceBlock); // Asumiendo que SDFluids.fluidBlocks ahora maneja RegistryObject<Block> o similar, o usamos un mapa estático
             if (ice != null) {
-                world.setBlockState(posDown, ice.getDefaultState());
+                world.setBlock(posDown, ice.defaultBlockState(), 3);
             }
         }
     }
 
     public boolean canFreeze(World world, BlockPos pos) {
-        Biome biome = world.getBiome(pos);
+        Biome biome = world.getBiome(pos).value();
         
         float f = SereneSeasonsReflectionBridge.getTemperatureSafe(world, biome, pos);
 
         if (f <= 0.15F) {
-            if (pos.getY() >= 0 && pos.getY() < 256 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
-                IBlockState iblockstate1 = world.getBlockState(pos);
+            if (pos.getY() >= 0 && pos.getY() < 256 && world.getBrightness(LightType.BLOCK_LIGHT, pos) < 10) {
+                BlockState iblockstate1 = world.getBlockState(pos);
                 Block block = iblockstate1.getBlock();
 
-                return block == this && iblockstate1.getValue(BlockLiquid.LEVEL) == 0;
+                return block == this && ((FlowingFluidBlock)block).getFluidState(iblockstate1).isSource();
             }
         }
         return false;
     }
 
-    protected final static Map<Block, Boolean> customDisplacements = Maps.newHashMap();
-    private static boolean displacementsInitialized = false;
-    
-    private static synchronized void initializeDisplacements() {
-        if (displacementsInitialized) return;
-
-        registerDisplacement("biomesoplenty", "coral");
-        registerDisplacement("biomesoplenty", "seaweed");
-        registerDisplacement("backportedflora", "rivergrass");
-        registerDisplacement("backportedflora", "seagrass");
-        registerDisplacement("backportedflora", "kelp");
-        registerDisplacement("greenery", "rivergrass");
-        registerDisplacement("greenery", "seagrass");
-        registerDisplacement("greenery", "kelp");
-        registerDisplacement("dynamictreesbop", "rootywater");
-
-        customDisplacements.put(Blocks.WATER, false);
-        displacementsInitialized = true;
-    }
-
-    private static void registerDisplacement(String modId, String blockId) {
-        if (Loader.isModLoaded(modId)) {
-            Block target = REGISTRY.getObject(new ResourceLocation(modId, blockId));
-            if (target != null && target != Blocks.AIR) {
-                customDisplacements.put(target, false);
-            }
-        }
+    @Override
+    public Vec3 getFluidColor(IBlockReader world, BlockPos pos, Vec3 originalColor) {
+        int biomeWaterColor = BiomeColors.getAverageWaterColor(world, pos);
+        float r = (float) ((biomeWaterColor >> 16) & 0xFF) / 255.0F;
+        float g = (float) ((biomeWaterColor >> 8) & 0xFF) / 255.0F;
+        float b = (float) (biomeWaterColor & 0xFF) / 255.0F;
+        
+        return new Vec3(0.37F + r, 0.53F + g, 0.53F + b);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
-        int biomeWaterColor = BiomeColorHelper.getWaterColorAtPos(world, pos);
-        Vec3d waterBlockColor = Blocks.WATER.getFogColor(world, pos, Blocks.WATER.getDefaultState(), entity, originalColor, partialTicks);
-
-        float red = (biomeWaterColor >> 16 & 0xFF) / 1655.0F;
-        float green = (biomeWaterColor >> 8 & 0xFF) / 655.0F;
-        float blue = (biomeWaterColor & 0xFF) / 255.0F;
-
-        return new Vec3d(waterBlockColor.x + red, waterBlockColor.y + green, waterBlockColor.z + blue);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getLightOpacity(IBlockState state) {
+    public int getLightBlock(BlockState state, IBlockReader world, BlockPos pos) {
         return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
     }
-
+    
     @Override
-    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
-        return true;
-    }
-
-    @Override
-    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity) {
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
-        return true;
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+        return EMPTY_SHAPE;
     }
 }

@@ -1,30 +1,41 @@
 package com.charles445.simpledifficulty.api.temperature;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface ITemperatureModifier
-{
-	/**
-	 * Temperature change that relies on the player
-	 * @param player
-	 * @return temperature influence on the player
-	 */
-	public float getPlayerInfluence(EntityPlayer player);
-	
-	/**
-	 * Temperature change that relies on the world
-	 * @param world
-	 * @param pos
-	 * @return temperature influence on the world
-	 */
-	public float getWorldInfluence(World world, BlockPos pos);
-	
-	/**
-	 * The name of the modifier, must be unique! <br>
-	 * Adding your Mod ID to this is a good idea
-	 * @return modifier name
-	 */
-	public String getName();
+/**
+ * Standard temperature modifier that contributes to the total temperature calculation.
+ * <p>
+ * Multiple standard modifiers can coexist and their influences are accumulated.
+ * </p>
+ */
+public interface ITemperatureModifier {
+
+    /**
+     * Calculates temperature influence based on the player's state.
+     *
+     * @param player The player being affected.
+     * @return The temperature influence value to add.
+     */
+    float getPlayerInfluence(PlayerEntity player);
+
+    /**
+     * Calculates temperature influence based on the world environment.
+     *
+     * @param world The world context.
+     * @param pos The position to calculate temperature influence for.
+     * @return The temperature influence value to add.
+     */
+    float getWorldInfluence(World world, BlockPos pos);
+
+    /**
+     * Gets the unique name of this modifier.
+     * <p>
+     * It is recommended to include your Mod ID in the name to avoid conflicts.
+     * </p>
+     *
+     * @return The unique modifier name.
+     */
+    String getName();
 }

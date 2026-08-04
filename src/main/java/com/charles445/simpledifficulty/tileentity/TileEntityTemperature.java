@@ -7,112 +7,125 @@ import com.charles445.simpledifficulty.block.BlockTemperature;
 import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.util.WorldUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.Heightmap;
 
+/**
+ * TileEntity for temperature-affecting blocks (Heater and Chiller).
+ * Calculates temperature influence on nearby players based on distance and environmental conditions.
+ */
 public class TileEntityTemperature extends TileEntity implements ITemperatureTileEntity {
+
+    public TileEntityTemperature() {
+        super(RegisterTileEntities.TEMPERATURE_TILE_ENTITY.get()); // Will need RegisterTileEntities class
+    }
+
+    public TileEntityTemperature(TileEntityType<?> type) {
+        super(type);
+    }
 
     @Override
     public float getInfluence(BlockPos targetPos, double distance) {
-        if (this.world == null) {
+        if (this.level == null) {
             return 0.0f;
         }
 
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = level.getBlockState(worldPosition);
         Block block = state.getBlock();
-        
+
         if (block instanceof BlockTemperature) {
-            // Optimization: Use the 'state' variable that we already consulted above
             boolean enabled = state.getValue(BlockTemperature.ENABLED);
             if (enabled) {
-                float activeTemp = ((BlockTemperature)block).getActiveTemperatureMult() * ModConfig.server.temperature.heaterTemperature;
-                double fullPowerSq = sq(ModConfig.server.temperature.heaterFullPowerRange);
-                
+                float activeTemp = ((BlockTemperature) block).getActiveTemperatureMult() * ModConfig.SERVER.heaterTemperature.get().floatValue();
+                double fullPowerSq = sq(ModConfig.SERVER.heaterFullPowerRange.get());
+
                 if (distance < fullPowerSq) {
                     return handleStrict(targetPos, activeTemp);
                 } else {
-                    double distanceDiv = sq(ModConfig.server.temperature.heaterMaxRange) - fullPowerSq;
-                    
+                    double distanceDiv = sq(ModConfig.SERVER.heaterMaxRange.get()) - fullPowerSq;
+
                     if (distanceDiv <= 0d) {
                         return 0.0f;
                     }
-                    
-                    return handleStrict(targetPos, activeTemp * Math.max(0.0f, 1.0f - (float)((distance - fullPowerSq) / distanceDiv)));
+
+                    return handleStrict(targetPos, activeTemp * Math.max(0.0f, 1.0f - (float) ((distance - fullPowerSq) / distanceDiv)));
                 }
             } else {
                 return 0.0f;
             }
         } else {
-            // Failsafe implemented: If the block disappears, we destroy the TileEntity to prevent memory leaks.
-            if (!world.isRemote) {
-                world.removeTileEntity(pos);
+            // Failsafe: If the block disappears, destroy the TileEntity to prevent memory leaks
+            if (!level.isClientSide) {
+                level.removeBlockEntity(worldPosition);
             }
             return 0.0f;
         }
     }
-    
+
     private float handleStrict(BlockPos targetPos, float distanceTemp) {
         if (!ServerConfig.instance.getBoolean(ServerOptions.STRICT_HEATERS)) {
             return distanceTemp;
         }
-        
-        BlockPos thisPos = this.getPos();
-        
+
+        BlockPos thisPos = this.getBlockPos();
+
         int curX = targetPos.getX();
         int curY = targetPos.getY();
         int curZ = targetPos.getZ();
-        
+
         int destX = thisPos.getX();
         int destY = thisPos.getY();
         int destZ = thisPos.getZ();
-        
+
         int xinc = curX < destX ? 1 : -1;
         int yinc = curY < destY ? 1 : -1;
         int zinc = curZ < destZ ? 1 : -1;
-        
+
         if (isUnprotected(new BlockPos(curX, curY, curZ)) || isUnprotected(new BlockPos(destX, destY, destZ))) {
             return 0.0f;
         }
-        
-        // Safety limit for the three-dimensional loop (Prevents infinite loops due to coordinate corruption)
-        int maxSteps = 128; 
+
+        // Safety limit for the three-dimensional loop (prevents infinite loops)
+        int maxSteps = 128;
         int steps = 0;
-        
+
         while ((curX != destX || curZ != destZ || curY != destY) && steps < maxSteps) {
             steps++;
-            
+
             if (curX != destX) curX += xinc;
             if (curY != destY) curY += yinc;
             if (curZ != destZ) curZ += zinc;
-            
+
             if (isUnprotected(new BlockPos(curX, curY, curZ))) {
                 return 0.0f;
             }
         }
-        
+
         return distanceTemp;
     }
-    
+
     private boolean isUnprotected(BlockPos pos) {
-        if (!WorldUtil.isChunkLoaded(this.world, pos)) {
-            return true; // If the chunk is not loaded, we assume it is not protected to prevent pulls
+        if (!WorldUtil.isChunkLoaded(this.level, pos)) {
+            return true; // If the chunk is not loaded, assume it is not protected
         }
-        
-        Chunk chunk = this.world.getChunk(pos);
-        
-        if (!chunk.canSeeSky(pos)) {
-            return false;
+
+        // Check if the position can see the sky (is exposed to weather)
+        if (!level.canSeeSky(pos)) {
+            return false; // Protected (underground or under cover)
         }
-        
-        if (chunk.getPrecipitationHeight(pos).getY() > pos.getY()) {
-            return false;
+
+        // Check precipitation height
+        int precipitationHeight = level.getHeight(Heightmap.Type.MOTION_BLOCKING, pos).getY();
+        if (precipitationHeight > pos.getY()) {
+            return false; // Protected (something above)
         }
-        
-        return true;
+
+        return true; // Unprotected (exposed to sky)
     }
-    
+
     private double sq(double d) {
         return d * d;
     }

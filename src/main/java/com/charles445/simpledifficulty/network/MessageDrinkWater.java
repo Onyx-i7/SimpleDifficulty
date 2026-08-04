@@ -5,61 +5,75 @@ import com.charles445.simpledifficulty.api.thirst.ThirstEnumBlockPos;
 import com.charles445.simpledifficulty.api.thirst.ThirstUtil;
 import com.charles445.simpledifficulty.util.SoundUtil;
 import com.charles445.simpledifficulty.util.internal.ThirstUtilInternal;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.SoundEvents;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundEvents;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageDrinkWater implements IMessage {
+import java.util.function.Supplier;
 
-    // Server side
-    
+/**
+ * Server-bound packet sent when a client player attempts to drink from a water source.
+ * The server validates the water source before applying thirst restoration.
+ */
+public class MessageDrinkWater {
+
+    /**
+     * Empty constructor required for packet reflection.
+     */
     public MessageDrinkWater() {
-        // Required for Forge reflection initialization
-    }
-    
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        // Customer data is neither shared nor trusted to prevent exploits
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        // No data is shared during shipping
+    /**
+     * Decodes the packet from the network buffer.
+     *
+     * @param buf The packet buffer.
+     */
+    public MessageDrinkWater(PacketBuffer buf) {
+        // No data to read
     }
-    
-    public static class Handler implements IMessageHandler<MessageDrinkWater, IMessage> {
-        
-        @Override
-        public IMessage onMessage(MessageDrinkWater message, MessageContext ctx) {
-            if (ctx.side == Side.SERVER) {
-                // Securely delegate player acquisition within the Forge network context
-                EntityPlayerMP player = ctx.getServerHandler().player;
-                
+
+    /**
+     * Encodes the packet into the network buffer.
+     *
+     * @param message The message to encode.
+     * @param buf The packet buffer.
+     */
+    public static void encode(MessageDrinkWater message, PacketBuffer buf) {
+        // No data to write
+    }
+
+    /**
+     * Handles the packet on the server side.
+     *
+     * @param message The message to handle.
+     * @param contextSupplier The network context supplier.
+     */
+    public static void handle(MessageDrinkWater message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        if (context.getDirection().getReceptionSide() == LogicalSide.SERVER) {
+            context.enqueueWork(() -> {
+                ServerPlayerEntity player = context.getSender();
                 if (player != null) {
-                    player.getServerWorld().addScheduledTask(() -> {
-                        // Security check: Prevents processing if the player is dead or disconnecting
-                        if (player.isDead || player.getHealth() <= 0.0f) {
-                            return;
-                        }
-                        
-                        ThirstEnumBlockPos traceResult = ThirstUtilInternal.traceWaterToDrink(player);
-                        if (traceResult == null) {
-                            return;
-                        }
-                        
-                        ThirstEnum result = traceResult.thirstEnum;
-                        if (result != null) {
-                            ThirstUtil.takeDrink(player, result.getThirst(), result.getSaturation(), result.getThirstyChance());
-                            SoundUtil.commonPlayPlayerSound(player, SoundEvents.ENTITY_GENERIC_DRINK);
-                        }
-                    });
+                    // Security check: Prevent processing if the player is dead
+                    if (!player.isAlive()) {
+                        return;
+                    }
+
+                    ThirstEnumBlockPos traceResult = ThirstUtilInternal.traceWaterToDrink(player);
+                    if (traceResult == null) {
+                        return;
+                    }
+
+                    ThirstEnum result = traceResult.thirstEnum;
+                    if (result != null) {
+                        ThirstUtil.takeDrink(player, result.getThirst(), result.getSaturation(), result.getThirstyChance());
+                        SoundUtil.commonPlayPlayerSound(player, SoundEvents.GENERIC_DRINK);
+                    }
                 }
-            }
-            return null;
+            });
         }
+        context.setPacketHandled(true);
     }
 }

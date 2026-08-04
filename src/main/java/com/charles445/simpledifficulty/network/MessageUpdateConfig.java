@@ -1,53 +1,82 @@
 package com.charles445.simpledifficulty.network;
 
 import com.charles445.simpledifficulty.api.config.ServerConfig;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageUpdateConfig implements IMessage {
+import java.util.function.Supplier;
 
-    // CLIENT side
-    
-    private NBTTagCompound nbt;
-    
+/**
+ * Client-bound packet sent by the server to synchronize configuration values.
+ * Contains a CompoundNBT with all server configuration options.
+ */
+public class MessageUpdateConfig {
+
+    private CompoundNBT nbt;
+
+    /**
+     * Empty constructor required for packet reflection.
+     */
     public MessageUpdateConfig() {
-        // Necessary to avoid crashes in Forge's reflection instantiation
     }
-    
-    public MessageUpdateConfig(NBTTagCompound compound) {
+
+    /**
+     * Creates a new config update message with the specified NBT data.
+     *
+     * @param compound The NBT compound containing configuration values.
+     */
+    public MessageUpdateConfig(CompoundNBT compound) {
         this.nbt = compound;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.nbt = ByteBufUtils.readTag(buf);
+    /**
+     * Decodes the packet from the network buffer.
+     *
+     * @param buf The packet buffer.
+     */
+    public MessageUpdateConfig(PacketBuffer buf) {
+        this.nbt = buf.readNbt();
     }
-    
-    @Override
-    public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, this.nbt);
+
+    /**
+     * Encodes the packet into the network buffer.
+     *
+     * @param message The message to encode.
+     * @param buf The packet buffer.
+     */
+    public static void encode(MessageUpdateConfig message, PacketBuffer buf) {
+        buf.writeNbt(message.nbt);
     }
-    
-    public static class Handler implements IMessageHandler<MessageUpdateConfig, IMessage> {
-        
-        @Override
-        public IMessage onMessage(MessageUpdateConfig message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                // Synchronization delegated to the main rendering thread
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    // Security filter: Prevents crashes if the configuration package arrives corrupted
-                    if (message.nbt != null) {
-                        ServerConfig.instance.updateValues(message.nbt);
-                    }
-                });
-            }
-            return null;
+
+    /**
+     * Handles the packet on the client side.
+     *
+     * @param message The message to handle.
+     * @param contextSupplier The network context supplier.
+     */
+    public static void handle(MessageUpdateConfig message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        if (context.getDirection().getReceptionSide() == LogicalSide.CLIENT) {
+            context.enqueueWork(() -> handleClient(message));
+        }
+        context.setPacketHandled(true);
+    }
+
+    /**
+     * Client-side handler for the configuration update.
+     *
+     * @param message The message to handle.
+     */
+    @OnlyIn(Dist.CLIENT)
+    private static void handleClient(MessageUpdateConfig message) {
+        // Security filter: Prevents crashes if the configuration package arrives corrupted
+        if (message.nbt != null) {
+            ServerConfig.instance.updateValues(message.nbt);
         }
     }
 }

@@ -1,50 +1,45 @@
 package com.charles445.simpledifficulty.capability;
 
 import com.charles445.simpledifficulty.api.thirst.IThirstCapability;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-public class ThirstStorage implements IStorage<IThirstCapability>
-{
-	private static final String thirstExhaustion = "thirstExhaustion";
-	private static final String thirstLevel = "thirstLevel";
-	private static final String thirstSaturation = "thirstSaturation";
-	private static final String thirstTickTimer = "thirstTickTimer";
-	private static final String thirstDamageCounter = "thirstDamageCounter";
-	
 
-	@Override
-	public NBTBase writeNBT(Capability<IThirstCapability> capability, IThirstCapability instance, EnumFacing side)
-	{
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setFloat(thirstExhaustion, instance.getThirstExhaustion());
-		compound.setInteger(thirstLevel, instance.getThirstLevel());
-		compound.setFloat(thirstSaturation,instance.getThirstSaturation());
-		compound.setInteger(thirstTickTimer,instance.getThirstTickTimer());
-		compound.setInteger(thirstDamageCounter,instance.getThirstDamageCounter());
-		return compound;
-	}
+public class ThirstStorage implements IStorage<IThirstCapability> {
+    private static final String THIRST_EXHAUSTION = "thirstExhaustion";
+    private static final String THIRST_LEVEL = "thirstLevel";
+    private static final String THIRST_SATURATION = "thirstSaturation";
+    private static final String THIRST_TICK_TIMER = "thirstTickTimer";
+    private static final String THIRST_DAMAGE_COUNTER = "thirstDamageCounter";
 
-	@Override
-	public void readNBT(Capability<IThirstCapability> capability, IThirstCapability instance, EnumFacing side, NBTBase nbt)
-	{
-		if(nbt instanceof NBTTagCompound)
-		{
-			NBTTagCompound compound = (NBTTagCompound)nbt;
-			
-			if(compound.hasKey(thirstExhaustion))
-				instance.setThirstExhaustion(compound.getFloat(thirstExhaustion));
-			if(compound.hasKey(thirstLevel))
-				instance.setThirstLevel(compound.getInteger(thirstLevel));
-			if(compound.hasKey(thirstSaturation))
-				instance.setThirstSaturation(compound.getFloat(thirstSaturation));
-			if(compound.hasKey(thirstTickTimer))
-				instance.setThirstTickTimer(compound.getInteger(thirstTickTimer));
-			if(compound.hasKey(thirstDamageCounter))
-				instance.setThirstDamageCounter(compound.getInteger(thirstDamageCounter));
-		}
-	}
+    @Override
+    public INBT writeNBT(Capability<IThirstCapability> capability, IThirstCapability instance, Direction side) {
+        CompoundNBT compound = new CompoundNBT();
+        compound.putFloat(THIRST_EXHAUSTION, instance.getThirstExhaustion());
+        compound.putInt(THIRST_LEVEL, instance.getThirstLevel());
+        compound.putFloat(THIRST_SATURATION, instance.getThirstSaturation());
+        compound.putInt(THIRST_TICK_TIMER, instance.getThirstTickTimer());
+        compound.putInt(THIRST_DAMAGE_COUNTER, instance.getThirstDamageCounter());
+        return compound;
+    }
 
+    @Override
+    public void readNBT(Capability<IThirstCapability> capability, IThirstCapability instance, Direction side, INBT nbt) {
+        if (nbt instanceof CompoundNBT) {
+            CompoundNBT compound = (CompoundNBT) nbt;
+
+            if (compound.contains(THIRST_EXHAUSTION))
+                instance.setThirstExhaustion(compound.getFloat(THIRST_EXHAUSTION));
+            if (compound.contains(THIRST_LEVEL))
+                instance.setThirstLevel(compound.getInt(THIRST_LEVEL));
+            if (compound.contains(THIRST_SATURATION))
+                instance.setThirstSaturation(compound.getFloat(THIRST_SATURATION));
+            if (compound.contains(THIRST_TICK_TIMER))
+                instance.setThirstTickTimer(compound.getInt(THIRST_TICK_TIMER));
+            if (compound.contains(THIRST_DAMAGE_COUNTER))
+                instance.setThirstDamageCounter(compound.getInt(THIRST_DAMAGE_COUNTER));
+        }
+    }
 }

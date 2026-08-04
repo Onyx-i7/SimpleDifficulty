@@ -1,44 +1,62 @@
 package com.charles445.simpledifficulty.fluid;
 
 import com.charles445.simpledifficulty.SimpleDifficulty;
-import com.charles445.simpledifficulty.api.SDFluids;
-import git.jbredwards.fluidlogged_api.api.fluid.ICompatibleFluid;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
-/**
- * Basic fluid implementation with Fluidlogged API compatibility.
- * Automatically registers the fluid and its corresponding bucket.
- */
-@Optional.Interface(iface = "git.jbredwards.fluidlogged_api.api.fluid.ICompatibleFluid", modid = "fluidlogged_api")
-public class FluidBasic extends Fluid implements ICompatibleFluid
-{
-    public FluidBasic(String fluidName, String still, String flowing)
-    {
-        super(fluidName,
-            new ResourceLocation(SimpleDifficulty.MODID, "fluids/"+still),
-            new ResourceLocation(SimpleDifficulty.MODID, "fluids/"+flowing)
-        );
-        
-        // Add to generic fluid map
-        SDFluids.fluids.put(fluidName, this);
-        
-        // Register fluid and add bucket for self
-        // Note: Bucket localization must be handled in lang files using format:
-        // item.fluidName.bucket=Localized Name
-        FluidRegistry.registerFluid(SDFluids.fluids.get(fluidName));
-        FluidRegistry.addBucketForFluid(SDFluids.fluids.get(fluidName));
+public abstract class FluidBasic extends ForgeFlowingFluid {
+
+    public FluidBasic(Properties properties) {
+        super(properties);
     }
 
-    @Nonnull
     @Override
-    @Optional.Method(modid = "fluidlogged_api")
-    public Fluid getParentFluid()
-    {
-        return FluidRegistry.WATER;
+    public Item getBucket() {
+        return null; // Buckets handled separately or via FluidAttributes
+    }
+
+    public static FluidAttributes.Builder createAttributes(String still, String flowing) {
+        return FluidAttributes.builder(
+                new ResourceLocation(SimpleDifficulty.MODID, "fluids/" + still),
+                new ResourceLocation(SimpleDifficulty.MODID, "fluids/" + flowing)
+        ).density(1000).viscosity(1000);
+    }
+
+    public static class Source extends FluidBasic {
+        public Source(Supplier<ForgeFlowingFluid.Properties> properties) {
+            super(properties.get());
+        }
+
+        @Override
+        public int getAmount(FluidState state) {
+            return 8;
+        }
+
+        @Override
+        public boolean isSource(FluidState state) {
+            return true;
+        }
+    }
+
+    public static class Flowing extends FluidBasic {
+        public Flowing(Supplier<ForgeFlowingFluid.Properties> properties) {
+            super(properties.get());
+        }
+
+        @Override
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState state) {
+            return false;
+        }
     }
 }

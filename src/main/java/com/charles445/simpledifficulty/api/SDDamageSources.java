@@ -7,10 +7,9 @@ import net.minecraft.util.DamageSource;
  * <p>
  * These damage sources are used when players take damage from environmental hazards
  * like dehydration, extreme temperatures, or parasites. Addons can use these to detect
- * specific causes of death or apply custom logic (e.g., preventing resurrection, 
+ * specific causes of death or apply custom logic (e.g., preventing resurrection,
  * modifying death messages, or triggering achievements).
  * </p>
- *
  */
 public class SDDamageSources {
 
@@ -24,7 +23,7 @@ public class SDDamageSources {
      * </ul>
      * </p>
      */
-    public static final DamageSource DEHYDRATION = (new DamageSource("dehydration")).setDamageBypassesArmor().setDamageIsAbsolute();
+    public static final DamageSource DEHYDRATION = (new DamageSource("dehydration")).bypassArmor().bypassMagic();
 
     /**
      * Damage source for hyperthermia (body temperature too high).
@@ -35,7 +34,7 @@ public class SDDamageSources {
      * </ul>
      * </p>
      */
-    public static final DamageSource HYPERTHERMIA = (new DamageSource("hyperthermia")).setDamageBypassesArmor();
+    public static final DamageSource HYPERTHERMIA = (new DamageSource("hyperthermia")).bypassArmor();
 
     /**
      * Damage source for hypothermia (body temperature too low).
@@ -46,7 +45,7 @@ public class SDDamageSources {
      * </ul>
      * </p>
      */
-    public static final DamageSource HYPOTHERMIA = (new DamageSource("hypothermia")).setDamageBypassesArmor();
+    public static final DamageSource HYPOTHERMIA = (new DamageSource("hypothermia")).bypassArmor();
 
     /**
      * Damage source for parasites (contaminated water or food).
@@ -58,7 +57,7 @@ public class SDDamageSources {
      * </ul>
      * </p>
      */
-    public static final DamageSource PARASITES = (new DamageSource("parasites")).setDamageBypassesArmor().setMagicDamage();
+    public static final DamageSource PARASITES = (new DamageSource("parasites")).bypassArmor().setMagic();
 
     /**
      * Damage source for Inspirations mod compatibility (burning from hot cauldron).
@@ -70,5 +69,5 @@ public class SDDamageSources {
      * </ul>
      * </p>
      */
-    public static final DamageSource INSPIRATIONS_CAULDRON_BURN = (new DamageSource("inspirationscauldronburn")).setDamageBypassesArmor().setFireDamage();
+    public static final DamageSource INSPIRATIONS_CAULDRON_BURN = (new DamageSource("inspirationscauldronburn")).bypassArmor().setIsFire();
 }

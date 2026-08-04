@@ -6,90 +6,108 @@ import com.charles445.simpledifficulty.api.temperature.ITemperatureModifier;
 import com.charles445.simpledifficulty.api.temperature.TemperatureRegistry;
 import com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge;
 import com.charles445.simpledifficulty.util.CompatUtil;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 
+/**
+ * Controller for mod compatibility initialization.
+ * Handles loading and registration of temperature modifiers from other mods.
+ */
 public class CompatController {
-    private static final String compatMod = "com.charles445.simpledifficulty.compat.mod.";
-    
+    private static final String COMPAT_MOD_PACKAGE = "com.charles445.simpledifficulty.compat.mod.";
+
+    /**
+     * Sets up common compatibility after mod initialization.
+     */
     public static void setupCommonPostInit() {
-        if (CompatUtil.canUseMod("weather2")) {
+        // Weather2 compatibility
+        if (CompatUtil.canUseMod(ModNames.WEATHER2)) {
             try {
                 Class.forName("com.charles445.simpledifficulty.compat.mod.Weather2Compat")
-                    .getMethod("init")
-                    .invoke(null);
-                SimpleDifficulty.logger.info("Weather2 Compatibility Bridge Initialized");
+                        .getMethod("init")
+                        .invoke(null);
+                SimpleDifficulty.LOGGER.info("Weather2 Compatibility Bridge Initialized");
             } catch (Exception e) {
-                SimpleDifficulty.logger.error("Failed to initialize Weather2 bridge!", e);
+                SimpleDifficulty.LOGGER.error("Failed to initialize Weather2 bridge!", e);
             }
         }
 
         // Create standard compatibility objects
-        Object auwDynamicModifier = newCompatObject(ModNames.AUW, compatMod + "AUWDynamicModifier");
-        Object auwModifier = newCompatObject(ModNames.AUW, compatMod + "AUWModifier");
-        Object baublesModifier = newCompatObject(ModNames.BAUBLES, compatMod + "BaublesModifier");
-        Object betweenlandsHandler = newCompatObject(ModNames.BETWEENLANDS, compatMod + "BetweenlandsHandler");
-        Object firstAidCompat = newCompatObject(ModNames.FIRSTAID, compatMod + "FirstAidCompat");
-        Object harvestFestivalModifier = newCompatObject(ModNames.HARVESTFESTIVAL, compatMod + "HarvestFestivalModifier");
-        Object inspirationsHandler = newCompatObject(ModNames.INSPIRATIONS, compatMod + "InspirationsHandler");
-        Object oreExcavationHandler = newCompatObject(ModNames.OREEXCAVATION, compatMod + "OREEXCAVATIONHandler");
-        Object sereneSeasonsModifier = newCompatObject(ModNames.SERENESEASONS, compatMod + "SereneSeasonsModifier");
-        
-        // Load Weather2 safely using the mod's dynamic reflection system
-        Object weather2Modifier = newCompatObject("weather2", compatMod + "Weather2Modifier");
-        
+        Object auwDynamicModifier = newCompatObject(ModNames.AUW, COMPAT_MOD_PACKAGE + "AUWDynamicModifier");
+        Object auwModifier = newCompatObject(ModNames.AUW, COMPAT_MOD_PACKAGE + "AUWModifier");
+        Object baublesModifier = newCompatObject(ModNames.BAUBLES, COMPAT_MOD_PACKAGE + "BaublesModifier");
+        Object betweenlandsHandler = newCompatObject(ModNames.BETWEENLANDS, COMPAT_MOD_PACKAGE + "BetweenlandsHandler");
+        Object firstAidCompat = newCompatObject(ModNames.FIRSTAID, COMPAT_MOD_PACKAGE + "FirstAidCompat");
+        Object harvestFestivalModifier = newCompatObject(ModNames.HARVESTFESTIVAL, COMPAT_MOD_PACKAGE + "HarvestFestivalModifier");
+        Object inspirationsHandler = newCompatObject(ModNames.INSPIRATIONS, COMPAT_MOD_PACKAGE + "InspirationsHandler");
+        Object oreExcavationHandler = newCompatObject(ModNames.OREEXCAVATION, COMPAT_MOD_PACKAGE + "OreExcavationHandler");
+        Object sereneSeasonsModifier = newCompatObject(ModNames.SERENESEASONS, COMPAT_MOD_PACKAGE + "SereneSeasonsModifier");
+        Object weather2Modifier = newCompatObject(ModNames.WEATHER2, COMPAT_MOD_PACKAGE + "Weather2Modifier");
+
+        // Register modifiers
         if (auwDynamicModifier instanceof ITemperatureDynamicModifier && auwModifier instanceof ITemperatureModifier) {
-            SimpleDifficulty.logger.info("Armor Underwear Modifiers Enabled");
-            TemperatureRegistry.registerDynamicModifier((ITemperatureDynamicModifier)auwDynamicModifier);
-            TemperatureRegistry.registerModifier((ITemperatureModifier)auwModifier);
+            SimpleDifficulty.LOGGER.info("Armor Underwear Modifiers Enabled");
+            TemperatureRegistry.registerDynamicModifier((ITemperatureDynamicModifier) auwDynamicModifier);
+            TemperatureRegistry.registerModifier((ITemperatureModifier) auwModifier);
         }
-        
+
         if (baublesModifier instanceof ITemperatureModifier) {
-            SimpleDifficulty.logger.info("Baubles Modifier Enabled");
-            TemperatureRegistry.registerModifier((ITemperatureModifier)baublesModifier);
+            SimpleDifficulty.LOGGER.info("Baubles Modifier Enabled");
+            TemperatureRegistry.registerModifier((ITemperatureModifier) baublesModifier);
         }
-        
+
         if (betweenlandsHandler != null) {
-            SimpleDifficulty.logger.info("The Betweenlands Handler Enabled");
+            SimpleDifficulty.LOGGER.info("The Betweenlands Handler Enabled");
         }
-        
+
         if (harvestFestivalModifier instanceof ITemperatureModifier) {
-            SimpleDifficulty.logger.info("Harvest Festival Modifier Enabled");
-            TemperatureRegistry.registerModifier((ITemperatureModifier)harvestFestivalModifier);
+            SimpleDifficulty.LOGGER.info("Harvest Festival Modifier Enabled");
+            TemperatureRegistry.registerModifier((ITemperatureModifier) harvestFestivalModifier);
         }
-        
+
         if (inspirationsHandler != null) {
-            SimpleDifficulty.logger.info("Inspirations Handler Enabled");
+            SimpleDifficulty.LOGGER.info("Inspirations Handler Enabled");
         }
-        
+
         if (oreExcavationHandler != null) {
-            SimpleDifficulty.logger.info("OreExcavation Handler Enabled");
+            SimpleDifficulty.LOGGER.info("OreExcavation Handler Enabled");
         }
-        
+
         if (sereneSeasonsModifier instanceof ITemperatureModifier) {
-            SimpleDifficulty.logger.info("Serene Seasons Modifier Enabled");
-            TemperatureRegistry.registerModifier((ITemperatureModifier)sereneSeasonsModifier);
+            SimpleDifficulty.LOGGER.info("Serene Seasons Modifier Enabled");
+            TemperatureRegistry.registerModifier((ITemperatureModifier) sereneSeasonsModifier);
         }
-        
+
         if (weather2Modifier instanceof ITemperatureDynamicModifier) {
-            SimpleDifficulty.logger.info("Weather2 Dynamic Modifier Enabled");
-            TemperatureRegistry.registerDynamicModifier((ITemperatureDynamicModifier)weather2Modifier);
+            SimpleDifficulty.LOGGER.info("Weather2 Dynamic Modifier Enabled");
+            TemperatureRegistry.registerDynamicModifier((ITemperatureDynamicModifier) weather2Modifier);
         }
 
         SereneSeasonsReflectionBridge.init();
     }
-    
+
+    /**
+     * Sets up client-side compatibility.
+     */
     public static void setupClient() {
+        // Client-side compatibility setup
     }
-    
+
+    /**
+     * Creates a new compatibility object instance using reflection.
+     *
+     * @param modid The mod ID to check.
+     * @param clazzpath The fully qualified class name.
+     * @return The instance, or null if failed.
+     */
     @Nullable
     public static Object newCompatObject(String modid, String clazzpath) {
         if (CompatUtil.canUseMod(modid)) {
             try {
-                Object o = Class.forName(clazzpath).newInstance();
-                return o;
+                return Class.forName(clazzpath).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                SimpleDifficulty.logger.error("Mod "+modid+" was loaded but object "+clazzpath+" was not accessible!", e);
+                SimpleDifficulty.LOGGER.error("Mod {} was loaded but object {} was not accessible!", modid, clazzpath, e);
             }
         }
         return null;

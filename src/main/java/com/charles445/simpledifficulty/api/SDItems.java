@@ -1,173 +1,69 @@
 package com.charles445.simpledifficulty.api;
 
+import com.charles445.simpledifficulty.register.RegisterItems;
+import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraftforge.fml.RegistryObject;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Registry class for all SimpleDifficulty items and armor materials.
- * <p>
- * This class holds references to all items added by the mod. These fields are initialized
- * during the mod's registration phase (preInit) and should not be modified by addons.
- * </p>
- *
  */
 public class SDItems {
 
-    /**
-     * A map of all registered SimpleDifficulty armor materials, keyed by their name.
-     * <p>
-     * <b>Do not modify this map directly.</b> It is intended for read-only access.
-     * </p>
-     */
-    public static final Map<String, ArmorMaterial> armorMaterials = new LinkedHashMap<>();
+    public static final Map<String, RegistryObject<Item>> items = new LinkedHashMap<String, RegistryObject<Item>>() {{
+        put("canteen", RegisterItems.CANTEEN);
+        put("iron_canteen", RegisterItems.IRON_CANTEEN);
+        put("charcoal_filter", RegisterItems.CHARCOAL_FILTER);
+        put("juice", RegisterItems.JUICE);
+        put("purified_water_bottle", RegisterItems.PURIFIED_WATER_BOTTLE);
+        put("salt_water_bottle", RegisterItems.SALT_WATER_BOTTLE);
+        put("ice_chunk", RegisterItems.ICE_CHUNK);
+        put("magma_chunk", RegisterItems.MAGMA_CHUNK);
+        put("thermometer", RegisterItems.THERMOMETER);
+        put("wool_helmet", RegisterItems.WOOL_HELMET);
+        put("wool_chestplate", RegisterItems.WOOL_CHESTPLATE);
+        put("wool_leggings", RegisterItems.WOOL_LEGGINGS);
+        put("wool_boots", RegisterItems.WOOL_BOOTS);
+        put("ice_helmet", RegisterItems.ICE_HELMET);
+        put("ice_chestplate", RegisterItems.ICE_CHESTPLATE);
+        put("ice_leggings", RegisterItems.ICE_LEGGINGS);
+        put("ice_boots", RegisterItems.ICE_BOOTS);
+        put("frost_powder", RegisterItems.FROST_POWDER);
+        put("frost_rod", RegisterItems.FROST_ROD);
+        put("dragon_canteen", RegisterItems.DRAGON_CANTEEN);
+    }};
 
-    /**
-     * A map of all registered SimpleDifficulty items, keyed by their registry name.
-     * <p>
-     * This map is populated during mod initialization and can be used by addons to
-     * iterate over or look up specific items by name.
-     * </p>
-     * <p>
-     * <b>Do not modify this map directly.</b> It is intended for read-only access.
-     * </p>
-     */
-    public static final Map<String, Item> items = new LinkedHashMap<>();
-
-    // ============================================
     // Armor Materials
-    // ============================================
+    public static final IArmorMaterial woolArmorMaterial = RegisterItems.WOOL_ARMOR_MATERIAL;
+    public static final IArmorMaterial iceArmorMaterial = RegisterItems.ICE_ARMOR_MATERIAL;
 
-    /**
-     * The wool armor material. Provides warmth and temperature insulation.
-     */
-    public static ArmorMaterial woolArmorMaterial;
+    // Items
+    public static final RegistryObject<Item> canteen = RegisterItems.CANTEEN;
+    public static final RegistryObject<Item> ironCanteen = RegisterItems.IRON_CANTEEN;
+    public static final RegistryObject<Item> charcoalFilter = RegisterItems.CHARCOAL_FILTER;
+    public static final RegistryObject<Item> juice = RegisterItems.JUICE;
+    public static final RegistryObject<Item> purifiedWaterBottle = RegisterItems.PURIFIED_WATER_BOTTLE;
+    public static final RegistryObject<Item> saltWaterBottle = RegisterItems.SALT_WATER_BOTTLE;
+    public static final RegistryObject<Item> ice_chunk = RegisterItems.ICE_CHUNK;
+    public static final RegistryObject<Item> magma_chunk = RegisterItems.MAGMA_CHUNK;
+    public static final RegistryObject<Item> thermometer = RegisterItems.THERMOMETER;
 
-    /**
-     * The ice armor material. Provides cooling and heat resistance.
-     */
-    public static ArmorMaterial iceArmorMaterial;
-
-    // ============================================
-    // Hydration Items
-    // ============================================
-
-    /**
-     * The canteen item. A basic container for storing and drinking water.
-     * <p>
-     * Holds a limited amount of water and can be refilled from water sources.
-     * </p>
-     */
-    public static Item canteen;
-
-    /**
-     * The iron canteen item. An upgraded container with higher capacity.
-     * <p>
-     * Holds more water than the standard canteen and is more durable.
-     * </p>
-     */
-    public static Item ironCanteen;
-
-    /**
-     * The charcoal filter item. Used to purify contaminated water.
-     * <p>
-     * Can be applied to water containers to remove parasites and impurities.
-     * </p>
-     */
-    public static Item charcoalFilter;
-
-    /**
-     * The juice item. A consumable drink that restores thirst.
-     * <p>
-     * Can be crafted from fruits and provides hydration with optional saturation.
-     * </p>
-     */
-    public static Item juice;
-
-    /**
-     * The purified water bottle item. Safe to drink and provides hydration.
-     * <p>
-     * Obtained by purifying water through filters or boiling.
-     * </p>
-     */
-    public static Item purifiedWaterBottle;
-
-    /**
-     * The salt water bottle item. Unsafe to drink directly.
-     * <p>
-     * Drinking salt water increases thirst instead of restoring it.
-     * Must be desalinated before consumption.
-     * </p>
-     */
-    public static Item saltWaterBottle;
-
-    // ============================================
-    // Resource Items
-    // ============================================
-
-    /**
-     * The ice chunk item. Dropped when mining ice blocks.
-     * <p>
-     * Can be used for crafting or as a cooling resource.
-     * </p>
-     */
-    public static Item ice_chunk;
-
-    /**
-     * The magma chunk item. Dropped when mining magma blocks.
-     * <p>
-     * Can be used for crafting or as a heating resource.
-     * </p>
-     */
-    public static Item magma_chunk;
-
-    // ============================================
-    // Utility Items
-    // ============================================
-
-    /**
-     * The thermometer item. Displays the current ambient temperature.
-     * <p>
-     * Useful for monitoring temperature changes in different biomes and altitudes.
-     * </p>
-     */
-    public static Item thermometer;
-
-    // ============================================
     // Wool Armor
-    // ============================================
+    public static final RegistryObject<Item> wool_helmet = RegisterItems.WOOL_HELMET;
+    public static final RegistryObject<Item> wool_chestplate = RegisterItems.WOOL_CHESTPLATE;
+    public static final RegistryObject<Item> wool_leggings = RegisterItems.WOOL_LEGGINGS;
+    public static final RegistryObject<Item> wool_boots = RegisterItems.WOOL_BOOTS;
 
-    /** Wool armor helmet. Provides warmth insulation for the head. */
-    public static Item wool_helmet;
-
-    /** Wool armor chestplate. Provides warmth insulation for the torso. */
-    public static Item wool_chestplate;
-
-    /** Wool armor leggings. Provides warmth insulation for the legs. */
-    public static Item wool_leggings;
-
-    /** Wool armor boots. Provides warmth insulation for the feet. */
-    public static Item wool_boots;
-
-    // ============================================
     // Ice Armor
-    // ============================================
+    public static final RegistryObject<Item> ice_helmet = RegisterItems.ICE_HELMET;
+    public static final RegistryObject<Item> ice_chestplate = RegisterItems.ICE_CHESTPLATE;
+    public static final RegistryObject<Item> ice_leggings = RegisterItems.ICE_LEGGINGS;
+    public static final RegistryObject<Item> ice_boots = RegisterItems.ICE_BOOTS;
 
-    /** Ice armor helmet. Provides cooling for the head. */
-    public static Item ice_helmet;
-
-    /** Ice armor chestplate. Provides cooling for the torso. */
-    public static Item ice_chestplate;
-
-    /** Ice armor leggings. Provides cooling for the legs. */
-    public static Item ice_leggings;
-
-    /** Ice armor boots. Provides cooling for the feet. */
-    public static Item ice_boots;
-    
-    public static Item frost_powder;
-    public static Item frost_rod;
-    public static Item dragonCanteen;
+    public static final RegistryObject<Item> frost_powder = RegisterItems.FROST_POWDER;
+    public static final RegistryObject<Item> frost_rod = RegisterItems.FROST_ROD;
+    public static final RegistryObject<Item> dragonCanteen = RegisterItems.DRAGON_CANTEEN;
 }

@@ -2,63 +2,47 @@ package com.charles445.simpledifficulty.network;
 
 import com.charles445.simpledifficulty.api.SDCapabilities;
 import com.charles445.simpledifficulty.api.temperature.ITemperatureCapability;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageUpdateTemperature implements IMessage {
+import java.util.function.Supplier;
 
-    private NBTTagCompound nbt;
-    
-    public MessageUpdateTemperature() {
-        // Necessary to avoid crashes in Forge's reflection instantiation
-    }
-    
-    public MessageUpdateTemperature(NBTBase nbt) {
-        this.nbt = (NBTTagCompound) nbt;
-    }
-    
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.nbt = ByteBufUtils.readTag(buf);
+public class MessageUpdateTemperature {
+    private final CompoundNBT nbt;
+
+    public MessageUpdateTemperature(PacketBuffer buf) {
+        this.nbt = buf.readNbt();
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, this.nbt);
+    public MessageUpdateTemperature(CompoundNBT nbt) {
+        this.nbt = nbt;
     }
-    
-    public NBTTagCompound getNBT() {
-        return this.nbt;
+
+    public static void encode(MessageUpdateTemperature message, PacketBuffer buf) {
+        buf.writeNbt(message.nbt);
     }
-    
-    public static class Handler implements IMessageHandler<MessageUpdateTemperature, IMessage> {
-        
-        @Override
-        public IMessage onMessage(MessageUpdateTemperature message, MessageContext ctx) {
-            if (ctx.side == Side.CLIENT) {
-                // Securely move all customer interaction to the main thread
-                Minecraft.getMinecraft().addScheduledTask(() -> {
-                    EntityPlayerSP player = Minecraft.getMinecraft().player;
-                    if (player != null) {
-                        Capability<ITemperatureCapability> capability = SDCapabilities.TEMPERATURE;
-                        ITemperatureCapability tempCap = player.getCapability(capability, null);
-                        
-                        if (tempCap != null && message.getNBT() != null) {
-                            capability.getStorage().readNBT(capability, tempCap, null, message.getNBT());
-                        }
+
+    public static void handle(MessageUpdateTemperature message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        if (context.getDirection() == net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_CLIENT) {
+            context.enqueueWork(() -> {
+                ClientPlayerEntity player = Minecraft.getInstance().player;
+                if (player != null) {
+                    Capability<ITemperatureCapability> capability = SDCapabilities.TEMPERATURE;
+                    ITemperatureCapability tempCap = player.getCapability(capability).orElse(null);
+
+                    if (tempCap != null && message.nbt != null) {
+                        capability.getStorage().readNBT(capability, tempCap, null, message.nbt);
                     }
-                });
-            }
-            return null;
+                }
+            });
         }
+        context.setPacketHandled(true);
     }
 }

@@ -1,24 +1,27 @@
 package com.charles445.simpledifficulty.temperature;
 
 import com.charles445.simpledifficulty.api.SDCapabilities;
+import com.charles445.simpledifficulty.api.temperature.ITemperatureCapability;
 import com.charles445.simpledifficulty.api.temperature.TemporaryModifier;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
-public class ModifierTemporary extends ModifierBase
-{
-	public ModifierTemporary()
-	{
-		super("Temporary");
-	}
+/**
+ * Temperature modifier for temporary effects (food, drinks, etc.).
+ */
+public class ModifierTemporary extends ModifierBase {
+    public ModifierTemporary() {
+        super("Temporary");
+    }
 
-	@Override
-	public float getPlayerInfluence(EntityPlayer player)
-	{
-		float sum = 0.0f;
-		for(TemporaryModifier tm : SDCapabilities.getTemperatureData(player).getTemporaryModifiers().values())
-		{
-			sum += tm.temperature;
-		}
-		return sum;
-	}
+    @Override
+    public float getPlayerInfluence(PlayerEntity player) {
+        ITemperatureCapability capability = SDCapabilities.getTemperatureData(player);
+        if (capability == null) return 0.0f;
+        
+        float sum = 0.0f;
+        for (TemporaryModifier tm : capability.getTemporaryModifiers().values()) {
+            sum += tm.temperature;
+        }
+        return sum;
+    }
 }

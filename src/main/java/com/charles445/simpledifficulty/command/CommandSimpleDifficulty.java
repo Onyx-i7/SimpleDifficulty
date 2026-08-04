@@ -8,556 +8,567 @@ import com.charles445.simpledifficulty.api.temperature.ITemperatureCapability;
 import com.charles445.simpledifficulty.api.thirst.IThirstCapability;
 import com.charles445.simpledifficulty.config.JsonConfigInternal;
 import com.charles445.simpledifficulty.config.JsonFileName;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.Block;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 
-public class CommandSimpleDifficulty extends CommandBase {
+/**
+ * Main command handler for SimpleDifficulty using Brigadier.
+ * Provides utilities for managing temperature, thirst, and JSON configurations.
+ */
+public class CommandSimpleDifficulty {
 
-    // Performance Optimization: Cleaned up redundant String array initialization inside Arrays.asList
-    private final List<String> tabCompletionsCommands = Arrays.asList(
-            "help", "exportJson", "reloadJson", "addArmor", "addBlock",
-            "addConsumableTemperature", "addConsumableThirst", "addDimension",
-            "addFluid", "addHeldItem", "nbt", "setThirst", "setTemperature"
-    );
-    
-    private final String commandUsage = "/simpledifficulty help";
-    
-    private final String listOfCommands = 
-              "   help <command>\n"
-            + "   exportJson\n"
-            + "   reloadJson\n"
-            + "   addArmor <temperature>\n"
-            + "   addBlock <temperature>\n"
-            + "   addConsumableTemperature <group> <temperature> <duration>\n"
-            + "   addConsumableThirst <amount> <saturation> <thirstyChance>\n"
-            + "   addDimension <temperature>\n"
-            + "   addFluid <temperature>\n"
-            + "   addHeldItem <temperature>\n"
-            + "   nbt\n"
-            + "   setThirst <thirst> <saturation>\n"
-            + "   setTemperature <temperature>";
+    private static final String EXPORT_JSON_REMINDER = "(Don't forget to exportJson!)";
 
-    private final String warn_notPlayerAdmin = "You do not have permission, or are not a player ingame!";
-    private final String warn_invalidArgs = "Invalid Arguments";
-    private final String warn_noItem = "Not holding an item!";
-    private final String exportJsonReminder = "(Don't forget to exportJson !)";
+    /**
+     * Registers all SimpleDifficulty commands to the dispatcher.
+     *
+     * @param dispatcher The command dispatcher to register with.
+     */
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+        LiteralArgumentBuilder<CommandSource> root = Commands.literal("simpledifficulty")
+                .requires(source -> source.hasPermission(2))
+                .executes(context -> help(context))
+                .then(Commands.literal("help")
+                        .executes(context -> help(context))
+                        .then(Commands.argument("command", StringArgumentType.word())
+                                .executes(context -> helpCommand(context, StringArgumentType.getString(context, "command")))))
+                .then(Commands.literal("reloadJson")
+                        .requires(source -> source.hasPermission(4))
+                        .executes(context -> updateJson(context)))
+                .then(Commands.literal("exportJson")
+                        .requires(source -> source.hasPermission(4))
+                        .executes(context -> exportJson(context)))
+                .then(Commands.literal("addArmor")
+                        .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                .executes(context -> addArmor(context, DoubleArgumentType.getDouble(context, "temperature")))
+                                .then(Commands.literal("--nbt").executes(context -> addArmorNBT(context, DoubleArgumentType.getDouble(context, "temperature"))))
+                                .then(Commands.literal("--clear").executes(context -> addArmorClear(context)))))
+                .then(Commands.literal("addBlock")
+                        .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                .executes(context -> addBlock(context, DoubleArgumentType.getDouble(context, "temperature")))
+                                .then(Commands.literal("--clear").executes(context -> addBlockClear(context)))))
+                .then(Commands.literal("addConsumableTemperature")
+                        .then(Commands.argument("group", StringArgumentType.word())
+                                .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                        .then(Commands.argument("duration", IntegerArgumentType.integer())
+                                                .executes(context -> addConsumableTemperature(context, 
+                                                        StringArgumentType.getString(context, "group"),
+                                                        DoubleArgumentType.getDouble(context, "temperature"),
+                                                        IntegerArgumentType.getInteger(context, "duration")))
+                                                .then(Commands.literal("--nbt").executes(context -> addConsumableTemperatureNBT(context,
+                                                        StringArgumentType.getString(context, "group"),
+                                                        DoubleArgumentType.getDouble(context, "temperature"),
+                                                        IntegerArgumentType.getInteger(context, "duration"))))
+                                                .then(Commands.literal("--clear").executes(context -> addConsumableTemperatureClear(context)))))))
+                .then(Commands.literal("addConsumableThirst")
+                        .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                .then(Commands.argument("saturation", DoubleArgumentType.doubleArg())
+                                        .then(Commands.argument("thirstyChance", DoubleArgumentType.doubleArg(0.0, 1.0))
+                                                .executes(context -> addConsumableThirst(context,
+                                                        IntegerArgumentType.getInteger(context, "amount"),
+                                                        (float) DoubleArgumentType.getDouble(context, "saturation"),
+                                                        (float) DoubleArgumentType.getDouble(context, "thirstyChance")))
+                                                .then(Commands.literal("--nbt").executes(context -> addConsumableThirstNBT(context,
+                                                        IntegerArgumentType.getInteger(context, "amount"),
+                                                        (float) DoubleArgumentType.getDouble(context, "saturation"),
+                                                        (float) DoubleArgumentType.getDouble(context, "thirstyChance"))))
+                                                .then(Commands.literal("--clear").executes(context -> addConsumableThirstClear(context)))))))
+                .then(Commands.literal("addDimension")
+                        .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                .executes(context -> addDimension(context, DoubleArgumentType.getDouble(context, "temperature")))))
+                .then(Commands.literal("addFluid")
+                        .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                .executes(context -> addFluid(context, DoubleArgumentType.getDouble(context, "temperature")))))
+                .then(Commands.literal("addHeldItem")
+                        .then(Commands.argument("temperature", DoubleArgumentType.doubleArg())
+                                .executes(context -> addHeldItem(context, DoubleArgumentType.getDouble(context, "temperature")))
+                                .then(Commands.literal("--nbt").executes(context -> addHeldItemNBT(context, DoubleArgumentType.getDouble(context, "temperature"))))
+                                .then(Commands.literal("--clear").executes(context -> addHeldItemClear(context)))))
+                .then(Commands.literal("nbt")
+                        .executes(context -> tagToString(context)))
+                .then(Commands.literal("setThirst")
+                        .then(Commands.argument("thirst", IntegerArgumentType.integer(0, 20))
+                                .executes(context -> setThirst(context, IntegerArgumentType.getInteger(context, "thirst"), 5.0f))
+                                .then(Commands.argument("saturation", DoubleArgumentType.doubleArg(0.0))
+                                        .executes(context -> setThirst(context, IntegerArgumentType.getInteger(context, "thirst"), (float) DoubleArgumentType.getDouble(context, "saturation"))))))
+                .then(Commands.literal("setTemperature")
+                        .then(Commands.argument("temperature", IntegerArgumentType.integer())
+                                .executes(context -> setTemperature(context, IntegerArgumentType.getInteger(context, "temperature")))));
 
-    @Override
-    public List<String> getAliases() {
-        return Arrays.asList("sd");
-    }
-    
-    @Override
-    public String getName() {
-        return "simpledifficulty";
-    }
-    
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 2; // Standard operator permission level for vanilla integration
+        dispatcher.register(root);
+        dispatcher.register(Commands.literal("sd").redirect(dispatcher.getRoot().getChild("simpledifficulty")));
     }
 
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return commandUsage;
-    }
-    
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, tabCompletionsCommands);
-        } else if (args.length == 0) {
-            return tabCompletionsCommands;
-        } else {
-            return Collections.emptyList();
-        }
+    private static int help(CommandContext<CommandSource> context) {
+        String listOfCommands = """
+                /simpledifficulty help
+                /simpledifficulty exportJson
+                /simpledifficulty reloadJson
+                /simpledifficulty addArmor <temperature> [--nbt|--clear]
+                /simpledifficulty addBlock <temperature> [--clear]
+                /simpledifficulty addConsumableTemperature <group> <temperature> <duration> [--nbt|--clear]
+                /simpledifficulty addConsumableThirst <amount> <saturation> <thirstyChance> [--nbt|--clear]
+                /simpledifficulty addDimension <temperature>
+                /simpledifficulty addFluid <temperature>
+                /simpledifficulty addHeldItem <temperature> [--nbt|--clear]
+                /simpledifficulty nbt
+                /simpledifficulty setThirst <thirst> [saturation]
+                /simpledifficulty setTemperature <temperature>
+                """;
+        context.getSource().sendSuccess(new StringTextComponent(listOfCommands), false);
+        return Command.SINGLE_SUCCESS;
     }
 
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args.length == 0) {
-            help(sender);
-            return;
-        }
-        
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "reloadjson": updateJson(server, sender, args); break;
-            case "exportjson": exportJson(server, sender, args); break;
-            case "addarmor": addArmor(server, sender, args); break;
-            case "addblock": addBlock(server, sender, args); break;
-            case "addconsumabletemperature": addConsumableTemperature(server, sender, args); break;
-            case "addconsumablethirst": addConsumableThirst(server, sender, args); break;
-            case "adddimension": addDimension(server, sender, args); break;
-            case "addfluid": addFluid(server, sender, args); break;
-            case "addhelditem": addHeldItem(server, sender, args); break;
-            case "nbt": tagToString(server, sender, args); break;
-            case "setthirst": setThirst(server, sender, args); break;
-            case "settemperature": setTemperature(server, sender, args); break;
-            case "help": helpCommand(server, sender, args); break;
-            default: help(sender); break;
-        }
+    private static int helpCommand(CommandContext<CommandSource> context, String commandName) {
+        String helpText = switch (commandName.toLowerCase(Locale.ENGLISH)) {
+            case "exportjson" -> "Exports your in-game JSON changes to the config folder";
+            case "reloadjson" -> "Discards any unexported in-game JSON changes and reloads from config";
+            case "addarmor" -> "Adds the held armor to the armor JSON (changes temperature when worn)";
+            case "addblock" -> "Adds the held block to the block JSON (changes temperature when near)";
+            case "addconsumabletemperature" -> "Adds the held item to consumableTemperature JSON";
+            case "addconsumablethirst" -> "Adds the held item to consumableThirst JSON";
+            case "adddimension" -> "Adds the current dimension to dimensionTemperature JSON";
+            case "addfluid" -> "Adds the held fluid item to fluid JSON";
+            case "addhelditem" -> "Adds the held item to heldItems JSON";
+            case "nbt" -> "Gets an item's NBT tag as a string for config use";
+            case "setthirst" -> "Sets the player's thirst level";
+            case "settemperature" -> "Sets the player's temperature level";
+            default -> "Unknown command. Use /simpledifficulty help";
+        };
+        context.getSource().sendSuccess(new StringTextComponent(helpText), false);
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void helpCommand(MinecraftServer server, ICommandSender sender, String[] args) {
-        if (args.length < 2) {
-            message(sender, listOfCommands);
-            return;
-        }
-        
-        switch (args[1].toLowerCase(Locale.ENGLISH)) {
-            case "help": message(sender, "If you need more help, you can contact the mod author on CurseForge or GitHub"); return;
-            case "exportjson": message(sender, "Exports your in-game JSON changes to the config folder"); return;
-            case "reloadjson": message(sender, "Discards any unexported in-game JSON changes.\nReloads the JSON from the config folder"); return;
-            case "addarmor": message(sender, "Adds the held armor to the armor JSON\n(changes temperature when worn)\nAdd argument --nbt to include NBT tag\nAdd argument --clear to remove the item from JSON first (ignores metadata and nbt)"); return;
-            case "addblock": message(sender, "Adds the held block to the block JSON\n(changes temperature when near the block)\nAdd argument --clear to remove the block from JSON first (ignores metadata and state)"); return;
-            case "addconsumabletemperature": message(sender, "Adds the held item to the consumableTemperature JSON\n(modifies temperature over time when consumed)\nAdd argument --nbt to include NBT tag\nAdd argument --clear to remove the item from JSON first (ignores metadata and nbt)"); return;
-            case "addconsumablethirst": message(sender, "Adds the held item to the consumableThirst JSON\n(replenishes thirst when consumed)\nAdd argument --nbt to include NBT tag\nAdd argument --clear to remove the item from JSON first (ignores metadata and nbt)"); return;
-            case "adddimension": message(sender, "Adds the dimension the player is in to the dimensionTemperature JSON"); return;
-            case "addfluid": message(sender, "Adds the held fluid item to the fluid JSON\n(changes temperature when inside the fluid)"); return;
-            case "addhelditem": message(sender, "Adds the held item to the heldItems JSON\n(changes player temperature when held in mainhand or offhand)\nAdd argument --nbt to include NBT tag\nAdd argument --clear to remove the item from JSON first (ignores metadata and nbt)"); return;
-            case "nbt": message(sender, "Gets an item's NBT tag as a string for config use"); return;
-            case "setthirst": message(sender, "Sets the player's thirst"); return;
-            case "settemperature": message(sender, "Sets the player's temperature"); return;
-            default: message(sender, "/simpledifficulty help <command> \n(Replace <command> with a simpledifficulty command name)"); return;
-        }
-    }
-    
-    private void setThirst(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <thirst> [saturation]");
+
+    private static int setThirst(CommandContext<CommandSource> context, int thirst, float saturation) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            IThirstCapability capability = SDCapabilities.getThirstData(player);
+            if (capability != null) {
+                capability.setThirstLevel(thirst);
+                capability.setThirstSaturation(saturation);
+                context.getSource().sendSuccess(new StringTextComponent("Thirst updated successfully."), true);
             }
-            try {
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                IThirstCapability capability = SDCapabilities.getThirstData(player);
-                if (capability != null) {
-                    capability.setThirstLevel(parseInt(args[1]));
-                    if (args.length >= 3) {
-                        capability.setThirstSaturation((float) parseDouble(args[2]));
-                    }
-                    message(sender, "Thirst updated successfully.");
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <thirst> [saturation]");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void setTemperature(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+    private static int setTemperature(CommandContext<CommandSource> context, int temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ITemperatureCapability capability = SDCapabilities.getTemperatureData(player);
+            if (capability != null) {
+                capability.setTemperatureLevel(temperature);
+                context.getSource().sendSuccess(new StringTextComponent("Temperature updated successfully."), true);
             }
-            try {
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ITemperatureCapability capability = SDCapabilities.getTemperatureData(player);
-                if (capability != null) {
-                    capability.setTemperatureLevel(parseInt(args[1]));
-                    message(sender, "Temperature updated successfully.");
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void tagToString(MinecraftServer server, ICommandSender sender, String[] args) {
-        if (isAdminPlayer(sender)) {
-            EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-            ItemStack stack = player.getHeldItemMainhand();
-            
+
+    private static int tagToString(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
             if (stack.isEmpty()) {
-                message(sender, warn_noItem);
-                return;
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            if (stack.hasTagCompound()) {
-                NBTTagCompound compound = stack.getTagCompound();
+
+            if (stack.hasTag()) {
+                CompoundNBT compound = stack.getTag();
                 String compString = compound != null ? compound.toString() : "{}";
-                TextComponentString tc = new TextComponentString(compString);
-                int metadata = getMetadataFromStack(stack);
-                
-                Style style = new Style();
-                style.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sdcopyidentity " + metadata + " " + compString));
-                style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to copy identity to clipboard")));
+                IFormattableTextComponent tc = new StringTextComponent(compString);
+
+                Style style = Style.EMPTY
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/sdcopyidentity " + compString))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to copy identity to clipboard")));
                 tc.setStyle(style);
-                
-                sender.sendMessage(tc);
+
+                context.getSource().sendSuccess(tc, false);
             } else {
-                message(sender, "This item has no NBT tag.");
+                context.getSource().sendFailure(new StringTextComponent("This item has no NBT tag."));
             }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
 
-    private int getMetadataFromStack(ItemStack stack) {
-        return stack.getHasSubtypes() ? stack.getMetadata() : -1;
+    private static int addBlock(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            Block block = Block.byItem(stack.getItem());
+            if (block == Blocks.AIR) {
+                context.getSource().sendFailure(new StringTextComponent("Couldn't find block for item!"));
+                return 0;
+            }
+
+            boolean accepted = JsonConfig.registerBlockTemperature(block, (float) temperature);
+            if (accepted) {
+                context.getSource().sendSuccess(new StringTextComponent("Added block to " + JsonFileName.blockTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+            } else {
+                context.getSource().sendFailure(new StringTextComponent("Block has properties information in the JSON, use the JSON instead!"));
+            }
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
     }
 
-    private void addBlock(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+    private static int addBlockClear(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                float temperature = (float) parseDouble(args[1]);
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                Block block = Block.getBlockFromItem(stack.getItem());
-                
-                if (block == Blocks.AIR) {
-                    FluidStack fluidStack = FluidUtil.getFluidContained(stack);
-                    if (fluidStack != null) {
-                        block = fluidStack.getFluid().getBlock();
-                        if (block == Blocks.AIR) {
-                            message(sender, "Couldn't find block for fluid!");
-                            return;
-                        } else if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                            block = Blocks.FLOWING_LAVA;
-                            JsonConfig.registerBlockTemperature(Blocks.LAVA, temperature);
-                        } else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
-                            block = Blocks.FLOWING_WATER;
-                            JsonConfig.registerBlockTemperature(Blocks.WATER, temperature);
-                        }
-                    } else {
-                        message(sender, "Couldn't find block for item!");
-                        return;
-                    }
-                }
-                
-                if (hasClearArgument(args) && block.getRegistryName() != null) {
-                    JsonConfig.blockTemperatures.remove(block.getRegistryName().toString());
-                    message(sender, "Removed from JSON");
-                }
-                
-                boolean accepted = JsonConfig.registerBlockTemperature(block, temperature);
-                
-                if (accepted) {
-                    message(sender, "Added block to " + JsonFileName.blockTemperatures + "!\n" + exportJsonReminder);
-                } else {
-                    message(sender, "Block has properties information in the JSON, use the JSON instead!");
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+            Block block = Block.byItem(stack.getItem());
+            if (block.getRegistryName() != null) {
+                JsonConfig.blockTemperatures.remove(block.getRegistryName().toString());
+                context.getSource().sendSuccess(new StringTextComponent("Removed from JSON"), true);
             }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addDimension(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
-            }
-            
-            try {
-                float temperature = (float) parseDouble(args[1]);
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                World world = player.world;
-                
-                if (world == null) {
-                    return;
-                }
-                
-                JsonConfig.registerDimensionTemperature(world.provider.getDimension(), temperature);
-                message(sender, "Added dimension to " + JsonFileName.dimensionTemperature + "!\n" + exportJsonReminder);
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+
+    private static int addDimension(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            World world = player.level;
+
+            JsonConfig.registerDimensionTemperature(world.dimension().location().toString(), (float) temperature);
+            context.getSource().sendSuccess(new StringTextComponent("Added dimension to " + JsonFileName.dimensionTemperature + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addFluid(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+    private static int addFluid(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                float temperature = (float) parseDouble(args[1]);
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                FluidStack fluidStack = FluidUtil.getFluidContained(stack);
-                if (fluidStack == null) {
-                    message(sender, "Couldn't find the item's fluid!");
-                    return;
-                }
-                
-                JsonConfig.registerFluidTemperature(fluidStack.getFluid().getName(), temperature);
-                message(sender, "Added fluid to " + JsonFileName.consumableThirst + "!\n" + exportJsonReminder);
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+            FluidStack fluidStack = FluidUtil.getFluidContained(stack).orElse(null);
+            if (fluidStack == null) {
+                context.getSource().sendFailure(new StringTextComponent("Couldn't find the item's fluid!"));
+                return 0;
             }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+
+            JsonConfig.registerFluidTemperature(fluidStack.getFluid().getRegistryName().toString(), (float) temperature);
+            context.getSource().sendSuccess(new StringTextComponent("Added fluid to " + JsonFileName.fluidTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addConsumableThirst(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 4) {
-                throw new WrongUsageException(warn_invalidArgs + " <amount> <saturation> <thirstyChance>");
+
+    private static int addConsumableThirst(CommandContext<CommandSource> context, int amount, float saturation, float thirstyChance) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                int amount = parseInt(args[1]);
-                float saturation = (float) parseDouble(args[2]);
-                float thirstyChance = (float) parseDouble(args[3]);
-                
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                if (hasClearArgument(args)) {
-                    JsonConfig.consumableThirst.remove(getRegistryName(stack));
-                    message(sender, "Removed from JSON");
-                }
-                
-                boolean nbtArgument = hasNBTArgument(args);
-                if (nbtArgument && stack.hasTagCompound()) {
-                    JsonConfig.registerConsumableThirst(getRegistryName(stack), amount, saturation, thirstyChance, getFullIdentity(stack));
-                    message(sender, "Added consumable item with nbt to " + JsonFileName.consumableThirst + "!\n" + exportJsonReminder);
-                } else {
-                    JsonConfig.registerConsumableThirst(stack, amount, saturation, thirstyChance);
-                    message(sender, "Added consumable item to " + JsonFileName.consumableThirst + "!\n" + exportJsonReminder);
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <amount> <saturation> <thirstyChance>");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+
+            JsonConfig.registerConsumableThirst(stack, amount, saturation, thirstyChance);
+            context.getSource().sendSuccess(new StringTextComponent("Added consumable item to " + JsonFileName.consumableThirst + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addHeldItem(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+    private static int addConsumableThirstNBT(CommandContext<CommandSource> context, int amount, float saturation, float thirstyChance) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                float temperature = (float) parseDouble(args[1]);
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                if (hasClearArgument(args)) {
-                    JsonConfig.heldItemTemperatures.remove(getRegistryName(stack));
-                    message(sender, "Removed from JSON");
-                }
-                
-                boolean nbtArgument = hasNBTArgument(args);
-                if (nbtArgument && stack.hasTagCompound()) {
-                    JsonConfig.registerHeldItem(getRegistryName(stack), temperature, getFullIdentity(stack));
-                    message(sender, "Added held item with nbt to " + JsonFileName.heldItemTemperatures + "!\n" + exportJsonReminder);
-                } else {
-                    JsonConfig.registerHeldItem(stack, temperature);
-                    message(sender, "Added held item to " + JsonFileName.heldItemTemperatures + "!\n" + exportJsonReminder);
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+            if (stack.hasTag()) {
+                JsonConfig.registerConsumableThirst(getRegistryName(stack), amount, saturation, thirstyChance, getFullIdentity(stack));
+                context.getSource().sendSuccess(new StringTextComponent("Added consumable item with NBT to " + JsonFileName.consumableThirst + "!\n" + EXPORT_JSON_REMINDER), true);
+            } else {
+                context.getSource().sendFailure(new StringTextComponent("Item has no NBT tag!"));
             }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addConsumableTemperature(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 4) {
-                throw new WrongUsageException(warn_invalidArgs + " <group> <temperature> <duration>");
+
+    private static int addConsumableThirstClear(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                String group = args[1].replaceAll("\"", "");
-                float temperature = (float) parseDouble(args[2]);
-                int duration = parseInt(args[3]);
-                
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                if (hasClearArgument(args)) {
-                    JsonConfig.consumableTemperature.remove(getRegistryName(stack));
-                    message(sender, "Removed from JSON");
-                }
-                
-                boolean nbtArgument = hasNBTArgument(args);
-                if (nbtArgument && stack.hasTagCompound()) {
-                    JsonConfig.registerConsumableTemperature(group, getRegistryName(stack), temperature, duration, getFullIdentity(stack));
-                    message(sender, "Added consumable item with nbt to " + JsonFileName.consumableTemperature + "!\n" + exportJsonReminder);
-                } else {
-                    JsonConfig.registerConsumableTemperature(group, stack, temperature, duration);
-                    message(sender, "Added consumable item to " + JsonFileName.consumableTemperature + "!\n" + exportJsonReminder);
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <group> <temperature> <duration>");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+
+            JsonConfig.consumableThirst.remove(getRegistryName(stack));
+            context.getSource().sendSuccess(new StringTextComponent("Removed from JSON"), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private void addArmor(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (isAdminPlayer(sender)) {
-            if (args.length < 2) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
+
+    private static int addHeldItem(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
             }
-            
-            try {
-                float temperature = (float) parseDouble(args[1]);
-                EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-                ItemStack stack = player.getHeldItemMainhand();
-                
-                if (stack.isEmpty()) {
-                    message(sender, warn_noItem);
-                    return;
-                }
-                
-                if (hasClearArgument(args)) {
-                    JsonConfig.armorTemperatures.remove(getRegistryName(stack));
-                    message(sender, "Removed from JSON");
-                }
-                
-                boolean nbtArgument = hasNBTArgument(args);
-                if (nbtArgument && stack.hasTagCompound()) {
-                    JsonConfig.registerArmorTemperature(getRegistryName(stack), temperature, getFullIdentity(stack));
-                    message(sender, "Added armor with nbt to " + JsonFileName.armorTemperatures + "!\n" + exportJsonReminder);
-                } else {
-                    JsonConfig.registerArmorTemperature(stack, temperature);
-                    message(sender, "Added armor to " + JsonFileName.armorTemperatures + "!\n" + exportJsonReminder);
-                }
-            } catch (NumberFormatException e) {
-                throw new WrongUsageException(warn_invalidArgs + " <temperature>");
-            }
-        } else {
-            message(sender, warn_notPlayerAdmin);
+
+            JsonConfig.registerHeldItem(stack, (float) temperature);
+            context.getSource().sendSuccess(new StringTextComponent("Added held item to " + JsonFileName.heldItemTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
         }
+        return Command.SINGLE_SUCCESS;
     }
-    
-    private String getRegistryName(ItemStack stack) {
+
+    private static int addHeldItemNBT(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            if (stack.hasTag()) {
+                JsonConfig.registerHeldItem(getRegistryName(stack), (float) temperature, getFullIdentity(stack));
+                context.getSource().sendSuccess(new StringTextComponent("Added held item with NBT to " + JsonFileName.heldItemTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+            } else {
+                context.getSource().sendFailure(new StringTextComponent("Item has no NBT tag!"));
+            }
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addHeldItemClear(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            JsonConfig.heldItemTemperatures.remove(getRegistryName(stack));
+            context.getSource().sendSuccess(new StringTextComponent("Removed from JSON"), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addConsumableTemperature(CommandContext<CommandSource> context, String group, double temperature, int duration) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            JsonConfig.registerConsumableTemperature(group, stack, (float) temperature, duration);
+            context.getSource().sendSuccess(new StringTextComponent("Added consumable item to " + JsonFileName.consumableTemperature + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addConsumableTemperatureNBT(CommandContext<CommandSource> context, String group, double temperature, int duration) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            if (stack.hasTag()) {
+                JsonConfig.registerConsumableTemperature(group, getRegistryName(stack), (float) temperature, duration, getFullIdentity(stack));
+                context.getSource().sendSuccess(new StringTextComponent("Added consumable item with NBT to " + JsonFileName.consumableTemperature + "!\n" + EXPORT_JSON_REMINDER), true);
+            } else {
+                context.getSource().sendFailure(new StringTextComponent("Item has no NBT tag!"));
+            }
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addConsumableTemperatureClear(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            JsonConfig.consumableTemperature.remove(getRegistryName(stack));
+            context.getSource().sendSuccess(new StringTextComponent("Removed from JSON"), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addArmor(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            JsonConfig.registerArmorTemperature(stack, (float) temperature);
+            context.getSource().sendSuccess(new StringTextComponent("Added armor to " + JsonFileName.armorTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addArmorNBT(CommandContext<CommandSource> context, double temperature) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            if (stack.hasTag()) {
+                JsonConfig.registerArmorTemperature(getRegistryName(stack), (float) temperature, getFullIdentity(stack));
+                context.getSource().sendSuccess(new StringTextComponent("Added armor with NBT to " + JsonFileName.armorTemperatures + "!\n" + EXPORT_JSON_REMINDER), true);
+            } else {
+                context.getSource().sendFailure(new StringTextComponent("Item has no NBT tag!"));
+            }
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addArmorClear(CommandContext<CommandSource> context) {
+        try {
+            ServerPlayerEntity player = context.getSource().getPlayerOrException();
+            ItemStack stack = player.getMainHandItem();
+
+            if (stack.isEmpty()) {
+                context.getSource().sendFailure(new StringTextComponent("Not holding an item!"));
+                return 0;
+            }
+
+            JsonConfig.armorTemperatures.remove(getRegistryName(stack));
+            context.getSource().sendSuccess(new StringTextComponent("Removed from JSON"), true);
+        } catch (CommandSyntaxException e) {
+            context.getSource().sendFailure(new StringTextComponent("You must be a player to use this command."));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int exportJson(CommandContext<CommandSource> context) {
+        context.getSource().sendSuccess(new StringTextComponent("Exporting SimpleDifficulty JSON"), true);
+        String result = JsonConfigInternal.manuallyExportAll();
+        context.getSource().sendSuccess(new StringTextComponent(result), true);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int updateJson(CommandContext<CommandSource> context) {
+        context.getSource().sendSuccess(new StringTextComponent("Reloading SimpleDifficulty JSON"), true);
+        JsonConfigInternal.jsonErrors.clear();
+        JsonConfigInternal.clearContainers();
+        JsonConfigInternal.postInit(SimpleDifficulty.jsonDirectory);
+
+        for (String s : JsonConfigInternal.jsonErrors) {
+            context.getSource().sendFailure(new StringTextComponent(s));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static String getRegistryName(ItemStack stack) {
         if (stack.getItem().getRegistryName() == null) {
             return "minecraft:air";
         }
         return stack.getItem().getRegistryName().toString();
     }
-    
-    private JsonItemIdentity getFullIdentity(ItemStack stack) {
-        if (stack.hasTagCompound() && stack.getTagCompound() != null) {
-            return new JsonItemIdentity(getMetadataFromStack(stack), stack.getTagCompound().toString());
-        }
-        return new JsonItemIdentity(getMetadataFromStack(stack));
-    }
 
-    private void exportJson(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (hasPermissionLevel(sender, 4)) {
-            message(sender, "Exporting SimpleDifficulty JSON");
-            String result = JsonConfigInternal.manuallyExportAll();
-            message(sender, result);
+    private static JsonItemIdentity getFullIdentity(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag() != null) {
+            return new JsonItemIdentity(stack.getTag().toString());
         }
-    }
-    
-    private void updateJson(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (hasPermissionLevel(sender, 4)) {
-            message(sender, "Reloading SimpleDifficulty JSON");
-            JsonConfigInternal.jsonErrors.clear();
-            JsonConfigInternal.clearContainers();
-            JsonConfigInternal.postInit(SimpleDifficulty.jsonDirectory);
-            
-            for (String s : JsonConfigInternal.jsonErrors) {
-                sender.sendMessage(new TextComponentString(s));
-            }
-        }
-    }
-
-    private boolean isAdminPlayer(ICommandSender sender) {
-        return hasPermissionLevel(sender, 2) && sender.getCommandSenderEntity() instanceof EntityPlayer;
-    }
-    
-    private void help(ICommandSender sender) {
-        sender.sendMessage(new TextComponentString(this.getUsage(sender)));
-    }
-    
-    private void message(ICommandSender sender, String message) {
-        sender.sendMessage(new TextComponentString(message));
-    }
-    
-    private boolean hasPermissionLevel(ICommandSender sender, int permLevel) {
-        return sender.canUseCommand(permLevel, "simpledifficulty");
-    }
-    
-    private boolean hasNBTArgument(String[] input) {
-        return hasArgument("--nbt", input);
-    }
-    
-    private boolean hasClearArgument(String[] input) {
-        return hasArgument("--clear", input);
-    }
-    
-    private boolean hasArgument(String argument, String[] input) {
-        if (input == null) {
-            return false;
-        }
-        for (String s : input) {
-            if (s.equals(argument)) {
-                return true;
-            }
-        }
-        return false;
+        return new JsonItemIdentity();
     }
 }

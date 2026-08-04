@@ -1,9 +1,11 @@
 package com.charles445.simpledifficulty.debug;
 
 /**
- * Basically, this was a temporary notepad file that the original author (charles445) 
- * used to test how other mod developers could disable built-in support via reflection, 
+ * Temporary notepad file used by the original author (charles445)
+ * to test how other mod developers could disable built-in support via reflection,
  * without having to compile against the API directly.
+ * 
+ * This file is kept for documentation purposes and contains no active code.
  */
 public class DebugScratchpad {
     /*
