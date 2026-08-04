@@ -20,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 public class RegisterFluids {
-    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, SimpleDifficulty.MODID);
+    public static final DeferredRegister<FlowingFluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, SimpleDifficulty.MODID);
 
     // Suppliers for the properties (resolve the forward reference)
     private static Supplier<ForgeFlowingFluid.Properties> purifiedWaterProps() {
@@ -38,16 +38,16 @@ public class RegisterFluids {
     }
 
     // Fluids
-    public static final RegistryObject<Fluid> PURIFIED_WATER_SOURCE = FLUIDS.register("purified_water_source",
+    public static final RegistryObject<FlowingFluid> PURIFIED_WATER_SOURCE = FLUIDS.register("purified_water_source",
             () -> new FluidBasic.Source(purifiedWaterProps()));
 
-    public static final RegistryObject<Fluid> PURIFIED_WATER = FLUIDS.register("purified_water_flowing",
+    public static final RegistryObject<FlowingFluid> PURIFIED_WATER = FLUIDS.register("purified_water_flowing",
             () -> new FluidBasic.Flowing(purifiedWaterProps()));
 
-    public static final RegistryObject<Fluid> SALT_WATER_SOURCE = FLUIDS.register("saltwater_source",
+    public static final RegistryObject<FlowingFluid> SALT_WATER_SOURCE = FLUIDS.register("saltwater_source",
             () -> new FluidBasic.Source(saltWaterProps()));
 
-    public static final RegistryObject<Fluid> SALT_WATER = FLUIDS.register("saltwater",
+    public static final RegistryObject<FlowingFluid> SALT_WATER = FLUIDS.register("saltwater",
             () -> new FluidBasic.Flowing(saltWaterProps()));
 
     // Fluid Blocks

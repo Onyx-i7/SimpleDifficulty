@@ -4,24 +4,19 @@ import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.handler.FluidHandler;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Block;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.fluid.FlowingFluid;
 
-import java.util.function.Supplier;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class BlockFluidBasicMixable extends BlockFluidBasic {
-    public BlockFluidBasicMixable(Supplier<? extends Fluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
+    public BlockFluidBasicMixable(Supplier<? extends FlowingFluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
         super(fluid, properties, iceBlock);
     }
 
@@ -37,13 +32,12 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
     }
 
     @Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, net.minecraft.block.Block block, BlockPos fromPos, boolean isMoving) {
         if (world.isClientSide) return;
-        
         if (!world.isLoaded(pos)) return;
         
-        if (world instanceof net.minecraft.world.server.ServerWorld) {
-            ((net.minecraft.world.server.ServerWorld) world).getBlockTicks().scheduleTick(pos, this, 5);
+        if (world instanceof ServerWorld) {
+            ((ServerWorld) world).getBlockTicks().scheduleTick(pos, this, 5);
         }
         
         if (FluidHandler.canMix(pos, world)) {
@@ -65,7 +59,7 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
     }
 
     @Override
-    public int getLightBlock(BlockState state, IBlockReader world, BlockPos pos) {
+    public int getLightBlock(BlockState state, net.minecraft.world.IBlockReader world, BlockPos pos) {
         return ServerConfig.instance.getBoolean(ServerOptions.PURIFIED_WATER_OPACITY) ? 1 : 3;
     }
 

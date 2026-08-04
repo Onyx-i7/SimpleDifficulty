@@ -3,13 +3,11 @@ package com.charles445.simpledifficulty.client.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.GraphicsEnvironment;
@@ -29,10 +27,10 @@ public class ClientCommandCopy extends ClientCommandBase {
     }
 
     @Override
-    public void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("sdcopy")
+    public LiteralArgumentBuilder<CommandSource> getCommandBuilder() {
+        return LiteralArgumentBuilder.<CommandSource>literal(getName())
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("text", StringArgumentType.greedyString())
-                        .executes(this::executeCopy)));
+                        .executes(this::executeCopy));
     }
 
     private int executeCopy(CommandContext<CommandSource> context) {

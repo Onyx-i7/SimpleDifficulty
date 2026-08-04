@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionBrewing;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potions;
 import net.minecraft.potion.PotionUtils;
