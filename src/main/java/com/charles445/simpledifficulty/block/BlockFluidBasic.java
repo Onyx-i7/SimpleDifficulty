@@ -24,13 +24,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeColors;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.fluid.FlowingFluid;
 
+import java.util.function.Supplier;
 import java.util.Random;
 
 public class BlockFluidBasic extends FlowingFluidBlock {
     private final String iceBlock;
 
-    // El constructor debe aceptar Supplier:
     public BlockFluidBasic(Supplier<? extends FlowingFluid> fluid, AbstractBlock.Properties properties) {
         super(fluid, properties);
         this.iceBlock = iceBlock;
