@@ -111,16 +111,16 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
     @Nullable
     private ItemStack getCookingResult(ItemStack stack) {
         if (this.level == null) return ItemStack.EMPTY;
-        // En lugar de pasar ItemStack directamente, envuélvelo en un Inventory:
-        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, 
-            new net.minecraft.inventory.Inventory(stack), this.level)
+        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, new net.minecraft.inventory.Inventory(stack), this.level)
+            .map(recipe -> recipe.assemble(new net.minecraft.inventory.Inventory(stack)))
+            .orElse(ItemStack.EMPTY);
     }
 
     private float getCookingExperience(ItemStack stack) {
         if (this.level == null) return 0.0f;
-        // En lugar de pasar ItemStack directamente, envuélvelo en un Inventory:
-        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, 
-            new net.minecraft.inventory.Inventory(stack), this.level)
+        return this.level.getRecipeManager().getRecipeFor(IRecipeType.SMELTING, new net.minecraft.inventory.Inventory(stack), this.level)
+            .map(recipe -> recipe.getExperience())
+            .orElse(0.0f);
     }
 
     private boolean playWorldSound(World world, BlockPos pos, boolean deposit) {
