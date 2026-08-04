@@ -123,41 +123,71 @@ public class CommandSimpleDifficulty {
     }
 
     private static int help(CommandContext<CommandSource> context) {
-        String listOfCommands = """
-                /simpledifficulty help
-                /simpledifficulty exportJson
-                /simpledifficulty reloadJson
-                /simpledifficulty addArmor <temperature> [--nbt|--clear]
-                /simpledifficulty addBlock <temperature> [--clear]
-                /simpledifficulty addConsumableTemperature <group> <temperature> <duration> [--nbt|--clear]
-                /simpledifficulty addConsumableThirst <amount> <saturation> <thirstyChance> [--nbt|--clear]
-                /simpledifficulty addDimension <temperature>
-                /simpledifficulty addFluid <temperature>
-                /simpledifficulty addHeldItem <temperature> [--nbt|--clear]
-                /simpledifficulty nbt
-                /simpledifficulty setThirst <thirst> [saturation]
-                /simpledifficulty setTemperature <temperature>
-                """;
+        String listOfCommands = 
+                "/simpledifficulty help\n" +
+                "/simpledifficulty exportJson\n" +
+                "/simpledifficulty reloadJson\n" +
+                "/simpledifficulty addArmor <temperature> [--nbt|--clear]\n" +
+                "/simpledifficulty addBlock <temperature> [--clear]\n" +
+                "/simpledifficulty addConsumableTemperature <group> <temperature> <duration> [--nbt|--clear]\n" +
+                "/simpledifficulty addConsumableThirst <amount> <saturation> <thirstyChance> [--nbt|--clear]\n" +
+                "/simpledifficulty addDimension <temperature>\n" +
+                "/simpledifficulty addFluid <temperature>\n" +
+                "/simpledifficulty addHeldItem <temperature> [--nbt|--clear]\n" +
+                "/simpledifficulty nbt\n" +
+                "/simpledifficulty setThirst <thirst> [saturation]\n" +
+                "/simpledifficulty setTemperature <temperature>";
+        
         context.getSource().sendSuccess(new StringTextComponent(listOfCommands), false);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int helpCommand(CommandContext<CommandSource> context, String commandName) {
-        String helpText = switch (commandName.toLowerCase(Locale.ENGLISH)) {
-            case "exportjson" -> "Exports your in-game JSON changes to the config folder";
-            case "reloadjson" -> "Discards any unexported in-game JSON changes and reloads from config";
-            case "addarmor" -> "Adds the held armor to the armor JSON (changes temperature when worn)";
-            case "addblock" -> "Adds the held block to the block JSON (changes temperature when near)";
-            case "addconsumabletemperature" -> "Adds the held item to consumableTemperature JSON";
-            case "addconsumablethirst" -> "Adds the held item to consumableThirst JSON";
-            case "adddimension" -> "Adds the current dimension to dimensionTemperature JSON";
-            case "addfluid" -> "Adds the held fluid item to fluid JSON";
-            case "addhelditem" -> "Adds the held item to heldItems JSON";
-            case "nbt" -> "Gets an item's NBT tag as a string for config use";
-            case "setthirst" -> "Sets the player's thirst level";
-            case "settemperature" -> "Sets the player's temperature level";
-            default -> "Unknown command. Use /simpledifficulty help";
-        };
+        String helpText;
+        String lowerCaseName = commandName.toLowerCase(Locale.ENGLISH);
+        
+        switch(lowerCaseName) {
+            case "exportjson":
+                helpText = "Exports your in-game JSON changes to the config folder";
+                break;
+            case "reloadjson":
+                helpText = "Discards any unexported in-game JSON changes and reloads from config";
+                break;
+            case "addarmor":
+                helpText = "Adds the held armor to the armor JSON (changes temperature when worn)";
+                break;
+            case "addblock":
+                helpText = "Adds the held block to the block JSON (changes temperature when near)";
+                break;
+            case "addconsumabletemperature":
+                helpText = "Adds the held item to consumableTemperature JSON";
+                break;
+            case "addconsumablethirst":
+                helpText = "Adds the held item to consumableThirst JSON";
+                break;
+            case "adddimension":
+                helpText = "Adds the current dimension to dimensionTemperature JSON";
+                break;
+            case "addfluid":
+                helpText = "Adds the held fluid item to fluid JSON";
+                break;
+            case "addhelditem":
+                helpText = "Adds the held item to heldItems JSON";
+                break;
+            case "nbt":
+                helpText = "Gets an item's NBT tag as a string for config use";
+                break;
+            case "setthirst":
+                helpText = "Sets the player's thirst level";
+                break;
+            case "settemperature":
+                helpText = "Sets the player's temperature level";
+                break;
+            default:
+                helpText = "Unknown command. Use /simpledifficulty help";
+                break;
+        }
+        
         context.getSource().sendSuccess(new StringTextComponent(helpText), false);
         return Command.SINGLE_SUCCESS;
     }

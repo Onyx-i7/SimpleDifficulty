@@ -43,18 +43,18 @@ public class JsonCompatDefaults {
      * @return true if successful.
      */
     public boolean populate(String modid) {
-        return switch (modid) {
-            case BAUBLES -> populateBaubles();
-            case BIOMESOPLENTY -> populateBiomesOPlenty();
-            case HARVESTCRAFT -> populateHarvestCraft();
-            case LYCANITESMOBS -> populateLycanitesMobs();
-            case PYROTECH -> populatePyrotech();
-            case REALISTICTORCHES -> populateRealisticTorches();
-            case RUSTIC -> populateRustic();
-            case SIMPLECAMPFIRE -> populateSimpleCampfire();
-            case TINKERSCONSTRUCT -> populateTinkersConstruct();
-            default -> false;
-        };
+        switch(modid) {
+            case BAUBLES: return populateBaubles();
+            case BIOMESOPLENTY: return populateBiomesOPlenty();
+            case HARVESTCRAFT: return populateHarvestCraft();
+            case LYCANITESMOBS: return populateLycanitesMobs();
+            case PYROTECH: return populatePyrotech();
+            case REALISTICTORCHES: return populateRealisticTorches();
+            case RUSTIC: return populateRustic();
+            case SIMPLECAMPFIRE: return populateSimpleCampfire();
+            case TINKERSCONSTRUCT: return populateTinkersConstruct();
+            default: return false;
+        }
     }
 
     private boolean populateBaubles() {
