@@ -1,6 +1,7 @@
 package com.charles445.simpledifficulty.register;
 
 import com.charles445.simpledifficulty.SimpleDifficulty;
+import com.charles445.simpledifficulty.register.RegisterFluids;
 import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.api.SDFluids;
 import com.charles445.simpledifficulty.api.SDItems;
@@ -42,8 +43,8 @@ public class RegisterClientModels {
         RenderTypeLookup.setRenderLayer(SDBlocks.chiller.get(), RenderType.cutout());
         
         // Fluids use translucent render layer
-        RenderTypeLookup.setRenderLayer(SDBlocks.blockPurifiedWater.get(), RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(SDBlocks.blockSaltWater.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(RegisterFluids.BLOCK_PURIFIED_WATER.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(RegisterFluids.BLOCK_SALT_WATER.get(), RenderType.translucent());
         
         // Ice blocks
         RenderTypeLookup.setRenderLayer(SDBlocks.icePurifiedWater.get(), RenderType.translucent());

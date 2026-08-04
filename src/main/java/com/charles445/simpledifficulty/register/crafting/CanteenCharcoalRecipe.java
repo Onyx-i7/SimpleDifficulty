@@ -61,16 +61,16 @@ public class CanteenCharcoalRecipe extends ShapelessRecipe {
 
         @Override
         public CanteenCharcoalRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-            String group = net.minecraft.util.JSONUtils.getString(json, "group", "");
+            String group = json.has("group") ? json.get("group").getAsString() : "";
             
-            com.google.gson.JsonArray ingredientsJson = net.minecraft.util.JSONUtils.getJsonArray(json, "ingredients");
+            com.google.gson.JsonArray ingredientsJson = json.getAsJsonArray("ingredients");
             NonNullList<Ingredient> ingredients = NonNullList.create();
             for (com.google.gson.JsonElement element : ingredientsJson) {
                 ingredients.add(Ingredient.fromJson(element));
             }
 
-            ItemStack result = net.minecraft.item.crafting.ShapedRecipe.fromJson(net.minecraft.util.JSONUtils.getJsonObject(json, "result"));
-
+            ItemStack result = net.minecraft.item.crafting.ShapedRecipe.itemFromJson(json.getAsJsonObject("result"));
+            
             return new CanteenCharcoalRecipe(recipeId, group, result, ingredients);
         }
 

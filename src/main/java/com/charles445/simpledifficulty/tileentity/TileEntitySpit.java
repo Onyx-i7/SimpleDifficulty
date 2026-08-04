@@ -156,8 +156,8 @@ public class TileEntitySpit extends TileEntity implements ITickableTileEntity {
             boolean isBlacklisted = false;
             
             @SuppressWarnings("unchecked")
-            java.util.List<String> spitBlacklist = (java.util.List<String>) ModConfig.SERVER.campfireSpitBlacklist.get();
-            
+            java.util.List<String> spitBlacklist = (java.util.List<String>) (Object) ModConfig.SERVER.campfireSpitBlacklist.get();
+
             for (String s : spitBlacklist) {
                 if (s.equals(heldItemName)) {
                     isBlacklisted = true;

@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public class JsonItemIdentity {
             try {
                 this.nbtCompound = JsonToNBT.parseTag(this.nbt);
                 if (this.nbtCompound == null) {
-                    throw new CommandSyntaxException(null, "Failed to parse NBT");
+                    throw new com.mojang.brigadier.exceptions.CommandSyntaxException(null, new StringTextComponent("Failed to parse NBT"));
                 }
             } catch (CommandSyntaxException e) {
                 SimpleDifficulty.LOGGER.warn("Failed to parse NBT string in JsonItemIdentity: {}", this.nbt);

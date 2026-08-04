@@ -32,13 +32,15 @@ public class BlockIceBasic extends Block {
         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0) {
             Block.popResource(world, pos, new ItemStack(this));
         } else {
-            if (world.dimensionType().isUltraWarm()) {
+            if (world.dimensionType().ultraWarm()) {
                 world.removeBlock(pos, false);
                 return;
             }
 
             int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack);
-            dropExperience(world, pos, 0);
+            if (world instanceof ServerWorld) {
+                this.popExperience((ServerWorld) world, pos, 0);
+            }
             
             BlockState downState = world.getBlockState(pos.below());
             if (downState.getMaterial().blocksMotion() || downState.getMaterial().isLiquid()) {
@@ -56,13 +58,13 @@ public class BlockIceBasic extends Block {
 
         f = com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge.getTemperatureSafe(world, biome, pos);
 
-        if (f > 0.15F && world.getBrightness(LightType.BLOCK_LIGHT, pos) > 11 - state.getLightBlock(world, pos)) {
+        if (f > 0.15F && world.getBrightness(net.minecraft.world.LightType.BLOCK, pos) > 11 - state.getLightBlock(world, pos)) {
             turnIntoWater(world, pos);
         }
     }
 
     private void turnIntoWater(World world, BlockPos pos) {
-        if (world.dimensionType().isUltraWarm()) {
+        if (world.dimensionType().ultraWarm()) {
             world.removeBlock(pos, false);
         } else {
             BlockState fluidState = getFluidStateSafe();
@@ -73,10 +75,10 @@ public class BlockIceBasic extends Block {
 
     private BlockState getFluidStateSafe() {
         if (SDFluids.fluidBlocks.containsKey(waterBlock)) {
-             Block block = SDFluids.fluidBlocks.get(waterBlock);
-             if (block != null) {
-                 return block.defaultBlockState();
-             }
+            Block block = com.charles445.simpledifficulty.register.RegisterFluids.BLOCK_SALT_WATER.get();
+            if (block != null) {
+                return block.defaultBlockState();
+            }
         }
         return Blocks.WATER.defaultBlockState();
     }

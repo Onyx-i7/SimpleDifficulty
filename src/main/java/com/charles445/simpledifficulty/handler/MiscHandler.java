@@ -68,7 +68,7 @@ public class MiscHandler {
             int maxY = playerPos.getY() + SCAN_RADIUS_Y;
             int maxZ = playerPos.getZ() + SCAN_RADIUS_XZ;
 
-            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+            BlockPos.Mutable mutablePos = new BlockPos.Mutable();
 
             Block campfireBlock = SDBlocks.campfire.get();
             Block rainCollectorBlock = SDBlocks.rainCollector.get();

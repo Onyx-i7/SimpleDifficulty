@@ -91,7 +91,7 @@ public class MessageUpdateThirst {
         if (player != null) {
             Capability<IThirstCapability> capability = SDCapabilities.THIRST;
             if (capability != null) {
-                IThirstCapability thirstCap = capability.orElse(null);
+                IThirstCapability thirstCap = player.getCapability(capability).orElse(null);
                 if (thirstCap == null) {
                     // Try getting from player capability
                     thirstCap = player.getCapability(capability).orElse(null);

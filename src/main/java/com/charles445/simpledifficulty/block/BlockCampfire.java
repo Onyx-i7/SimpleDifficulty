@@ -52,16 +52,8 @@ public class BlockCampfire extends Block {
     // VoxelShape replaces AxisAlignedBB for collision and selection
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.4D, 16.0D);
 
-    public BlockCampfire() {
-        super(AbstractBlock.Properties.of(Material.WOOD, MaterialColor.WOOD)
-                .sound(SoundType.WOOD)
-                .strength(0.5f)
-                .randomTicks()
-                .noOcclusion()
-                .harvestTool(ToolType.AXE)
-                .harvestLevel(0)
-                .lightLevel(state -> state.getValue(BURNING) ? 15 : 0));
-        
+    public BlockCampfire(AbstractBlock.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(AGE, AGE_MIN)
                 .setValue(BURNING, false));
@@ -220,7 +212,6 @@ public class BlockCampfire extends Block {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public int getTickDelay(BlockState state, net.minecraft.world.IWorldReader world) {
         return RAIN_CHECK_RATE;
     }
@@ -286,7 +277,6 @@ public class BlockCampfire extends Block {
                 0.0d, (rand.nextDouble() * 0.015d) + 0.005d, 0.0d);
     }
 
-    @Override
     public boolean isPathfindable(BlockState state, net.minecraft.world.IBlockReader world, BlockPos pos, net.minecraft.pathfinding.PathNodeType type) {
         return false;
     }

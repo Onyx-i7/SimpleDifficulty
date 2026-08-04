@@ -141,8 +141,8 @@ public class TemperatureCapability implements ITemperatureCapability {
 
         if (!appliedEffect) {
             if (this.getTemperatureDamageCounter() != 0) {
-                boolean hasHypothermia = player.hasEffect(SDPotions.HYPOTHERMIA.get());
-                boolean hasHyperthermia = player.hasEffect(SDPotions.HYPERTHERMIA.get());
+                boolean hasHypothermia = player.hasEffect(SDPotions.hypothermia.get());
+                boolean hasHyperthermia = player.hasEffect(SDPotions.hyperthermia.get());
                 if (!hasHypothermia && !hasHyperthermia) {
                     this.setTemperatureDamageCounter(0);
                 }

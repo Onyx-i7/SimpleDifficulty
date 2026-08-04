@@ -1,21 +1,21 @@
 package com.charles445.simpledifficulty.register.crafting;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.common.brewing.BrewingRecipe;
-import javax.annotation.Nonnull;
 
 public class FixedBrewingRecipe extends BrewingRecipe {
-    public FixedBrewingRecipe(ItemStack input, ItemStack ingredient, ItemStack output) {
+    public FixedBrewingRecipe(ItemStack input, Ingredient ingredient, ItemStack output) {
         super(input, ingredient, output);
     }
 
     @Override
-    public boolean isInput(@Nonnull ItemStack stack) {
-        return super.isInput(stack) && ItemStack.areItemStackTagsEqual(getInput(), stack);
+    public boolean isInput(ItemStack stack) {
+        return super.isInput(stack) && ItemStack.tagMatches(getInput(), stack);
     }
 
     @Override
     public boolean isIngredient(ItemStack ingredient) {
-        return ItemStack.areItemsEqual(getIngredient(), ingredient);
+        return this.getIngredient().test(ingredient);
     }
 }

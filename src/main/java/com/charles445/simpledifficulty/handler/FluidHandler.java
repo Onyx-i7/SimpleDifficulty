@@ -77,10 +77,10 @@ public class FluidHandler {
         int zChunkPos = world.getChunk(pos).getPos().z;
         BlockPos chunkPos = new BlockPos(xChunkPos * 16 + 8, 0, zChunkPos * 16 + 8);
 
-        Biome biomeInNorthChunk = world.getBiome(chunkPos.north(32)).value();
-        Biome biomeInEastChunk = world.getBiome(chunkPos.east(32)).value();
-        Biome biomeInSouthChunk = world.getBiome(chunkPos.south(32)).value();
-        Biome biomeInWestChunk = world.getBiome(chunkPos.west(32)).value();
+        Biome biomeInNorthChunk = world.getBiome(chunkPos.north(32));
+        Biome biomeInEastChunk = world.getBiome(chunkPos.east(32));
+        Biome biomeInSouthChunk = world.getBiome(chunkPos.south(32));
+        Biome biomeInWestChunk = world.getBiome(chunkPos.west(32));
 
         Block saltWaterBlock = SDFluids.blockSaltWater.get();
 

@@ -95,7 +95,7 @@ public class ModConfig {
         public final ForgeConfigSpec.IntValue campfireSpitDelay;
         public final ForgeConfigSpec.IntValue campfireSpitSize;
         public final ForgeConfigSpec.BooleanValue campfireSpitExperience;
-        public final ForgeConfigSpec.ConfigValue<? extends String> campfireSpitBlacklist; // Simplified for now
+        public final ForgeConfigSpec.ConfigValue<java.util.List<String>> campfireSpitBlacklist;
         public final ForgeConfigSpec.BooleanValue campfireSpitBlacklistIsWhitelist;
         public final ForgeConfigSpec.BooleanValue goldenAppleJuiceEffect;
         public final ForgeConfigSpec.BooleanValue iceDropsChunks;
@@ -175,7 +175,7 @@ public class ModConfig {
             campfireSpitDelay = builder.defineInRange("CampfireSpitDelay", 35, 1, Integer.MAX_VALUE);
             campfireSpitSize = builder.defineInRange("CampfireSpitSize", 3, 1, 10);
             campfireSpitExperience = builder.define("CampfireSpitExperience", true);
-            campfireSpitBlacklist = builder.defineList("CampfireSpitBlacklist", java.util.Collections.emptyList(), o -> true);
+            campfireSpitBlacklist = builder.<String>defineList("CampfireSpitBlacklist", java.util.Collections.emptyList(), o -> o instanceof String);
             campfireSpitBlacklistIsWhitelist = builder.define("CampfireSpitBlacklistIsWhitelist", false);
             goldenAppleJuiceEffect = builder.define("GoldenAppleJuiceEffect", true);
             iceDropsChunks = builder.define("IceDropsChunks", true);
@@ -242,7 +242,7 @@ public class ModConfig {
         ClientConfig.instance.put(ClientOptions.DRAW_THIRST_SATURATION, CLIENT.drawThirstSaturation.get());
         ClientConfig.instance.put(ClientOptions.ENABLE_THERMOMETER, CLIENT.enableThermometer.get());
         ClientConfig.instance.put(ClientOptions.ALTERNATE_TEMP, CLIENT.alternateTemp.get());
-        ClientConfig.instance.put(ClientOptions.HUD_THERMOMETER, CLIENT.hudThermometer.get());
+        ClientConfig.instance.put(ClientOptions.HUD_THERMOMETRY, CLIENT.hudThermometerY.get());
         ClientConfig.instance.put(ClientOptions.HUD_THERMOMETERX, CLIENT.hudThermometerX.get());
         ClientConfig.instance.put(ClientOptions.HUD_THERMETERY, CLIENT.hudThermometerY.get());
         ClientConfig.instance.put(ClientOptions.TEMPERATURE_READOUT, CLIENT.temperatureReadout.get());

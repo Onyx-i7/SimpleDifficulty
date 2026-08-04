@@ -171,8 +171,7 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
         return max == 0.0d ? 1.0d : (max - (double) getDoses(stack)) / max;
     }
 
-    @Override
-    public boolean isBarVisible(ItemStack stack) {
+    public boolean showDurabilityBar(ItemStack stack) {
         return !isCanteenEmpty(stack);
     }
 

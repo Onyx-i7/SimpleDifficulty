@@ -37,7 +37,7 @@ public class JsonConfig {
      */
     public static void registerArmorTemperature(ItemStack stack, float temperature) {
         String registryName = stack.getItem().getRegistryName().toString();
-        registerArmorTemperature(registryName, temperature, new JsonItemIdentity(-1));
+        registerArmorTemperature(registryName, temperature, new JsonItemIdentity());
     }
 
     /**
@@ -47,7 +47,7 @@ public class JsonConfig {
      * @param temperature The temperature value to apply.
      */
     public static void registerArmorTemperature(String registryName, float temperature) {
-        registerArmorTemperature(registryName, temperature, new JsonItemIdentity(-1));
+        registerArmorTemperature(registryName, temperature, new JsonItemIdentity());
     }
 
     /**

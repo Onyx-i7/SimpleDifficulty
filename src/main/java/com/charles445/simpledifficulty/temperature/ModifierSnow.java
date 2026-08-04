@@ -16,9 +16,9 @@ public class ModifierSnow extends ModifierBase {
     @Override
     public float getWorldInfluence(World world, BlockPos pos) {
         if (world.isRaining() && world.canSeeSky(pos)) {
-            Biome biome = world.getBiome(pos).value();
+            Biome biome = world.getBiome(pos);
             
-            if (biome.coldEnoughToSnow(pos)) {
+            if (biome.shouldSnow(world, pos)) {
                 // Snow enabled variant
                 return ModConfig.SERVER.snowValue.get();
             } else {

@@ -113,11 +113,6 @@ public class BlockTemperature extends Block {
             }
         }
     }
-
-    @Override
-    public int getLightEmission(BlockState state, IBlockReader world, BlockPos pos) {
-        return state.getValue(ENABLED) ? 7 : 0;
-    }
     
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {

@@ -25,7 +25,12 @@ public class WorldGenIce {
 
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
-        World world = event.getWorld();
+        World world;
+        if (event.getWorld() instanceof World) {
+            world = (World) event.getWorld();
+        } else {
+            return;
+        }
         if (world == null || world.isClientSide) {
             return;
         }

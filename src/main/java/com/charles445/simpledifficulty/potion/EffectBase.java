@@ -60,7 +60,6 @@ public abstract class EffectBase extends Effect {
     }
 
     @OnlyIn(Dist.CLIENT)
-    @Override
     public void renderInventoryEffect(EffectInstance effect, MatrixStack matrixStack, int x, int y, float z) {
         Minecraft mc = Minecraft.getInstance();
         if (getTexture() != null && mc != null) {
@@ -70,7 +69,6 @@ public abstract class EffectBase extends Effect {
     }
 
     @OnlyIn(Dist.CLIENT)
-    @Override
     public void renderHUDEffect(EffectInstance effect, MatrixStack matrixStack, int x, int y, float z, float alpha) {
         Minecraft mc = Minecraft.getInstance();
         if (getTexture() != null && mc != null) {

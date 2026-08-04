@@ -55,7 +55,9 @@ public class BlockFluidBasicMixable extends BlockFluidBasic {
     public void onPlace(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (world.isClientSide) return;
 
-        world.scheduleTick(pos, this, 5);
+        if (world instanceof ServerWorld) {
+            ((ServerWorld) world).getBlockTicks().scheduleTick(pos, this, 5);
+        }
         
         if (FluidHandler.canMix(pos, world)) {
             FluidHandler.scheduleMixing(world, pos);

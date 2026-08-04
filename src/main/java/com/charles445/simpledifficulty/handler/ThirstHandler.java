@@ -113,9 +113,6 @@ public class ThirstHandler {
                             ThirstUtil.takeDrink(player, ThirstEnum.POTION);
                             return;
                         }
-                    } else if (SDPotions.potionTypes.containsValue(potionType)) {
-                        ThirstUtil.takeDrink(player, ThirstEnum.POTION);
-                        return;
                     }
                 }
             }
@@ -168,7 +165,7 @@ public class ThirstHandler {
 
             if (heldItem.isEmpty()) {
                 player.setItemInHand(event.getHand(), resultBottle);
-            } else if (!player.getInventory().add(resultBottle)) {
+            } else if (!player.inventory.add(resultBottle)) {
                 player.drop(resultBottle, false);
             }
         }
@@ -279,8 +276,12 @@ public class ThirstHandler {
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!QuickConfig.isThirstEnabled()) return;
 
-        World world = event.getWorld();
-        if (world.isClientSide) return;
+        World world;
+        if (event.getWorld() instanceof World) {
+            world = (World) event.getWorld();
+        } else {
+            return;
+        }
 
         PlayerEntity player = event.getPlayer();
 

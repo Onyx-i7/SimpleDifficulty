@@ -40,7 +40,7 @@ public class RegisterRecipes {
             // Potion recipes (programmatic registration still needed)
             if (POTION_RECIPES_AS_VANILLA) {
                 // This allows for CraftTweaker support
-                registerPotionMixes();
+                // registerPotionMixes();
             } else {
                 // Custom brewing recipes (doesn't allow CraftTweaker removal)
                 registerCustomBrewingRecipes();

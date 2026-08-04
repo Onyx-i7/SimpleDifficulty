@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.vector.Vector3f;
 
 /**
  * Renderer for the Spit tile entity, displaying cooking items.
@@ -34,7 +35,7 @@ public class RenderSpit extends TileEntityRenderer<TileEntitySpit> {
         matrixStack.pushPose();
 
         matrixStack.translate(0.5D, 0.0D, 0.5D);
-        matrixStack.mulPose(com.mojang.math.Vector3f.YP.rotationDegrees(45.0F));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(45.0F));
         matrixStack.translate(-0.5D, 0.0D, -0.5D);
 
         int slots = te.items.getSlots();

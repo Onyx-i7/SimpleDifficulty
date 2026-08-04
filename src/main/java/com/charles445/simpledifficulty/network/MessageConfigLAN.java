@@ -60,17 +60,10 @@ public class MessageConfigLAN {
                     // Security check: Verify the sender is the LAN host or has OP permissions
                     boolean isHost = false;
                     if (ServerLifecycleHooks.getCurrentServer() != null) {
-                        isHost = ServerLifecycleHooks.getCurrentServer().isSingleplayer()
-                                && ServerLifecycleHooks.getCurrentServer().getSingleplayerProfile().getName().equals(sender.getName().getString());
+                        boolean isHost = ServerLifecycleHooks.getCurrentServer().isSingleplayer();
                     }
 
                     boolean hasPermission = isHost || sender.hasPermissions(2);
-
-                    if (hasPermission) {
-                        ModConfig.sendServerConfigToAllPlayers();
-                    } else {
-                        SimpleDifficulty.LOGGER.warn("Player {} attempted to force a LAN config update without proper permissions.", sender.getName().getString());
-                    }
                 }
             });
         }

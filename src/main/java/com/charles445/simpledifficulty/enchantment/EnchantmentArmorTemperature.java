@@ -19,7 +19,7 @@ public class EnchantmentArmorTemperature extends Enchantment {
     };
 
     public EnchantmentArmorTemperature() {
-        super(Rarity.COMMON, EnchantmentCategory.ARMOR, ARMOR_SLOTS);
+        super(Rarity.COMMON, EnchantmentType.ARMOR, ARMOR_SLOTS);
     }
 
     @Override

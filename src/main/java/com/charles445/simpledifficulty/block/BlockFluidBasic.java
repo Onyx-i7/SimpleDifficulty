@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtils;
@@ -32,7 +31,7 @@ import java.util.Random;
 public class BlockFluidBasic extends FlowingFluidBlock {
     protected final String iceBlock;
 
-    public BlockFluidBasic(Supplier<? extends Fluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
+    public BlockFluidBasic(Supplier<? extends FlowingFluid> fluid, AbstractBlock.Properties properties, String iceBlock) {
         super(fluid, properties);
         this.iceBlock = iceBlock;
     }
@@ -86,12 +85,8 @@ public class BlockFluidBasic extends FlowingFluidBlock {
         return false;
     }
 
-    public Vector3d getFluidColor(IBlockReader world, BlockPos pos, Vector3d originalColor) {
-        int biomeWaterColor = BiomeColors.getAverageWaterColor(world, pos);
-        float r = (float) ((biomeWaterColor >> 16) & 0xFF) / 255.0F;
-        float g = (float) ((biomeWaterColor >> 8) & 0xFF) / 255.0F;
-        float b = (float) (biomeWaterColor & 0xFF) / 255.0F;
-        return new Vector3d(0.37F + r, 0.53F + g, 0.53F + b);
+    public net.minecraft.util.math.vector.Vector3d getFluidColor(net.minecraft.world.IBlockDisplayReader world, BlockPos pos, net.minecraft.util.math.vector.Vector3d originalColor) {
+        return originalColor;
     }
 
     @Override

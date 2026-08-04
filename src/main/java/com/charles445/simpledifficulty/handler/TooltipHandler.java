@@ -4,6 +4,7 @@ import com.charles445.simpledifficulty.api.temperature.TemperatureUtil;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.text.DecimalFormat;
 
@@ -25,9 +26,9 @@ public class TooltipHandler {
         if (tempTag != 0.0f) {
             // Has armor temperature tag
             if (tempTag > 0.0f) {
-                event.getToolTip().add(TextFormatting.DARK_RED + " Temperature +" + df.format(tempTag));
+                event.getToolTip().add(new StringTextComponent(TextFormatting.DARK_RED + " Temperature +" + df.format(tempTag)));
             } else {
-                event.getToolTip().add(TextFormatting.DARK_BLUE + " Temperature " + df.format(tempTag));
+                event.getToolTip().add(new StringTextComponent(TextFormatting.DARK_BLUE + " Temperature " + df.format(tempTag)));
             }
         }
     }

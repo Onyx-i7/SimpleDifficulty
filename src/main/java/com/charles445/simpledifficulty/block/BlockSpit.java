@@ -58,7 +58,10 @@ public class BlockSpit extends Block {
     
     @Override
     public boolean canSurvive(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos) {
-        return hasCampfire(world, pos);
+        if (world instanceof World) {
+            return hasCampfire((World) world, pos);
+        }
+        return false;
     }
     
     @SuppressWarnings("deprecation")

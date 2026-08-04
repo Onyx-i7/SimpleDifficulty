@@ -102,7 +102,7 @@ public class ItemJuice extends ItemDrinkBase {
         if (type == JuiceEnum.GOLDEN_APPLE || type == JuiceEnum.GOLDEN_CARROT || type == JuiceEnum.GOLDEN_MELON) {
             return true;
         }
-        return super.hasEffect(stack);
+        return super.isFoil(stack);
     }
 
     /**

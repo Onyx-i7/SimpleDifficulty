@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class SDFluids {
 
-    public static final Map<String, RegistryObject<FlowingFluid>> fluids = new LinkedHashMap<String, RegistryObject<FlowingFluid>>() {{
+    public static final java.util.Map<String, RegistryObject<Fluid>> fluids = new java.util.HashMap<>(); {{
         put("purifiedwater", RegisterFluids.PURIFIED_WATER);
         put("saltwater", RegisterFluids.SALT_WATER);
     }};
@@ -39,6 +39,6 @@ public class SDFluids {
     public static final RegistryObject<FlowingFluidBlock> blockSaltWater = RegisterFluids.BLOCK_SALT_WATER;
 
     // Bucket Items (if handled separately)
-    public static final RegistryObject<Item> purifiedWaterBucket = RegisterItems.PURIFIED_WATER_ITEM;
-    public static final RegistryObject<Item> saltWaterBucket = RegisterItems.SALT_WATER_ITEM;
+    public static final RegistryObject<Item> purifiedWaterBucket = RegisterFluids.PURIFIED_WATER_ITEM;
+    public static final RegistryObject<Item> saltWaterBucket = RegisterFluids.SALT_WATER_ITEM;
 }
