@@ -20,10 +20,6 @@ import net.minecraft.world.chunk.IChunk;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Temperature modifier based on nearby blocks and tile entities.
- * Handles proximity-based heating/cooling from environmental sources.
- */
 public class ModifierBlocksTiles extends ModifierBase {
     private float coldestValue = 0.0f;
     private float hottestValue = 0.0f;
@@ -62,7 +58,6 @@ public class ModifierBlocksTiles extends ModifierBase {
             return hottestValue + coldestValue;
         }
 
-        // Apply diminishing returns for stacking temperature sources
         hotTotal -= hottestValue;
         coldTotal -= coldestValue;
 
@@ -81,7 +76,6 @@ public class ModifierBlocksTiles extends ModifierBase {
     }
 
     private void doBlocksRoutine(World world, BlockPos pos) {
-        // Scan 9x5x9 area around the player
         for (int x = -4; x <= 4; x++) {
             for (int y = -3; y <= 1; y++) {
                 for (int z = -4; z <= 4; z++) {
@@ -112,7 +106,6 @@ public class ModifierBlocksTiles extends ModifierBase {
                             }
                         }
                     } else {
-                        // Material support (fire)
                         if (blockstate.getMaterial() == Material.FIRE) {
                             processTemp(JsonConfigInternal.materialTemperature.fire);
                         }
@@ -126,7 +119,6 @@ public class ModifierBlocksTiles extends ModifierBase {
         if (!ServerConfig.instance.getBoolean(ServerOptions.TEMPERATURE_TE_ENABLED))
             return;
 
-        // Scan 7x7 chunks around the player
         for (int x = -3; x <= 3; x++) {
             for (int z = -3; z <= 3; z++) {
                 checkChunkAndProcess(world, pos.offset(x * 16, 0, z * 16), pos);
@@ -160,8 +152,8 @@ public class ModifierBlocksTiles extends ModifierBase {
 
     private void checkChunkAndProcess(World world, BlockPos pos, BlockPos selfPos) {
         if (WorldUtil.isChunkLoaded(world, pos)) {
-            net.minecraft.world.chunk.IChunk chunk = world.getChunk(pos);
-            for (Map.Entry<BlockPos, TileEntity> entry : chunk.getTileEntities().entrySet()) {
+            Chunk chunk = world.getChunk(pos);
+            for (Map.Entry<BlockPos, TileEntity> entry : chunk.getBlockEntities().entrySet()) {
                 processTemp(checkTileEntity(world, entry.getKey(), entry.getValue(), selfPos));
             }
         }
@@ -170,7 +162,7 @@ public class ModifierBlocksTiles extends ModifierBase {
     private float checkTileEntity(World world, BlockPos pos, TileEntity tileEntity, BlockPos selfPos) {
         double distance = pos.distSqr(selfPos);
 
-        if (distance < 2500.0d) { // Within 50 blocks
+        if (distance < 2500.0d) {
             if (tileEntity instanceof ITemperatureTileEntity) {
                 return ((ITemperatureTileEntity) tileEntity).getInfluence(selfPos, distance);
             }

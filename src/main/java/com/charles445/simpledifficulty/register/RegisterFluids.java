@@ -7,7 +7,7 @@ import com.charles445.simpledifficulty.fluid.FluidBasic;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.fluid.FlowingFluid;  // ← AGREGAR ESTE IMPORT
+import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -21,9 +21,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 public class RegisterFluids {
-    public static final DeferredRegister<FlowingFluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, SimpleDifficulty.MODID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, SimpleDifficulty.MODID);
 
-    // Suppliers for the properties (resolve the forward reference)
     private static Supplier<ForgeFlowingFluid.Properties> purifiedWaterProps() {
         return () -> new ForgeFlowingFluid.Properties(
                 PURIFIED_WATER_SOURCE, PURIFIED_WATER,
@@ -38,7 +37,6 @@ public class RegisterFluids {
         ).bucket(SALT_WATER_ITEM).block(BLOCK_SALT_WATER);
     }
 
-    // Fluids
     public static final RegistryObject<FlowingFluid> PURIFIED_WATER_SOURCE = FLUIDS.register("purified_water_source",
             () -> new FluidBasic.Source(purifiedWaterProps()));
 
@@ -51,7 +49,6 @@ public class RegisterFluids {
     public static final RegistryObject<FlowingFluid> SALT_WATER = FLUIDS.register("saltwater",
             () -> new FluidBasic.Flowing(saltWaterProps()));
 
-    // Fluid Blocks
     public static final RegistryObject<FlowingFluidBlock> BLOCK_PURIFIED_WATER = RegisterBlocks.BLOCKS.register("purifiedwater",
             () -> new BlockFluidBasicMixable(PURIFIED_WATER_SOURCE,
                     AbstractBlock.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops(),
@@ -62,7 +59,6 @@ public class RegisterFluids {
                     AbstractBlock.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops(),
                     "saltwater"));
 
-    // Items (buckets)
     public static final RegistryObject<Item> PURIFIED_WATER_ITEM = RegisterItems.ITEMS.register("purifiedwater_bucket",
             () -> new BlockItem(BLOCK_PURIFIED_WATER.get(), new Item.Properties().tab(ItemGroup.TAB_MISC).stacksTo(1)));
 
