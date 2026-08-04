@@ -152,7 +152,7 @@ public class ModifierBlocksTiles extends ModifierBase {
 
     private void checkChunkAndProcess(World world, BlockPos pos, BlockPos selfPos) {
         if (WorldUtil.isChunkLoaded(world, pos)) {
-            Chunk chunk = world.getChunk(pos);
+            net.minecraft.world.chunk.IChunk chunk = world.getChunk(pos);
             for (Map.Entry<BlockPos, TileEntity> entry : chunk.getBlockEntities().entrySet()) {
                 processTemp(checkTileEntity(world, entry.getKey(), entry.getValue(), selfPos));
             }
