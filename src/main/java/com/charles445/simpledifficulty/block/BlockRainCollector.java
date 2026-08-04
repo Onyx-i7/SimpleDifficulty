@@ -27,6 +27,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.Direction;
+import net.minecraft.item.BlockItemUseContext;
 
 import java.util.Random;
 
@@ -83,7 +86,7 @@ public class BlockRainCollector extends Block {
     }
     
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, UseHand hand, BlockRayTraceResult hit) {
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         ItemStack itemstack = player.getItemInHand(hand);
 
         if (itemstack.isEmpty()) {
@@ -172,7 +175,7 @@ public class BlockRainCollector extends Block {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(BlockItemUseContext context)
         return this.defaultBlockState().setValue(LEVEL, 0);
     }
 

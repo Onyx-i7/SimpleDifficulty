@@ -11,6 +11,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.potion.EffectType;
+import net.minecraft.client.gui.screen.Screen;
 
 /**
  * Base class for all custom SimpleDifficulty effects.
@@ -81,7 +83,7 @@ public abstract class EffectBase extends Effect {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void renderInventoryEffect(EffectInstance effect, int x, int y, float z, MatrixStack matrixStack, net.minecraft.client.gui.Screen gui) {
+    public void renderInventoryEffect(EffectInstance effect, int x, int y, float z, MatrixStack matrixStack, Screen gui) {
         Minecraft mc = Minecraft.getInstance();
         if (getTexture() != null && mc != null) {
             mc.getTextureManager().bind(getTexture());

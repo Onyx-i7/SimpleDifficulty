@@ -6,7 +6,7 @@ import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.util.SoundUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;

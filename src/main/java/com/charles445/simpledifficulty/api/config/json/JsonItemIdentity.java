@@ -45,11 +45,7 @@ public class JsonItemIdentity {
             } else {
                 try {
                     this.nbtCompound = JsonToNBT.parseTag(this.nbt);
-                    if (this.nbtCompound == null) {
-                        throw new NBTException("Failed to parse NBT");
-                    }
-                } catch (NBTException e) {
-                    SimpleDifficulty.LOGGER.warn("Failed to parse NBT string in JsonItemIdentity: {}", this.nbt);
+                } catch (Exception e) {
                     this.nbtCompound = null;
                     this.nbt = null;
                 }

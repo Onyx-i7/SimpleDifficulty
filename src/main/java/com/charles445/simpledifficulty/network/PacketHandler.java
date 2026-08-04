@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.SimpleChannel;
+import net.minecraftforge.fml.network.simpleimpl.SimpleChannel;
 
 import java.util.function.Function;
 

@@ -6,6 +6,8 @@ import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.handler.FluidHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.Block;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

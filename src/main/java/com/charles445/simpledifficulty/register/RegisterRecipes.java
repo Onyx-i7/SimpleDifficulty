@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionBrewing;
+import net.minecraft.item.Item;
 import net.minecraft.potion.Potions;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
@@ -81,20 +82,20 @@ public class RegisterRecipes {
         registerPotionRecipe(Items.LINGERING_POTION, potionType, Items.GUNPOWDER, Items.SPLASH_POTION, potionType);
     }
 
-    private static void registerSameItemPotionRecipes(Potion itemInPotionType, net.minecraft.item.IItemProvider ingredient, Potion itemOutPotionType) {
-        registerPotionRecipe(Items.POTION, itemInPotionType, ingredient.asItem(), Items.POTION, itemOutPotionType);
-        registerPotionRecipe(Items.LINGERING_POTION, itemInPotionType, ingredient.asItem(), Items.LINGERING_POTION, itemOutPotionType);
-        registerPotionRecipe(Items.SPLASH_POTION, itemInPotionType, ingredient.asItem(), Items.SPLASH_POTION, itemOutPotionType);
+    private static void registerSameItemPotionRecipes(Potion itemInPotionType, Item ingredient, Potion itemOutPotionType) {
+        registerPotionRecipe(Items.POTION, itemInPotionType, ingredient, Items.POTION, itemOutPotionType);
+        registerPotionRecipe(Items.LINGERING_POTION, itemInPotionType, ingredient, Items.LINGERING_POTION, itemOutPotionType);
+        registerPotionRecipe(Items.SPLASH_POTION, itemInPotionType, ingredient, Items.SPLASH_POTION, itemOutPotionType);
     }
 
-    private static void registerPotionRecipe(net.minecraft.item.IItemProvider itemIn, Potion itemInPotionType, 
-                                              net.minecraft.item.IItemProvider ingredient, 
-                                              net.minecraft.item.IItemProvider itemOut, Potion itemOutPotionType) {
+    private static void registerPotionRecipe(Item itemIn, Potion itemInPotionType, 
+                                          Item ingredient, 
+                                          Item itemOut, Potion itemOutPotionType) {
         BrewingRecipeRegistry.addRecipe(
                 new FixedBrewingRecipe(
-                        toPotion(new ItemStack(itemIn.asItem()), itemInPotionType),
-                        new ItemStack(ingredient.asItem()),
-                        toPotion(new ItemStack(itemOut.asItem()), itemOutPotionType)
+                        toPotion(new ItemStack(itemIn), itemInPotionType),
+                        new ItemStack(ingredient),
+                        toPotion(new ItemStack(itemOut), itemOutPotionType)
                 )
         );
     }
