@@ -37,7 +37,6 @@ public class RegisterFluids {
     public static final RegistryObject<LiquidBlock> BLOCK_SALT_WATER = RegisterBlocks.BLOCKS.register("saltwater", 
         () -> new BlockFluidSaltWater(SALT_WATER, LiquidBlock.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
 
-    // Items de Fluidos (Se usa CreativeModeTab en lugar de ModCreativeTab si es nativo)
     public static final RegistryObject<Item> PURIFIED_WATER_ITEM = RegisterItems.ITEMS.register("purifiedwater", 
         () -> new BlockItem(BLOCK_PURIFIED_WATER.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
         
