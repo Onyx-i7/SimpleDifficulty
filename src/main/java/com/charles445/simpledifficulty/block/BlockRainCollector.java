@@ -175,7 +175,7 @@ public class BlockRainCollector extends Block {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context)
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         return this.defaultBlockState().setValue(LEVEL, 0);
     }
 
