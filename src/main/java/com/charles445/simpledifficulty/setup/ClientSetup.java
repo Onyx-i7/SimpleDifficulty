@@ -30,7 +30,7 @@ public class ClientSetup {
         MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 
         event.enqueueWork(() -> {
-            ItemModelsProperties.register(RegisterItems.juice.get(), new ResourceLocation(SimpleDifficulty.MODID,  
+            ItemModelsProperties.register(RegisterItems.juice.get(), new ResourceLocation(SimpleDifficulty.MODID, "type"),  
                 (itemStack, clientWorld, livingEntity) -> {
                     if (itemStack.hasTag() && itemStack.getTag().contains("JuiceType")) {
                         String juiceName = itemStack.getTag().getString("JuiceType");
@@ -45,7 +45,6 @@ public class ClientSetup {
             );
         });
 
-        
         // Note: Tile Entity Renderers (RenderSpit) and Particles will be registered 
         // here once i port the Block/TileEntity and Particle classes.
     }
