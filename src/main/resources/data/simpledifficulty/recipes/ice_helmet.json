@@ -1,19 +1,16 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "SSS",
-        "S S"
-    ],
-    "key":
-    {
-        "S":
-        {
-            "item": "#ICE_CHUNK"
-        }
-    },
-    "result":
-    {
-        "item": "simpledifficulty:ice_helmet"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "simpledifficulty:ice_chunk"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:ice_helmet",
+    "count": 1
+  }
 }

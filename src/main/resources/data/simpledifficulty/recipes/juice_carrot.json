@@ -1,14 +1,13 @@
 {
-    "type": "forge:ore_shapeless",
-    "ingredients": [{"item": "#SUGAR"},{"item": "#PURIFIED_WATER_BOTTLE"},
-    {
-        "item": "minecraft:carrot"
-    }
-    
-    ],
-    "result":
-    {
-        "item": "simpledifficulty:juice",
-        "data": 3
-    }
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "tag": "forge:sugar" },
+    { "item": "simpledifficulty:purified_water_bottle" },
+    { "item": "minecraft:carrot" }
+  ],
+  "result": {
+    "item": "simpledifficulty:juice",
+    "count": 1,
+    "nbt": "{JuiceType:\"carrot\"}"
+  }
 }

@@ -1,28 +1,18 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        " x ",
-        "x x",
-        "xxx"
-    ],
-    "key":
-    {
-        "x":
-        {
-            "type": "forge:ore_dict",
-            "ore": "leather"
-        }
-    },
-    "result":
-    {
-        "type": "minecraft:item_nbt",
-        "item": "simpledifficulty:canteen",
-        "count": 1,
-        "nbt":
-        {
-            "Doses": 0,
-            "CanteenType": 0
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " x ",
+    "x x",
+    "xxx"
+  ],
+  "key": {
+    "x": {
+      "tag": "forge:leather"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:canteen",
+    "count": 1,
+    "nbt": "{Doses:0,CanteenType:0}"
+  }
 }

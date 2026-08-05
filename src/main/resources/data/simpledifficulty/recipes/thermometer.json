@@ -1,26 +1,20 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        " G ",
-        "GRG",
-        " G "
-    ],
-    "key":
-    {
-        "G":
-        {
-            "type": "forge:ore_dict",
-            "ore": "blockGlass"
-        },
-        "R":
-        {
-            "type": "forge:ore_dict",
-            "ore": "dustRedstone"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "GRG",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass"
     },
-    "result":
-    {
-        "item": "simpledifficulty:thermometer"
+    "R": {
+      "tag": "forge:dusts/redstone"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:thermometer",
+    "count": 1
+  }
 }

@@ -1,19 +1,16 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "MM",
-		"MM"
-    ],
-    "key":
-    {
-        "M":
-        {
-            "item": "#MAGMA_CHUNK"
-        }
-    },
-    "result":
-    {
-        "item": "minecraft:magma"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MM",
+    "MM"
+  ],
+  "key": {
+    "M": {
+      "item": "simpledifficulty:magma_chunk"
     }
+  },
+  "result": {
+    "item": "minecraft:magma",
+    "count": 1
+  }
 }

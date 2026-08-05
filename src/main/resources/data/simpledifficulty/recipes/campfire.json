@@ -1,26 +1,20 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        " L ",
-        "LLL",
-        "WWW"
-    ],
-    "key":
-    {
-        "W":
-        {
-            "type": "forge:ore_dict",
-            "ore": "plankWood"
-        },
-        "L":
-        {
-            "type": "forge:ore_dict",
-            "ore": "logWood"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    "LLL",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:planks"
     },
-    "result":
-    {
-        "item": "simpledifficulty:campfire"
+    "L": {
+      "tag": "minecraft:logs"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:campfire",
+    "count": 1
+  }
 }

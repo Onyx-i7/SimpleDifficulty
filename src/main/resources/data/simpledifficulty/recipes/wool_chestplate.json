@@ -1,21 +1,17 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "S S",
-        "SSS",
-        "SSS"
-    ],
-    "key":
-    {
-        "S":
-        {
-            "type": "forge:ore_dict",
-            "ore": "wool"
-        }
-    },
-    "result":
-    {
-        "item": "simpledifficulty:wool_chestplate"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "minecraft:wool"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:wool_chestplate",
+    "count": 1
+  }
 }

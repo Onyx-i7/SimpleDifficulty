@@ -1,35 +1,26 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "RSR",
-        "CBC",
-        "CCC"
-    ],
-    "key":
-    {
-        "S":
-        {
-            "type": "forge:ore_dict",
-            "ore": "string"
-        },
-        "C":
-        {
-            "type": "forge:ore_dict",
-            "ore": "cobblestone"
-        },
-        "R":
-        {
-            "type": "forge:ore_dict",
-            "ore": "ingotIron"
-        },
-        "B":
-        {
-            "item": "#BUCKET"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RSR",
+    "CBC",
+    "CCC"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:string"
     },
-    "result":
-    {
-        "item": "simpledifficulty:rain_collector"
+    "C": {
+      "tag": "forge:cobblestone"
+    },
+    "R": {
+      "tag": "forge:ingots/iron"
+    },
+    "B": {
+      "item": "minecraft:bucket"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:rain_collector",
+    "count": 1
+  }
 }

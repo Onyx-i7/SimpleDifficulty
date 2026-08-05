@@ -1,25 +1,18 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "pxp"
-    ],
-    "key":
-    {
-        "p":
-        {
-            "type": "forge:ore_dict",
-            "ore": "stickWood"
-        },
-        "x":
-        {
-            "type": "forge:ore_dict",
-            "ore": "cobblestone"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "pxp"
+  ],
+  "key": {
+    "p": {
+      "tag": "forge:rods/wooden"
     },
-    "result":
-    {
-        "item": "simpledifficulty:spit",
-        "count": 1
+    "x": {
+      "tag": "forge:cobblestone"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:spit",
+    "count": 1
+  }
 }

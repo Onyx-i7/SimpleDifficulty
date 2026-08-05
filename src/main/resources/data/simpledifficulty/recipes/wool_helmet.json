@@ -1,20 +1,16 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "SSS",
-        "S S"
-    ],
-    "key":
-    {
-        "S":
-        {
-            "type": "forge:ore_dict",
-            "ore": "wool"
-        }
-    },
-    "result":
-    {
-        "item": "simpledifficulty:wool_helmet"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "tag": "minecraft:wool"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:wool_helmet",
+    "count": 1
+  }
 }

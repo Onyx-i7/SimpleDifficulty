@@ -1,26 +1,20 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "p",
-        "x",
-        "p"
-    ],
-    "key":
-    {
-        "p":
-        {
-            "type": "forge:ore_dict",
-            "ore": "paper"
-        },
-        "x":
-        {
-            "item": "#CHARCOAL"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "p",
+    "x",
+    "p"
+  ],
+  "key": {
+    "p": {
+      "tag": "forge:paper"
     },
-    "result":
-    {
-        "item": "simpledifficulty:charcoal_filter",
-        "count": 3
+    "x": {
+      "item": "minecraft:charcoal"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:charcoal_filter",
+    "count": 3
+  }
 }

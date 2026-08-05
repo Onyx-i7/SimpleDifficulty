@@ -1,30 +1,23 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "C C",
-		"CSC",
-		"SRS"
-    ],
-    "key":
-    {
-        "C":
-        {
-            "item": "#MAGMA_CHUNK"
-        },
-		"S":
-		{
-			"type": "forge:ore_dict",
-            "ore": "cobblestone"
-		},
-		"R":
-		{
-			"type": "forge:ore_dict",
-            "ore": "dustRedstone"
-		}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "C C",
+    "CSC",
+    "SRS"
+  ],
+  "key": {
+    "C": {
+      "item": "simpledifficulty:magma_chunk"
     },
-    "result":
-    {
-        "item": "simpledifficulty:heater"
+    "S": {
+      "tag": "forge:cobblestone"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
     }
+  },
+  "result": {
+    "item": "simpledifficulty:heater",
+    "count": 1
+  }
 }

@@ -1,19 +1,16 @@
 {
-    "type": "forge:ore_shaped",
-    "pattern":
-    [
-        "MM",
-		"MM"
-    ],
-    "key":
-    {
-        "M":
-        {
-            "item": "#ICE_CHUNK"
-        }
-    },
-    "result":
-    {
-        "item": "minecraft:ice"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MM",
+    "MM"
+  ],
+  "key": {
+    "M": {
+      "item": "simpledifficulty:ice_chunk"
     }
+  },
+  "result": {
+    "item": "minecraft:ice",
+    "count": 1
+  }
 }
