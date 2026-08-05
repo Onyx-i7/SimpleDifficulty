@@ -3,11 +3,11 @@
 	"parent": "minecraft:block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"0": "simpledifficulty:blocks/rain_collector_b",
-		"1": "simpledifficulty:blocks/rain_collector_s",
-		"2": "simpledifficulty:blocks/rain_collector_t",
+		"0": "simpledifficulty:block/rain_collector_b",
+		"1": "simpledifficulty:block/rain_collector_s",
+		"2": "simpledifficulty:block/rain_collector_t",
 		"3": "simpledifficulty:fluids/purifiedwater_still",
-		"particle": "simpledifficulty:blocks/rain_collector_b"
+		"particle": "simpledifficulty:block/rain_collector_b"
 	},
 	"elements": [
         {

@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/wool_chestplate"
+        "layer0": "simpledifficulty:item/wool_chestplate"
     }
 }

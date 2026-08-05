@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/charcoal_filter"
+        "layer0": "simpledifficulty:item/charcoal_filter"
     }
 }

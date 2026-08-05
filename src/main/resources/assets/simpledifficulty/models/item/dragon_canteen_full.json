@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/dragon_canteen_full"
+        "layer0": "simpledifficulty:item/dragon_canteen_full"
     }
 }

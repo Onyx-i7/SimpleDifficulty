@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/purified_water_bottle"
+        "layer0": "simpledifficulty:item/purified_water_bottle"
     }
 }

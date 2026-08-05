@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/juice"
+        "layer0": "simpledifficulty:item/juice"
     },
 	"overrides": [
 		{"predicate":{"simpledifficulty:type": 0}, "model": "simpledifficulty:item/juice/juice_apple"},

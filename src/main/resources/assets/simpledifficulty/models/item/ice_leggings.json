@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/ice_leggings"
+        "layer0": "simpledifficulty:item/ice_leggings"
     }
 }

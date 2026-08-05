@@ -2,10 +2,10 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/block",
 	"textures": {
-		"1": "simpledifficulty:blocks/campfire_stone",
-		"2": "simpledifficulty:blocks/campfire_half",
-		"3": "simpledifficulty:blocks/campfire_half_top",
-		"particle": "simpledifficulty:blocks/campfire_half"
+		"1": "simpledifficulty:block/campfire_stone",
+		"2": "simpledifficulty:block/campfire_half",
+		"3": "simpledifficulty:block/campfire_half_top",
+		"particle": "simpledifficulty:block/campfire_half"
 	},
 	"elements": [
 		{

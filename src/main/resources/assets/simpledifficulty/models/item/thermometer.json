@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/thermometer_00"
+        "layer0": "simpledifficulty:item/thermometer_00"
     },
     "overrides": [
         { "predicate": { "temperature": 0.00 }, "model": "simpledifficulty:item/thermometer" },

@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/thermometer_03"
+        "layer0": "simpledifficulty:item/thermometer_03"
     }
 }

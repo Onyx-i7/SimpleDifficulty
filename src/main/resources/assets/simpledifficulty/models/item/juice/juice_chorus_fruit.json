@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpledifficulty:items/juice/juice_chorus_fruit"
+        "layer0": "simpledifficulty:item/juice/juice_chorus_fruit"
     }
 }

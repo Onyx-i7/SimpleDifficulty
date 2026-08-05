@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/block",
 	"textures": {
-		"0": "simpledifficulty:blocks/spit_all",
-		"particle": "simpledifficulty:blocks/spit_part"
+		"0": "simpledifficulty:block/spit_all",
+		"particle": "simpledifficulty:block/spit_part"
 	},
 	"elements": [
 		{

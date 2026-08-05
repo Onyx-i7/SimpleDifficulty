@@ -3,10 +3,10 @@
 	"parent": "minecraft:block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"0": "simpledifficulty:blocks/temper_base",
-		"1": "simpledifficulty:blocks/temper_chillsmooth_off",
-		"2": "simpledifficulty:blocks/temper_chillsmooth_off2",
-		"particle": "simpledifficulty:blocks/temper_base"
+		"0": "simpledifficulty:block/temper_base",
+		"1": "simpledifficulty:block/temper_chillsmooth_off",
+		"2": "simpledifficulty:block/temper_chillsmooth_off2",
+		"particle": "simpledifficulty:block/temper_base"
 	},
 	"elements": [
 		{
