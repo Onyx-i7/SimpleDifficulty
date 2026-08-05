@@ -4,6 +4,7 @@ import com.charles445.simpledifficulty.SimpleDifficulty;
 import com.charles445.simpledifficulty.client.gui.TemperatureGui;
 import com.charles445.simpledifficulty.client.gui.TemperatureInfoGui;
 import com.charles445.simpledifficulty.client.gui.ThirstGui;
+import com.charles445.simpledifficulty.register.RegisterItems;
 import com.charles445.simpledifficulty.handler.TooltipHandler;
 import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.item.ItemJuice;
@@ -29,7 +30,7 @@ public class ClientSetup {
         MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 
         event.enqueueWork(() -> {
-            ItemModelsProperties.register(SDItems.JUICE.get(), new ResourceLocation(SimpleDifficulty.MODID, "type"), 
+            ItemModelsProperties.register(RegisterItems.juice.get(), new ResourceLocation(SimpleDifficulty.MODID,  
                 (itemStack, clientWorld, livingEntity) -> {
                     if (itemStack.hasTag() && itemStack.getTag().contains("JuiceType")) {
                         String juiceName = itemStack.getTag().getString("JuiceType");
@@ -46,6 +47,6 @@ public class ClientSetup {
 
         
         // Note: Tile Entity Renderers (RenderSpit) and Particles will be registered 
-        // here once we port the Block/TileEntity and Particle classes.
+        // here once i port the Block/TileEntity and Particle classes.
     }
 }
