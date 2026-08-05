@@ -1,10 +1,10 @@
 {
     "forge_marker": 1,
     "variants": {
-        "level=0": {"model": "simpledifficulty:rain_collector_0"},
-        "level=1": {"model": "simpledifficulty:rain_collector_1"},
-        "level=2": {"model": "simpledifficulty:rain_collector_2"},
-        "level=3": {"model": "simpledifficulty:rain_collector_3"}
+        "level=0": {"model": "simpledifficulty:block/rain_collector_0"},
+        "level=1": {"model": "simpledifficulty:block/rain_collector_1"},
+        "level=2": {"model": "simpledifficulty:block/rain_collector_2"},
+        "level=3": {"model": "simpledifficulty:block/rain_collector_3"}
     }
 
 }

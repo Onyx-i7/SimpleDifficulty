@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="[36,)"
 license="MIT"
-issueTrackerURL="https://github.com/juraj-hrivnak/SimpleDifficulty/issues"
+issueTrackerURL="https://github.com/Onyx-i7/SimpleDifficulty/issues"
 
 [[mods]]
 modId="simpledifficulty"
 version="0.8.0"
 displayName="SimpleDifficulty"
 updateJSONURL="https://raw.githubusercontent.com/juraj-hrivnak/SimpleDifficulty/master/modupdatechecker.json"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog"
+displayURL="https://github.com/Onyx-i7/SimpleDifficulty/tree/1.16.5-development"
 logoFile="logo.png"
 credits="Original concept and development by Charles445. Underdog fork and maintenance by juraj-hrivnak. Performance optimization, bug fixes, and port 1.16.5 by Onyx-i7."
 authors="Charles445, juraj-hrivnak, Onyx-i7"

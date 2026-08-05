@@ -1,7 +1,10 @@
 {
-	"forge_marker": 1,
     "variants": {
-        "enabled=true": { "model": "simpledifficulty:temper_heat_on"},
-        "enabled=false": { "model": "simpledifficulty:temper_heat_off"}
+        "enabled=true": { 
+            "model": "simpledifficulty:block/temper_heat_on"
+        },
+        "enabled=false": { 
+            "model": "simpledifficulty:block/temper_heat_off"
+        }
     }
 }

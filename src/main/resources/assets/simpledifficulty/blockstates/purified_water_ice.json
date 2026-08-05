@@ -3,7 +3,7 @@
 	"defaults": {
 		"model": "cube_all",
 		"textures": {
-			"all": "simpledifficulty:block/saltwater_ice"
+			"all": "simpledifficulty:block/purified_water_ice"
 		}
 	},
 	"variants": {

@@ -32,7 +32,7 @@ public abstract class EffectBase extends Effect {
     }
 
     protected ResourceLocation formatTexture(String s) {
-        return new ResourceLocation(SimpleDifficulty.MODID, "textures/potions/" + s + ".png");
+        return new ResourceLocation(SimpleDifficulty.MODID, "textures/effect/" + s + ".png");
     }
 
     public void removePotionCoreEffect(LivingEntity entity, final Effect effect) {

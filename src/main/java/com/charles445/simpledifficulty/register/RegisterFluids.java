@@ -11,6 +11,7 @@ import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
@@ -53,11 +54,19 @@ public class RegisterFluids {
             () -> new BlockFluidBasicMixable(PURIFIED_WATER_SOURCE,
                     AbstractBlock.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops(),
                     "purifiedwater"));
+                    FluidAttributes.builder(
+                        new ResourceLocation("simpledifficulty", "block/purified_water_still"),
+                        new ResourceLocation("simpledifficulty", "block/purified_water_flow")
+                    );
 
     public static final RegistryObject<FlowingFluidBlock> BLOCK_SALT_WATER = RegisterBlocks.BLOCKS.register("saltwater",
             () -> new BlockFluidSaltWater(SALT_WATER_SOURCE,
                     AbstractBlock.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops(),
                     "saltwater"));
+                    FluidAttributes.builder(
+                        new ResourceLocation("simpledifficulty", "block/salt_water_still"),
+                        new ResourceLocation("simpledifficulty", "block/salt_water_flow")
+                    );
 
     public static final RegistryObject<Item> PURIFIED_WATER_ITEM = RegisterItems.ITEMS.register("purifiedwater_bucket",
             () -> new BlockItem(BLOCK_PURIFIED_WATER.get(), new Item.Properties().tab(ItemGroup.TAB_MISC).stacksTo(1)));

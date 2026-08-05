@@ -23,8 +23,8 @@ public abstract class FluidBasic extends ForgeFlowingFluid {
 
     public static FluidAttributes.Builder createAttributes(String still, String flowing) {
         return FluidAttributes.builder(
-                new ResourceLocation(SimpleDifficulty.MODID, "fluids/" + still),
-                new ResourceLocation(SimpleDifficulty.MODID, "fluids/" + flowing)
+                new ResourceLocation(SimpleDifficulty.MODID, "block/" + still),
+                new ResourceLocation(SimpleDifficulty.MODID, "block/" + flowing)
         ).density(1000).viscosity(1000);
     }
 

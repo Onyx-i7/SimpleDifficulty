@@ -1,9 +1,9 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-        "model": "simpledifficulty:spit"
+        "model": "simpledifficulty:block/spit"
     },
 	"variants": {
-		"normal": { "model": "simpledifficulty:spit"}
+		"normal": { "model": "simpledifficulty:block/spit"}
 	}
 }
