@@ -1,4 +1,4 @@
-<h1 align="center">SimpleDifficulty for Underdog</h1>
+<h1 align="center">SimpleDifficulty</h1>
 
 <div align="center">
 
@@ -13,13 +13,19 @@
 
 </div>
 
-# ⚠️ UNDER DEVELOPMENT (1.16.5 Port)
+# Currently in development
 
-> **Important Notice:** This branch (`1.16.5-development`) is an ongoing, unofficial port of **SimpleDifficulty** to Minecraft 1.16.5 based on my enhanced 1.12.2 version
+**Notice and Other Information**: This branch of the repository is for testing, as a first step toward new versions currently 1.16.5 but I’ll port it to future versions once it’s ready
 
-* **Status:** Testing & Development only
-* **Stability:** Highly unstable. It is **NOT** ready for survival worlds or modpacks yet
-* **Usage:** Use this code at your own risk strictly for testing or development purposes
+The alphas can be found in the repository’s Actions section
+
+This was part of my most ambitious plans for this mod: to port the mod to modern versions so it can serve as an alternative to Tough As Nails, since I think that’s a great mod
+
+It’s not optimized at all this causes lag when looking at blocks and walking and it has many bugs that I’ll gradually fix as I find them during development
+
+For now, these **alphas** offer:
+1. Temperature and thirst, though these haven’t been fully tested
+2. All items and blocks, though the blocks are missing their textures
 
 ---
 
