@@ -30,7 +30,7 @@ public class ClientSetup {
         MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 
         event.enqueueWork(() -> {
-            ItemModelsProperties.register(RegisterItems.juice.get(), new ResourceLocation(SimpleDifficulty.MODID, "type"),  
+            ItemModelsProperties.register(SDItems.juice.get(), new ResourceLocation(SimpleDifficulty.MODID, "type"),  
                 (itemStack, clientWorld, livingEntity) -> {
                     if (itemStack.hasTag() && itemStack.getTag().contains("JuiceType")) {
                         String juiceName = itemStack.getTag().getString("JuiceType");
