@@ -1,0 +1,86 @@
+{
+    "death.attack.dehydration": "%1$s脱水而亡",
+    "death.attack.hyperthermia": "%1$s热死了",
+    "death.attack.hypothermia": "%1$s冻死了",
+    "death.attack.parasites": "%1$s死于寄生虫",
+
+    "effect.cold_resist": "严寒抗性",
+    "effect.heat_resist": "炎热抗性",
+    "effect.hyperthermia": "中暑",
+    "effect.hypothermia": "伤寒",
+    "effect.parasites": "感染寄生虫",
+    "effect.thirsty": "脱水",
+
+    "enchantment.chilling": "降温",
+    "enchantment.heating": "加热",
+
+    "enchantment.simpledifficulty.chilling.desc": "穿戴时降低自身体温",
+    "enchantment.simpledifficulty.heating.desc": "穿戴时提高自身体温",
+
+    "fluid.purifiedwater": "纯净水",
+
+    "itemGroup.tabSimpleDifficulty": "坚定意志",
+
+    "item.simpledifficulty:canteen_broken": "破水壶",
+    "item.simpledifficulty:canteen_empty": "空水壶",
+    "item.simpledifficulty:canteen_normal": "水壶",
+    "item.simpledifficulty:canteen_purified": "纯净水壶",
+
+    "item.simpledifficulty:charcoal_filter": "木炭过滤器",
+
+    "item.simpledifficulty:ice_chunk": "碎冰块",
+
+    "item.simpledifficulty:ice_helmet": "冰头盔",
+    "item.simpledifficulty:ice_chestplate": "冰胸甲",
+    "item.simpledifficulty:ice_leggings": "冰护腿",
+    "item.simpledifficulty:ice_boots": "冰靴子",
+
+    "item.simpledifficulty:juice_apple": "苹果汁",
+    "item.simpledifficulty:juice_beetroot": "甜菜汁",
+    "item.simpledifficulty:juice_cactus": "仙人掌汁",
+    "item.simpledifficulty:juice_carrot": "胡萝卜汁",
+    "item.simpledifficulty:juice_chorus_fruit": "紫颂果汁",
+    "item.simpledifficulty:juice_golden_melon": "金西瓜汁",
+    "item.simpledifficulty:juice_golden_apple": "金苹果汁",
+    "item.simpledifficulty:juice_golden_carrot": "金萝卜汁",
+    "item.simpledifficulty:juice_melon": "西瓜汁",
+    "item.simpledifficulty:juice_pumpkin": "南瓜汁",
+
+    "item.simpledifficulty:magma_chunk": "碎岩浆块",
+
+    "item.simpledifficulty:purified_water_bottle": "纯净水瓶",
+
+    "item.simpledifficulty:thermometer": "温度计",
+
+    "item.simpledifficulty:wool_helmet": "棉帽",
+    "item.simpledifficulty:wool_chestplate": "棉衣",
+    "item.simpledifficulty:wool_leggings": "棉裤",
+    "item.simpledifficulty:wool_boots": "棉鞋",
+
+    "lingering_potion.effect.cold_resist_type": "滞留型抗寒药水",
+    "lingering_potion.effect.long_cold_resist_type": "滞留型抗寒药水",
+    "lingering_potion.effect.heat_resist_type": "滞留型耐热药水",
+    "lingering_potion.effect.long_heat_resist_type": "滞留型耐热药水",
+
+    "potion.effect.cold_resist_type": "抗寒药水",
+    "potion.effect.long_cold_resist_type": "抗寒药水",
+    "potion.effect.heat_resist_type": "耐热药水",
+    "potion.effect.long_heat_resist_type": "耐热药水",
+
+    "splash_potion.effect.cold_resist_type": "喷溅型抗寒药水",
+    "splash_potion.effect.long_cold_resist_type": "喷溅型抗寒药水",
+    "splash_potion.effect.heat_resist_type": "喷溅型耐热药水",
+    "splash_potion.effect.long_heat_resist_type": "喷溅型耐热药水",
+
+    "block.simpledifficulty:campfire": "篝火",
+    "block.simpledifficulty:chiller": "降温器",
+    "block.simpledifficulty:heater": "加热器",
+    "block.simpledifficulty:purifiedwater": "纯净水",
+    "block.simpledifficulty:rain_collector": "雨水收集器",
+    "block.simpledifficulty:spit": "篝火烤架",
+
+    "tipped_arrow.effect.cold_resist_type": "抗寒箭",
+    "tipped_arrow.effect.long_cold_resist_type": "抗寒箭",
+    "tipped_arrow.effect.heat_resist_type": "耐热箭",
+    "tipped_arrow.effect.long_heat_resist_type": "耐热箭"
+}

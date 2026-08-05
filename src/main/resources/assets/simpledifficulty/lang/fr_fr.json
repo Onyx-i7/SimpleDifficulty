@@ -1,0 +1,112 @@
+{
+    "death.attack.dehydration": "%1$s est mort de déshydratation",
+    "death.attack.hyperthermia": "%1$s est mort d'hyperthermie",
+    "death.attack.hypothermia": "%1$s est mort d'hypothermie",
+    "death.attack.parasites": "%1$s est mort de parasites",
+
+    "effect.cold_resist": "Résistance au froid",
+    "effect.heat_resist": "Résistance à la chaleur",
+    "effect.hyperthermia": "Hyperthermie",
+    "effect.hypothermia": "Hypothermie",
+    "effect.parasites": "Parasites",
+    "effect.thirsty": "Soif",
+
+    "enchantment.chilling": "Refroidissement",
+    "enchantment.heating": "Réchauffement",
+
+    "enchantment.simpledifficulty.chilling.desc": "Réduit la température du joueur lorsqu'il est porté",
+    "enchantment.simpledifficulty.heating.desc": "Augmente la température du joueur lorsqu'il est porté",
+
+    "fluid.purifiedwater": "Eau purifiée",
+    "fluid.saltwater": "Eau salée",
+
+    "item.fluid.purifiedwater.bucket": "Seau d'eau purifiée",
+    "item.fluid.saltwater.bucket": "Seau d'eau salée",
+
+    "itemGroup.tabSimpleDifficulty": "SimpleDifficulty",
+
+    "item.simpledifficulty:canteen_broken": "Gourde cassée",
+    "item.simpledifficulty:canteen_empty": "Gourde vide",
+    "item.simpledifficulty:canteen_normal": "Gourde d'eau de source",
+    "item.simpledifficulty:canteen_purified": "Gourde d'eau purifiée",
+    "item.simpledifficulty:canteen_salt": "Gourde d'eau salée",
+
+    "item.simpledifficulty:charcoal_filter": "Filtre à charbon",
+
+    "item.simpledifficulty:ice_chunk": "Morceau de glace",
+
+    "item.simpledifficulty:ice_helmet": "Casque en glace",
+    "item.simpledifficulty:ice_chestplate": "Plastron en glace",
+    "item.simpledifficulty:ice_leggings": "Jambières en glace",
+    "item.simpledifficulty:ice_boots": "Bottes en glace",
+
+    "item.simpledifficulty:juice_apple": "Jus de pomme",
+    "item.simpledifficulty:juice_beetroot": "Jus de betterave",
+    "item.simpledifficulty:juice_cactus": "Jus de cactus",
+    "item.simpledifficulty:juice_carrot": "Jus de carotte",
+    "item.simpledifficulty:juice_chorus_fruit": "Jus de fruit du chorus",
+    "item.simpledifficulty:juice_golden_melon": "Jus de melon scintillant",
+    "item.simpledifficulty:juice_golden_apple": "Jus de pomme dorée",
+    "item.simpledifficulty:juice_golden_carrot": "Jus de carotte dorée",
+    "item.simpledifficulty:juice_melon": "Jus de melon",
+    "item.simpledifficulty:juice_pumpkin": "Jus de citrouille",
+
+    "item.simpledifficulty:magma_chunk": "Morceau de magma",
+
+    "item.simpledifficulty:purified_water_bottle": "Fiole d'eau purifiée",
+    "item.simpledifficulty:salt_water_bottle": "Fiole d'eau salée",
+
+    "item.simpledifficulty:thermometer": "Thermomètre",
+
+    "item.simpledifficulty:wool_helmet": "Capuche en tissu",
+    "item.simpledifficulty:wool_chestplate": "Veste en tissu",
+    "item.simpledifficulty:wool_leggings": "Pantalon en tissu",
+    "item.simpledifficulty:wool_boots": "Chaussures en tissu",
+
+    "lingering_potion.effect.cold_resist_type": "Potion persistante de résistance au froid",
+    "lingering_potion.effect.long_cold_resist_type": "Potion persistante de résistance au froid",
+    "lingering_potion.effect.heat_resist_type": "Potion persistante de résistance à la chaleur",
+    "lingering_potion.effect.long_heat_resist_type": "Potion persistante de résistance à la chaleur",
+
+    "potion.effect.cold_resist_type": "Potion de résistance au froid",
+    "potion.effect.long_cold_resist_type": "Potion de résistance au froid",
+    "potion.effect.heat_resist_type": "Potion de résistance à la chaleur",
+    "potion.effect.long_heat_resist_type": "Potion de résistance à la chaleur",
+
+    "splash_potion.effect.cold_resist_type": "Potion jetable de résistance au froid",
+    "splash_potion.effect.long_cold_resist_type": "Potion jetable de résistance au froid",
+    "splash_potion.effect.heat_resist_type": "Potion jetable de résistance à la chaleur",
+    "splash_potion.effect.long_heat_resist_type": "Potion jetable de résistance à la chaleur",
+
+    "block.simpledifficulty:campfire": "Feu de camp",
+    "block.simpledifficulty:chiller": "Refroidisseur",
+    "block.simpledifficulty:heater": "Chauffage",
+    "block.simpledifficulty:rain_collector": "Collecteur de pluie",
+    "block.simpledifficulty:spit": "Broche de feu de camp",
+    "block.simpledifficulty:purifiedwater": "Eau purifiée",
+    "block.simpledifficulty:saltwater": "Eau salée",
+    "block.simpledifficulty:purifiedwater_ice": "Glace d'eau purifiée",
+    "block.simpledifficulty:saltwater_ice": "Glace d'eau salée",
+
+    "tipped_arrow.effect.cold_resist_type": "Flèche de résistance au froid",
+    "tipped_arrow.effect.long_cold_resist_type": "Flèche de résistance au froid",
+    "tipped_arrow.effect.heat_resist_type": "Flèche de résistance à la chaleur",
+    "tipped_arrow.effect.long_heat_resist_type": "Flèche de résistance à la chaleur",
+
+    "item.simpledifficulty:frost_rod": "Bâton de givre",
+    "item.simpledifficulty:frost_powder": "Poudre de givre",
+
+    "item.simpledifficulty:iron_canteen_broken": "Gourde en fer cassée",
+    "item.simpledifficulty:iron_canteen_empty": "Gourde en fer vide",
+    "item.simpledifficulty:iron_canteen_normal": "Gourde en fer d'eau de source",
+    "item.simpledifficulty:iron_canteen_purified": "Gourde en fer d'eau purifiée",
+    "item.simpledifficulty:iron_canteen_salt": "Gourde en fer d'eau salée",
+
+    "item.simpledifficulty:dragon_canteen_broken": "Gourde du Dragon cassée",
+    "item.simpledifficulty:dragon_canteen_empty": "Gourde du Dragon vide",
+    "item.simpledifficulty:dragon_canteen_normal": "Gourde du Dragon d'eau de source",
+    "item.simpledifficulty:dragon_canteen_purified": "Gourde du Dragon d'eau purifiée",
+    "item.simpledifficulty:dragon_canteen_salt": "Gourde du Dragon d'eau salée",
+
+    "death.attack.inspirationscauldronburn": "%1$s est mort en buvant de l'eau bouillante"
+}

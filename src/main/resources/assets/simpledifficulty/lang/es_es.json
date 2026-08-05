@@ -1,0 +1,112 @@
+{
+    "death.attack.dehydration": "%1$s ha muerto de deshidratación",
+    "death.attack.hyperthermia": "%1$s ha muerto de hipertermia",
+    "death.attack.hypothermia": "%1$s ha muerto de hipotermia",
+    "death.attack.parasites": "%1$s ha muerto por parásitos",
+
+    "effect.cold_resist": "Resistencia al frío",
+    "effect.heat_resist": "Resistencia al calor",
+    "effect.hyperthermia": "Hipertermia",
+    "effect.hypothermia": "Hipotermia",
+    "effect.parasites": "Parásitos",
+    "effect.thirsty": "Sediento",
+
+    "enchantment.chilling": "Enfriamiento",
+    "enchantment.heating": "Calentamiento",
+
+    "enchantment.simpledifficulty.chilling.desc": "Reduce la temperatura del jugador al llevarla puesta",
+    "enchantment.simpledifficulty.heating.desc": "Aumenta la temperatura del jugador al llevarla puesta",
+
+    "fluid.purifiedwater": "Agua purificada",
+    "fluid.saltwater": "Agua salada",
+
+    "item.fluid.purifiedwater.bucket": "Cubo de agua purificada",
+    "item.fluid.saltwater.bucket": "Cubo de agua salada",
+
+    "itemGroup.tabSimpleDifficulty": "SimpleDifficulty",
+
+    "item.simpledifficulty:canteen_broken": "Cantimplora rota",
+    "item.simpledifficulty:canteen_empty": "Cantimplora vacía",
+    "item.simpledifficulty:canteen_normal": "Cantimplora de agua de manantial",
+    "item.simpledifficulty:canteen_purified": "Cantimplora de agua purificada",
+    "item.simpledifficulty:canteen_salt": "Cantimplora de agua salada",
+
+    "item.simpledifficulty:charcoal_filter": "Filtro de carbón",
+
+    "item.simpledifficulty:ice_chunk": "Trozo de hielo",
+
+    "item.simpledifficulty:ice_helmet": "Casco de hielo",
+    "item.simpledifficulty:ice_chestplate": "Peto de hielo",
+    "item.simpledifficulty:ice_leggings": "Grebas de hielo",
+    "item.simpledifficulty:ice_boots": "Botas de hielo",
+
+    "item.simpledifficulty:juice_apple": "Jugo de manzana",
+    "item.simpledifficulty:juice_beetroot": "Jugo de remolacha",
+    "item.simpledifficulty:juice_cactus": "Jugo de cactus",
+    "item.simpledifficulty:juice_carrot": "Jugo de zanahoria",
+    "item.simpledifficulty:juice_chorus_fruit": "Jugo de fruta del chorus",
+    "item.simpledifficulty:juice_golden_melon": "Jugo de sandía reluciente",
+    "item.simpledifficulty:juice_golden_apple": "Jugo de manzana dorada",
+    "item.simpledifficulty:juice_golden_carrot": "Jugo de zanahoria dorada",
+    "item.simpledifficulty:juice_melon": "Jugo de sandía",
+    "item.simpledifficulty:juice_pumpkin": "Jugo de calabaza",
+
+    "item.simpledifficulty:magma_chunk": "Trozo de magma",
+
+    "item.simpledifficulty:purified_water_bottle": "Botella de agua purificada",
+    "item.simpledifficulty:salt_water_bottle": "Botella de agua salada",
+
+    "item.simpledifficulty:thermometer": "Termómetro",
+
+    "item.simpledifficulty:wool_helmet": "Capucha de lana",
+    "item.simpledifficulty:wool_chestplate": "Chaqueta de lana",
+    "item.simpledifficulty:wool_leggings": "Pantalones de lana",
+    "item.simpledifficulty:wool_boots": "Zapatos de lana",
+
+    "lingering_potion.effect.cold_resist_type": "Poción persistente de resistencia al frío",
+    "lingering_potion.effect.long_cold_resist_type": "Poción persistente de resistencia al frío",
+    "lingering_potion.effect.heat_resist_type": "Poción persistente de resistencia al calor",
+    "lingering_potion.effect.long_heat_resist_type": "Poción persistente de resistencia al calor",
+
+    "potion.effect.cold_resist_type": "Poción de resistencia al frío",
+    "potion.effect.long_cold_resist_type": "Poción de resistencia al frío",
+    "potion.effect.heat_resist_type": "Poción de resistencia al calor",
+    "potion.effect.long_heat_resist_type": "Poción de resistencia al calor",
+
+    "splash_potion.effect.cold_resist_type": "Poción arrojadiza de resistencia al frío",
+    "splash_potion.effect.long_cold_resist_type": "Poción arrojadiza de resistencia al frío",
+    "splash_potion.effect.heat_resist_type": "Poción arrojadiza de resistencia al calor",
+    "splash_potion.effect.long_heat_resist_type": "Poción arrojadiza de resistencia al calor",
+
+    "block.simpledifficulty:campfire": "Hoguera",
+    "block.simpledifficulty:chiller": "Enfriador",
+    "block.simpledifficulty:heater": "Calentador",
+    "block.simpledifficulty:rain_collector": "Recolector de lluvia",
+    "block.simpledifficulty:spit": "Asador de hoguera",
+    "block.simpledifficulty:purifiedwater": "Agua purificada",
+    "block.simpledifficulty:saltwater": "Agua salada",
+    "block.simpledifficulty:purifiedwater_ice": "Hielo de agua purificada",
+    "block.simpledifficulty:saltwater_ice": "Hielo de agua salada",
+
+    "tipped_arrow.effect.cold_resist_type": "Flecha con efecto de resistencia al frío",
+    "tipped_arrow.effect.long_cold_resist_type": "Flecha con efecto de resistencia al frío",
+    "tipped_arrow.effect.heat_resist_type": "Flecha con efecto de resistencia al calor",
+    "tipped_arrow.effect.long_heat_resist_type": "Flecha con efecto de resistencia al calor",
+
+    "item.simpledifficulty:frost_rod": "Vara de escarcha",
+    "item.simpledifficulty:frost_powder": "Polvo de escarcha",
+
+    "item.simpledifficulty:iron_canteen_broken": "Cantimplora de hierro rota",
+    "item.simpledifficulty:iron_canteen_empty": "Cantimplora de hierro vacía",
+    "item.simpledifficulty:iron_canteen_normal": "Cantimplora de hierro de agua de manantial",
+    "item.simpledifficulty:iron_canteen_purified": "Cantimplora de hierro de agua purificada",
+    "item.simpledifficulty:iron_canteen_salt": "Cantimplora de hierro de agua salada",
+
+    "item.simpledifficulty:dragon_canteen_broken": "Cantimplora de dragón rota",
+    "item.simpledifficulty:dragon_canteen_empty": "Cantimplora de dragón vacía",
+    "item.simpledifficulty:dragon_canteen_normal": "Cantimplora de dragón de agua de manantial",
+    "item.simpledifficulty:dragon_canteen_purified": "Cantimplora de dragón de agua purificada",
+    "item.simpledifficulty:dragon_canteen_salt": "Cantimplora de dragón de agua salada",
+
+    "death.attack.inspirationscauldronburn": "%1$s ha muerto por beber agua hirviendo"
+}

@@ -1,0 +1,90 @@
+{
+    "death.attack.dehydration": "%1$s умер от обезвоживания",
+    "death.attack.hyperthermia": "%1$s умер от перегрева",
+    "death.attack.hypothermia": "%1$s умер от обморожения",
+    "death.attack.parasites": "%1$s умер от паразитов",
+
+    "effect.cold_resist": "Сопротивление холоду",
+    "effect.heat_resist": "Сопротивление теплу",
+    "effect.hyperthermia": "Перегрев",
+    "effect.hypothermia": "Обморожение",
+    "effect.parasites": "Паразиты",
+    "effect.thirsty": "Жажда",
+
+    "enchantment.chilling": "Охлаждение",
+    "enchantment.heating": "Утепление",
+
+    "enchantment.simpledifficulty.chilling.desc": "Снижает температуру игрока при ношении",
+    "enchantment.simpledifficulty.heating.desc": "Повышает температуру игрока при ношении",
+
+    "fluid.purifiedwater": "Очищенная вода",
+    "fluid.saltwater": "Соленая вода",
+
+    "item.fluid.purifiedwater.bucket": "Ведро с очищенной водой",
+    "item.fluid.saltwater.bucket": "Ведро с соленой водой",
+
+    "itemGroup.tabSimpleDifficulty": "SimpleDifficulty",
+
+    "item.simpledifficulty:canteen_broken": "Сломанный бурдюк",
+    "item.simpledifficulty:canteen_empty": "Пустой бурдюк",
+    "item.simpledifficulty:canteen_normal": "Бурдюк с водой",
+    "item.simpledifficulty:canteen_purified": "Бурдюк с очищенной водой",
+
+    "item.simpledifficulty:charcoal_filter": "Угольный фильтр",
+
+    "item.simpledifficulty:ice_chunk": "Ледяной осколок",
+
+    "item.simpledifficulty:ice_helmet": "Ледяной шлем",
+    "item.simpledifficulty:ice_chestplate": "Ледяной нагрудник",
+    "item.simpledifficulty:ice_leggings": "Ледяные поножи",
+    "item.simpledifficulty:ice_boots": "Ледяные ботинки",
+
+    "item.simpledifficulty:juice_apple": "Яблочный сок",
+    "item.simpledifficulty:juice_beetroot": "Свекольный сок",
+    "item.simpledifficulty:juice_cactus": "Кактусовый сок",
+    "item.simpledifficulty:juice_carrot": "Морковный сок",
+    "item.simpledifficulty:juice_chorus_fruit": "Сок коруса",
+    "item.simpledifficulty:juice_golden_melon": "Сок сверкающего арбуза",
+    "item.simpledifficulty:juice_golden_apple": "Сок золотого яблока",
+    "item.simpledifficulty:juice_golden_carrot": "Сок золотой моркови",
+    "item.simpledifficulty:juice_melon": "Арбузный сок",
+    "item.simpledifficulty:juice_pumpkin": "Тыквенный сок",
+
+    "item.simpledifficulty:magma_chunk": "Огненный осколок",
+
+    "item.simpledifficulty:purified_water_bottle": "Бутылка очищенной воды",
+
+    "item.simpledifficulty:thermometer": "Термометр",
+
+    "item.simpledifficulty:wool_helmet": "Шерстяная шапка",
+    "item.simpledifficulty:wool_chestplate": "Шерстяная шуба",
+    "item.simpledifficulty:wool_leggings": "Шерстяные штаны",
+    "item.simpledifficulty:wool_boots": "Шерстяные сапоги",
+
+    "lingering_potion.effect.cold_resist_type": "Затяжное зелье сопротивления холоду",
+    "lingering_potion.effect.long_cold_resist_type": "Затяжное зелье сопротивления холоду",
+    "lingering_potion.effect.heat_resist_type": "Затяжное зелье сопротивления теплу",
+    "lingering_potion.effect.long_heat_resist_type": "Затяжное зелье сопротивления теплу",
+
+    "potion.effect.cold_resist_type": "Зелье сопротивления холоду",
+    "potion.effect.long_cold_resist_type": "Зелье сопротивления холоду",
+    "potion.effect.heat_resist_type": "Зелье сопротивления теплу",
+    "potion.effect.long_heat_resist_type": "Зелье сопротивления теплу",
+
+    "splash_potion.effect.cold_resist_type": "Взрывное зелье сопротивления холоду",
+    "splash_potion.effect.long_cold_resist_type": "Взрывное зелье сопротивления холоду",
+    "splash_potion.effect.heat_resist_type": "Взрывное зелье сопротивления теплу",
+    "splash_potion.effect.long_heat_resist_type": "Взрывное зелье сопротивления теплу",
+
+    "block.simpledifficulty:campfire": "Костёр",
+    "block.simpledifficulty:chiller": "Охладитель",
+    "block.simpledifficulty:heater": "Нагреватель",
+    "block.simpledifficulty:purifiedwater": "Очищенная вода",
+    "block.simpledifficulty:rain_collector": "Сборщик дождя",
+    "block.simpledifficulty:spit": "Шомпол для костра",
+
+    "tipped_arrow.effect.cold_resist_type": "Стрела сопротивления холоду",
+    "tipped_arrow.effect.long_cold_resist_type": "Стрела сопротивления холоду",
+    "tipped_arrow.effect.heat_resist_type": "Стрела сопротивления теплу",
+    "tipped_arrow.effect.long_heat_resist_type": "Стрела сопротивления теплу"
+}

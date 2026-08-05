@@ -5,9 +5,7 @@
   "refmap": "mixins.simpledifficulty.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "MixinInspirationsHandler"
-  ],
+  "mixins": [],
   "client": [],
   "server": []
 }
