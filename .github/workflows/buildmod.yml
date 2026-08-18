@@ -2,6 +2,8 @@ name: Build SimpleDifficulty Mod
 
 on:
   push:
+    branches-ignore:
+      - '1.16.5-development'
   workflow_dispatch:
 
 permissions:
