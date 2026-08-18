@@ -49,7 +49,7 @@ public class BlockRainCollector extends Block {
 
     private void scheduleDynamicUpdate(World world, BlockPos pos) {
         if (!world.isUpdateScheduled(pos, this)) {
-            int dynamicRate = BASE_TICK_RATE + world.rand.nextInt(81);
+            int dynamicRate = BASE_TICK_RATE + world.rand.nextInt(1210);
             world.scheduleUpdate(pos, this, dynamicRate);
         }
     }
