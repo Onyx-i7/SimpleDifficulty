@@ -140,7 +140,7 @@ These mods work without dedicated integration but have been tested:
 2. **Locate** your Minecraft `mods` folder:
    - **Windows**: `%appdata%\.minecraft\mods`
    - **Linux**: `~/.minecraft/mods`
-3. **Copy** the `SimpleDifficulty-1.12.2-0.%.%.jar` file into the `mods` folder
+3. **Copy** the `SimpleDifficulty-0.%.%.jar` file into the `mods` folder
 4. **Launch** Minecraft with the Forge profile
 
 ---
