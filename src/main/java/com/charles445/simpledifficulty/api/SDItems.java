@@ -166,8 +166,4 @@ public class SDItems {
 
     /** Ice armor boots. Provides cooling for the feet. */
     public static Item ice_boots;
-    
-    public static Item frost_powder;
-    public static Item frost_rod;
-    public static Item dragonCanteen;
 }
