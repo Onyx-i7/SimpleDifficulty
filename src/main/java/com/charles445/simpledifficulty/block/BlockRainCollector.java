@@ -37,7 +37,7 @@ import java.util.Random;
 public class BlockRainCollector extends Block {
 
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 3);
-    private static final int BASE_TICK_RATE = 240; // 12 seconds baseline interval for slower collection
+    private static final int BASE_TICK_RATE = 1200; // 1 min
     
     public BlockRainCollector() {
         super(Material.IRON, MapColor.STONE);
@@ -49,7 +49,6 @@ public class BlockRainCollector extends Block {
 
     private void scheduleDynamicUpdate(World world, BlockPos pos) {
         if (!world.isUpdateScheduled(pos, this)) {
-            // Generates a wide window between 12 to 16 seconds to slow down collection significantly
             int dynamicRate = BASE_TICK_RATE + world.rand.nextInt(81);
             world.scheduleUpdate(pos, this, dynamicRate);
         }
