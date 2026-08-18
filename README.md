@@ -31,10 +31,11 @@ SimpleDifficulty brings a **temperature and thirst system** to Minecraft 1.12.2,
 ### Core Mechanics
 * **Thirst System**: Requires players to manage hydration levels to avoid negative status effects.
 * **Temperature Dynamics**: Environmental biomes, blocks, and armor affect the player's temperature.
+  * *Hypothermia & Hyperthermia*: Now reduce max health and apply negative potion effects instead of dealing direct damage. *(Note: Spice of Life's health modifier is ignored in the calculation).*
 * **Water Variants**: 
   * *Regular Water*: Standard hydration source.
   * *Saltwater*: Increases dehydration rates if consumed.
-  * *Purified Water*: Safe, clean hydration with optimal saturation values.
+  * *Purified / Spring Water*: Safe, clean hydration with optimal saturation values. Vanilla water is now treated as spring water. *(Note: The water itself must be generated using another mod. Cave Generator is recommended).*
 
 ### Refined Water & Item Systems
 * **Canteen Overhaul**: Corrected durability logic and thirst replenishment scaling. Purified water consumption accurately updates items and sources.
@@ -42,7 +43,9 @@ SimpleDifficulty brings a **temperature and thirst system** to Minecraft 1.12.2,
 * **Consistent Smelting**: Corrected cooking logic to prevent special fluid containers (like spring water bottles) from downgrading back to standard variants during processing.
 * **Recipe Sanitization**: Removed redundant or broken shapeless recipes for canteens and filters to prevent crafting conflicts.
 * **Visual Adjustments**: Fluid color rendering adapts organically based on biome locations, featuring customized depth fog settings.
-* **Ice Mechanics**: Generates natural ice structures in applicable environments. Fully compatible with freeze/melt block states.
+  * *Enhanced Fog*: Improved water fog visuals. The fog color is brighter now and changes depending on the biome.
+  * *Customization*: Added a new config option to make waters darker or brighter.
+* **Ice Mechanics**: Added regular and salt water ice! 🧊 Generates natural ice structures in applicable environments. Includes a world generator for it, and implements melting, freezing, and Serene Seasons support. Fully compatible with freeze/melt block states.
 
 ## Technical Optimizations
 
@@ -71,6 +74,8 @@ Designed specifically to reduce server overhead and client-side stuttering in la
 - Optimized environmental water-block scanning algorithms
 - Improved canteen consumption action performance
 - Streamlined tick-by-tick thirst calculations
+- Added salt/freshwater mixing logic with an optimized fill algorithm that doesn't affect performance.
+- Removed particle effects from fluids and slightly improved performance for fluid rendering.
 
 #### Garbage Collection
 - Lowered object instantiation rates during standard gameplay loops
@@ -86,12 +91,13 @@ Designed specifically to reduce server overhead and client-side stuttering in la
 The following mods have dedicated integration code and full compatibility:
 
 <details>
-<summary><b>Click to expand full list (24 mods)</b></summary>
+<summary><b>Click to expand full list (25 mods)</b></summary>
 
 - Animania
 - Armor Underwear
 - Baubles
-- Biomes O' Plenty
+- Biomes O' Plenty *(Added compatibility for aquatic plants)*
+- Dynamic Trees *(Added compatibility for fluid blocks)*
 - DynamicSurroundings
 - EnhancedVisuals
 - First Aid
@@ -105,9 +111,9 @@ The following mods have dedicated integration code and full compatibility:
 - Realistic Torches
 - Rustic
 - Serene Seasons
+- Streams
 - SurvivalTools
 - Simple Camp Fire
-- Streams
 - Traveler's Backpacks
 - Tinkers' Construct
 - The Betweenlands
@@ -119,9 +125,9 @@ The following mods have dedicated integration code and full compatibility:
 
 These mods work without dedicated integration but have been tested:
 
-- Cave Generator
+- Cave Generator *(Recommended for generating spring water)*
 - Fluidlogged API
-- Greenery
+- Greenery *(Added compatibility for aquatic plants)*
 
 > **Want compatibility with a specific mod?** Open an issue and I'll try to make it work!
 
