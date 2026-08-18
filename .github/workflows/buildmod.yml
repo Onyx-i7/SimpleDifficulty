@@ -2,7 +2,6 @@ name: Build SimpleDifficulty Mod
 
 on:
   push:
-    branches: [ 'main', 'master', 'testing' ]
   workflow_dispatch:
 
 permissions:
@@ -18,7 +17,7 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Set up JDK 25 for Gradle
-        uses: actions/setup-java@v5.6.0
+        uses: actions/setup-java@v5.7.0
         with:
           distribution: 'temurin'
           java-version: '25'
