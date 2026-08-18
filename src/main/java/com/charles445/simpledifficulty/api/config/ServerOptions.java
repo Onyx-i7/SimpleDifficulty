@@ -12,7 +12,6 @@ public enum ServerOptions implements IConfigOption
 	/*Integer*/ CANTEEN_DOSES ("canteenDoses"),
 	/*Boolean*/ STRICT_HEATERS ("strictHeaters"),
 	/*Integer*/ IRON_CANTEEN_DOSES ("ironCanteenDoses"),
-	/*Integer*/ DRAGON_CANTEEN_DOSES ("dragonCanteenDoses"),
 	/*Boolean*/ INFINITE_PURIFIED_WATER ("infinitePurifiedWater"),
 	/*Boolean*/ PURIFIED_WATER_OPACITY ("purifiedWaterOpacity"),
 	/*Double*/  THIRST_EXHAUSTION_MULTIPLIER ("thirstExhaustionMultiplier"),

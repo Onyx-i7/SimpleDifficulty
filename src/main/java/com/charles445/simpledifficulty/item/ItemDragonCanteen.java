@@ -1,10 +1,9 @@
 package com.charles445.simpledifficulty.item;
 
 import com.charles445.simpledifficulty.SimpleDifficulty;
-import com.charles445.simpledifficulty.api.config.ServerConfig;
-import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.api.item.IItemCanteen;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
+import com.charles445.simpledifficulty.config.json.ExtraItem;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
@@ -13,10 +12,19 @@ import net.minecraft.util.ResourceLocation;
 
 public class ItemDragonCanteen extends ItemCanteen {
 
+    public static final String EI_CAPACITY = "capacity";
+    
     private static final ThirstEnum[] THIRST_VALUES = ThirstEnum.values();
+    
+    public int capacity = 10;
 
-    public ItemDragonCanteen() {
+    public ItemDragonCanteen(ExtraItem extraItem) {
         super();
+        
+        Integer oCapacity = extraItem.getInteger(EI_CAPACITY);
+        if (oCapacity != null) {
+            this.capacity = oCapacity.intValue();
+        }
         
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {
             if (stack.getItem() instanceof IItemCanteen) {
@@ -29,7 +37,7 @@ public class ItemDragonCanteen extends ItemCanteen {
     
     @Override
     public int getMaxDoses(ItemStack stack) {
-        return ServerConfig.instance.getInteger(ServerOptions.DRAGON_CANTEEN_DOSES);
+        return this.capacity;
     }
     
     @Override

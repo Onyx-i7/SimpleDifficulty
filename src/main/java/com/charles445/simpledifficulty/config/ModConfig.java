@@ -91,11 +91,6 @@ public class ModConfig
 		@Config.Name("IronCanteenDoses")
 		@Config.RangeInt(min=1)
 		public int ironCanteenDoses = 8;
-
-		@Config.Comment("Maximum number of doses in a dragon canteen")
-		@Config.Name("DragonCanteenDoses")
-		@Config.RangeInt(min=1)
-		public int dragonCanteenDoses = 30;
 		
 		@Config.Comment("Whether purified water blocks are infinite")
 		@Config.Name("Infinite Purified Water")
@@ -545,7 +540,6 @@ public class ModConfig
 	    ServerConfig.instance.put(ServerOptions.CANTEEN_DOSES, server.canteenDoses);
 	    ServerConfig.instance.put(ServerOptions.STRICT_HEATERS, server.strictHeaters);
 	    ServerConfig.instance.put(ServerOptions.IRON_CANTEEN_DOSES, server.ironCanteenDoses);
-	    ServerConfig.instance.put(ServerOptions.DRAGON_CANTEEN_DOSES, server.dragonCanteenDoses);
 	    ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
 	    ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
 	    ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
@@ -565,7 +559,6 @@ public class ModConfig
 	    compound.setString(ServerOptions.CANTEEN_DOSES.getName(), ""+server.canteenDoses);
 	    compound.setString(ServerOptions.STRICT_HEATERS.getName(), ""+server.strictHeaters);
 	    compound.setString(ServerOptions.IRON_CANTEEN_DOSES.getName(), ""+server.ironCanteenDoses);
-	    compound.setString(ServerOptions.DRAGON_CANTEEN_DOSES.getName(), ""+server.dragonCanteenDoses);
 	    compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
 	    compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
 	    compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);

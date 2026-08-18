@@ -8,6 +8,7 @@ import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.api.thirst.*;
 import com.charles445.simpledifficulty.config.ModConfig;
+import com.charles445.simpledifficulty.compat.mod.Weather2Compat;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -107,7 +108,7 @@ public class ThirstUtilInternal implements IThirstUtil
 		//Check if player is looking up, if it's raining, if they can see sky, and if THIRST_DRINK_RAIN is enabled
 		//This essentially means rain can't be a trace result for drinking or for a canteen
 		
-		if(player.rotationPitch < -75.0f && player.world.isRainingAt(player.getPosition()) && player.world.canSeeSky(player.getPosition()) && ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_RAIN))
+		if(player.rotationPitch < -75.0f && Weather2Compat.isRainingAt(player.world, player.getPosition()) && player.world.canSeeSky(player.getPosition()) && ServerConfig.instance.getBoolean(ServerOptions.THIRST_DRINK_RAIN))
 		{
 			//Drinking rain
 			return new ThirstEnumBlockPos(ThirstEnum.RAIN, player.getPosition());
