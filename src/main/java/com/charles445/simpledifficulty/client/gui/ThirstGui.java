@@ -85,11 +85,8 @@ public class ThirstGui {
         GlStateManager.enableBlend();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
         
-        // Increment right_height FIRST so Forge's automatic spacing system handles the vertical offset correctly.
         GuiIngameForge.right_height += 10;
         
-        // FIX: Base alignment (91) matches vanilla hunger bar. 
-        // Config offsets (defaulting to -10 and 9) provide the perfect visual alignment above the hunger bar.
         int left = width / 2 + 82 + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_X); 
         int top = height - GuiIngameForge.right_height + ClientConfig.instance.getInteger(ClientOptions.THIRST_HUD_Y); 
         
@@ -97,17 +94,26 @@ public class ThirstGui {
         int xOffset = isThirsty ? (textureWidth * 4) : 0;
         int bgXOffset = isThirsty ? (textureWidth * 13) : 0;
         
+        // Store Y positions for each drop to ensure saturation aligns perfectly
+        int[] dropYPositions = new int[10];
+        
         for (int i = 0; i < 10; i++) {
             int halfIcon = i * 2 + 1;
             int x = left - i * 8;
             int y = top;
             
+            // Apply shake effect to main drops
             if (thirstSaturation <= 0.0F && updateCounter % (thirst * 3 + 1) == 0) {
                 y = top + (rand.nextInt(3) - 1);
             }
-    
+            
+            // Store the Y position for this drop
+            dropYPositions[i] = y;
+            
+            // Draw background
             RenderUtil.drawTexturedModalRect(x, y, texturepos_X + bgXOffset, texturepos_Y, textureWidth, textureHeight);
             
+            // Draw main drop
             if (halfIcon < thirst) {
                 RenderUtil.drawTexturedModalRect(x, y, texturepos_X + xOffset + (textureWidth * 4), texturepos_Y, textureWidth, textureHeight);
             } else if (halfIcon == thirst) {
@@ -115,12 +121,13 @@ public class ThirstGui {
             }
         }
         
+        // Draw saturation overlay using the same Y positions as the drops
         int thirstSaturationInt = (int) thirstSaturation;
         if (thirstSaturationInt > 0 && ModConfig.client.drawThirstSaturation) {
             for (int i = 0; i < 10; i++) {
                 int halfIcon = i * 2 + 1;
                 int x = left - i * 8;
-                int y = top;
+                int y = dropYPositions[i]; // Use the same Y position as the drop
                 
                 if (halfIcon < thirstSaturationInt) {
                     RenderUtil.drawTexturedModalRect(x, y, texturepos_X + (textureWidth * 14), texturepos_Y, textureWidth, textureHeight);
