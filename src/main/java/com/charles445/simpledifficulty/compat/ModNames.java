@@ -18,5 +18,5 @@ public class ModNames
 	public static final String SERENESEASONS = "sereneseasons";
 	public static final String SIMPLECAMPFIRE = "campfire";
 	public static final String TINKERSCONSTRUCT = "tconstruct";
-	public static final String WEATHER2REMASTERED = "weather2remaster";
+	public static final String WEATHER2 = "weather2";
 } 

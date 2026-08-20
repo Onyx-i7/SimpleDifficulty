@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    def mixin = 'zone.rong:mixinbooter:11.12'
+    def mixin = 'zone.rong:mixinbooter:11.14'
 
     modUtils.enableMixins(mixin)
     
@@ -65,8 +65,8 @@ dependencies {
     annotationProcessor mixin
     
     // Streams
-    implementation rfg.deobf('curse.maven:streams-229769:3109315')
-    implementation rfg.deobf('curse.maven:farseek-229708:3093852')
+    compileOnly rfg.deobf('curse.maven:streams-229769:3109315')
+    compileOnly rfg.deobf('curse.maven:farseek-229708:3093852')
 
     // Serene Seasons
     compileOnly rfg.deobf('curse.maven:sereneseasons-291874:2799213')
@@ -78,10 +78,13 @@ dependencies {
     compileOnly rfg.deobf('curse.maven:inspirations-284007:2843007')
 
     // Fluidlogged API
-    implementation rfg.deobf('com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT')
+    compileOnly rfg.deobf('com.github.jbredwards:fluidlogged-api:1.12.2-Latest-SNAPSHOT')
 
     // Traveler's Backpack
-    implementation rfg.deobf('curse.maven:travelers-backpack-321117:3150850')
+    compileOnly rfg.deobf('curse.maven:travelers-backpack-321117:3150850')
+
+    // Weather2 Remastered
+    compileOnly rfg.deobf("curse.maven:weather-2-remastered-695602:7670711")
 }
 
 tasks.named('processResources', ProcessResources).configure {

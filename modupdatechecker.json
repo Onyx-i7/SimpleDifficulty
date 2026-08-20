@@ -1,10 +1,11 @@
 {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files",
     "promos": {
-        "1.12.2-latest":        "0.7.0",
-        "1.12.2-recommended":   "0.7.0"
+        "1.12.2-latest":        "0.8.0",
+        "1.12.2-recommended":   "0.8.0"
     },
     "1.12.2": {
+        "0.8.0": "[!] Major performance overhaul with memory leak fixes. [+] Added Weather2 Remastered & The Betweenlands compatibility. [+] Added Dragon Canteen & frost items. [+] Improved JEI integration & fluid container mechanics. [+] Migrated build system to RetroFuturaGradle. [+] Added Spanish translations & complete API documentation. [FIX] Critical stability improvements & bug fixes.",
         "0.7.0": "[!] WARNING: May require updating Fluidlogged API to v3.0.0. [+] Added support for Fluidlogged API 3.0.0.",
         "0.6.1": "[API] Fixed wrong type for PurifiedWater in the API. [+] Added Dynamic Trees compatibility for fluid blocks.",
         "0.6.0": "[+] Added Serene Seasons support for ice melting and freezing.",

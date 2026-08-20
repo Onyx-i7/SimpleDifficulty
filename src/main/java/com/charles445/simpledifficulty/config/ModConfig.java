@@ -393,7 +393,9 @@ public class ModConfig
 			@Config.Name("SaltWaterThirst")
 			public boolean saltWaterThirst = true;
 
-			
+			@Config.Comment("Whether eating dry/salty foods applies the Thirsty effect, and eating fruits/soups restores thirst.")
+			@Config.Name("DietThirstInteraction")
+			public boolean dietThirstInteraction = false;
 		}
 	}
 	
@@ -543,6 +545,7 @@ public class ModConfig
 	    ServerConfig.instance.put(ServerOptions.INFINITE_PURIFIED_WATER, server.infinitePurifiedWater);
 	    ServerConfig.instance.put(ServerOptions.PURIFIED_WATER_OPACITY, server.purifiedWaterOpacity);
 	    ServerConfig.instance.put(ServerOptions.SALT_WATER_THIRST, server.thirst.saltWaterThirst);
+		ServerConfig.instance.put(ServerOptions.DIET_THIRST_INTERACTION, server.thirst.dietThirstInteraction);
 	}
 	
 	private static MessageUpdateConfig getNewConfigMessage()
@@ -562,6 +565,7 @@ public class ModConfig
 	    compound.setString(ServerOptions.INFINITE_PURIFIED_WATER.getName(), ""+server.infinitePurifiedWater);
 	    compound.setString(ServerOptions.PURIFIED_WATER_OPACITY.getName(), ""+server.purifiedWaterOpacity);
 	    compound.setString(ServerOptions.SALT_WATER_THIRST.getName(), ""+server.thirst.saltWaterThirst);
+		compound.setString(ServerOptions.DIET_THIRST_INTERACTION.getName(), ""+server.thirst.dietThirstInteraction);
 	    
 	    return new MessageUpdateConfig(compound);
 	}

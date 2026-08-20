@@ -15,7 +15,8 @@ public enum ServerOptions implements IConfigOption
 	/*Boolean*/ INFINITE_PURIFIED_WATER ("infinitePurifiedWater"),
 	/*Boolean*/ PURIFIED_WATER_OPACITY ("purifiedWaterOpacity"),
 	/*Double*/  THIRST_EXHAUSTION_MULTIPLIER ("thirstExhaustionMultiplier"),
-	/*Boolean*/ SALT_WATER_THIRST ("saltWaterThirst");	
+	/*Boolean*/ SALT_WATER_THIRST ("saltWaterThirst"),
+	/*Boolean*/ DIET_THIRST_INTERACTION ("dietThirstInteraction");
 	
 	String name;
 	

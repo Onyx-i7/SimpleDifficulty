@@ -26,6 +26,8 @@ import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.EnumActionResult;
@@ -109,6 +111,29 @@ public class ThirstHandler {
                         ThirstUtil.takeDrink(player, ThirstEnum.POTION);
                         return;
                     }
+                }
+            }
+
+            if (ModConfig.server.thirst.dietThirstInteraction) {
+                Item item = stack.getItem();
+                
+                // 1. Dry/Salted Foods (Gradual Dehydration)
+                if (item == Items.BREAD || item == Items.COOKIE || 
+                    item == Items.COOKED_BEEF || item == Items.COOKED_CHICKEN || 
+                    item == Items.COOKED_MUTTON || item == Items.COOKED_PORKCHOP || 
+                    item == Items.COOKED_FISH || item == Items.COOKED_RABBIT) {
+                    
+                    player.addPotionEffect(new PotionEffect(SDPotions.thirsty, 600, 0, false, false));
+                }
+                
+                // 2. Hydrating Foods (Fruits)
+                else if (item == Items.MELON || item == Items.APPLE || item == Items.CHORUS_FRUIT) {
+                    ThirstUtil.takeDrink(player, 2, 0.2f, 0.0f); // Light Hydration
+                }
+                
+                // 3. Hydrating Foods (Soups and Broths)
+                else if (item == Items.MUSHROOM_STEW || item == Items.BEETROOT_SOUP || item == Items.RABBIT_STEW) {
+                    ThirstUtil.takeDrink(player, 6, 0.8f, 0.0f); // High hydration
                 }
             }
             
