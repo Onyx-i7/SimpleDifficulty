@@ -14,7 +14,7 @@ public class Weather2Compat {
     private static boolean isWeather2Loaded = false;
 
     public static void init() {
-        isWeather2Loaded = Loader.isModLoaded("weather2");
+        isWeather2Loaded = Loader.isModLoaded("weather2remaster");
     }
 
     public static boolean isLoaded() {
