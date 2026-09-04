@@ -74,7 +74,7 @@ public abstract class PotionBase extends Potion {
     @SideOnly(Side.CLIENT)
     @Override
     public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) { 
-        if (getTexture() != null && mc != null) {
+        if (getTexture() != null) {
             mc.getTextureManager().bindTexture(getTexture());
             Gui.drawModalRectWithCustomSizedTexture(x + xOffset + 6, y + yOffset + 7, 0, 0, 18, 18, 18, 18);
         }
@@ -89,7 +89,7 @@ public abstract class PotionBase extends Potion {
     @SideOnly(Side.CLIENT)
     @Override
     public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
-        if (getTexture() != null && mc != null) {
+        if (getTexture() != null) {
             mc.getTextureManager().bindTexture(getTexture());
             Gui.drawModalRectWithCustomSizedTexture(x + xOffset + 3, y + yOffset + 3, 0, 0, 18, 18, 18, 18);
         }

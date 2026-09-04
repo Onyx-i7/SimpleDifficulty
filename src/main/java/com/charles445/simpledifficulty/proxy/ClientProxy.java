@@ -67,8 +67,10 @@ public class ClientProxy extends CommonProxy {
         // Try not to call this on logical server
         // Check world.isRemote if available
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.getConnection() == null || mc.getConnection().getNetworkManager() == null) {
+        if (mc.getConnection() == null) {
             return false;
+        } else {
+            mc.getConnection();
         }
         return mc.getConnection().getNetworkManager().isChannelOpen();
     }

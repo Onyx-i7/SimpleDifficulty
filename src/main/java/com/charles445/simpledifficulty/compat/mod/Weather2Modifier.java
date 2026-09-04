@@ -43,6 +43,6 @@ public class Weather2Modifier implements ITemperatureDynamicModifier {
 
     @Override
     public String getName() {
-        return "weather2";
+        return "weather2remaster";
     }
 }

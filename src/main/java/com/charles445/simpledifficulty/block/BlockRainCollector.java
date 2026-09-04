@@ -5,7 +5,6 @@ import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.item.IItemCanteen;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
 import com.charles445.simpledifficulty.api.thirst.ThirstUtil;
-import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.util.SoundUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

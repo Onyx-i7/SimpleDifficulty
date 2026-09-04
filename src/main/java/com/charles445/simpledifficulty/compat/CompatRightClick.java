@@ -59,8 +59,8 @@ public class CompatRightClick
 		};
 	}
 	
-	public static interface IRightClick
+	public interface IRightClick
 	{
-		public void process(PlayerInteractEvent.RightClickBlock event, World world, BlockPos pos, IBlockState state, EntityPlayer player);
+		void process(PlayerInteractEvent.RightClickBlock event, World world, BlockPos pos, IBlockState state, EntityPlayer player);
 	}
 }

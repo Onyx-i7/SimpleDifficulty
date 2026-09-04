@@ -30,7 +30,7 @@ public class ClientCommandIdentityCopy extends ClientCommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         // Optimized check: Require both the metadata integer AND the NBT string to avoid malformed JSON output
-        if (args == null || args.length < 2) {
+        if (args.length < 2) {
             sender.sendMessage(new TextComponentString("Copy failed! Too few arguments. Usage: " + getUsage(sender)));
             return;
         }

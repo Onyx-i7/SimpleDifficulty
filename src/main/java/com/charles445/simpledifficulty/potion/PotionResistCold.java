@@ -23,7 +23,7 @@ public class PotionResistCold extends PotionBase {
     
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
-        if (entity == null || SDPotions.hypothermia == null) {
+        if (SDPotions.hypothermia == null) {
             return;
         }
         

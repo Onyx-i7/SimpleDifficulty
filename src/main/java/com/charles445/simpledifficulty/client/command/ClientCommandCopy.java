@@ -29,7 +29,7 @@ public class ClientCommandCopy extends ClientCommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args == null || args.length == 0) {
+        if (args.length == 0) {
             sender.sendMessage(new TextComponentString("Usage: " + getUsage(sender)));
             return;
         }
@@ -40,7 +40,6 @@ public class ClientCommandCopy extends ClientCommandBase {
             return;
         }
 
-        // Performance and Stability Fix: Guard against Headless environments to avoid AWT Toolkit crashes
         if (GraphicsEnvironment.isHeadless()) {
             sender.sendMessage(new TextComponentString("Cannot copy to clipboard: Headless environment detected."));
             return;

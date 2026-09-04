@@ -2,7 +2,6 @@ package com.charles445.simpledifficulty.block;
 
 import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.api.SDFluids;
-import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.api.config.ServerConfig;
 import com.charles445.simpledifficulty.api.config.ServerOptions;
 import com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge;
@@ -142,7 +141,7 @@ public class BlockFluidBasic extends BlockFluidClassic {
     private static void registerDisplacement(String modId, String blockId) {
         if (Loader.isModLoaded(modId)) {
             Block target = REGISTRY.getObject(new ResourceLocation(modId, blockId));
-            if (target != null && target != Blocks.AIR) {
+            if (target != Blocks.AIR) {
                 customDisplacements.put(target, false);
             }
         }

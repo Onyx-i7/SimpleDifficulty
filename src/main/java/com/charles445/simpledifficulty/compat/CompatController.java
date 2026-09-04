@@ -13,7 +13,7 @@ public class CompatController {
     private static final String compatMod = "com.charles445.simpledifficulty.compat.mod.";
     
     public static void setupCommonPostInit() {
-        if (CompatUtil.canUseMod("weather2")) {
+        if (CompatUtil.canUseMod("weather2remaster")) {
             try {
                 Class.forName("com.charles445.simpledifficulty.compat.mod.Weather2Compat")
                     .getMethod("init")
@@ -36,7 +36,7 @@ public class CompatController {
         Object sereneSeasonsModifier = newCompatObject(ModNames.SERENESEASONS, compatMod + "SereneSeasonsModifier");
         
         // Load Weather2 safely using the mod's dynamic reflection system
-        Object weather2Modifier = newCompatObject("weather2", compatMod + "Weather2Modifier");
+        Object weather2Modifier = newCompatObject("weather2remaster", compatMod + "Weather2Modifier");
         
         if (auwDynamicModifier instanceof ITemperatureDynamicModifier && auwModifier instanceof ITemperatureModifier) {
             SimpleDifficulty.logger.info("Armor Underwear Modifiers Enabled");
@@ -89,7 +89,7 @@ public class CompatController {
                 Object o = Class.forName(clazzpath).newInstance();
                 return o;
             } catch (Exception e) {
-                SimpleDifficulty.logger.error("Mod "+modid+" was loaded but object "+clazzpath+" was not accessible!", e);
+                SimpleDifficulty.logger.error("Mod {} was loaded but object {} was not accessible!", modid, clazzpath, e);
             }
         }
         return null;

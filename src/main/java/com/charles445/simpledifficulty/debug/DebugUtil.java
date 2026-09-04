@@ -25,7 +25,7 @@ public class DebugUtil {
     public static void messageAll(String s) {
         if (ServerConfig.instance.getBoolean(ServerOptions.DEBUG)) {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-            if (server != null && server.getPlayerList() != null) {
+            if (server != null) {
                 for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
                     player.sendMessage(new TextComponentString(s));
                 }

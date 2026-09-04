@@ -48,12 +48,12 @@ public abstract class ClientCommandBase implements IClientCommand {
     @Override
     public int compareTo(ICommand command) {
         // Safety check: Avoid comparison crashes if the incoming command is missing metadata
-        if (command == null || command.getName() == null) {
+        if (command == null) {
             return 1;
+        } else {
+            command.getName();
         }
-        if (this.getName() == null) {
-            return -1;
-        }
+        this.getName();
         return this.getName().compareTo(command.getName());
     }
     

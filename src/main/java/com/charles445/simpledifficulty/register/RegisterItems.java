@@ -75,13 +75,8 @@ public class RegisterItems
 				
 				if(extraItem.enabled)
 				{
-					switch(name)
-					{	
-						default: 
-							SimpleDifficulty.logger.error("Tried to register invalid extra item: "+name);
-							break;
-					}
-				}
+                    SimpleDifficulty.logger.error("Tried to register invalid extra item: {}", name);
+                }
 			}
 		}
 		

@@ -38,7 +38,7 @@ public class ConfigHandler {
                 SimpleDifficulty.logger.error("Server proxy called isClientConnectedToServer while world was remote!");
                 return;
             }
-            if (!connectedToServer.booleanValue()) {
+            if (!connectedToServer) {
                 // Not connected to anyone
                 ModConfig.sendLocalClientConfigToAPI();
                 ModConfig.sendLocalServerConfigToAPI();

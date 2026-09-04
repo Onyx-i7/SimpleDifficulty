@@ -74,7 +74,7 @@ public class FluidHandler {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.world.isRemote == false) {
+        if (event.phase == TickEvent.Phase.END && !event.world.isRemote) {
             // Process entries with O(n) complexity instead of O(n²)
             int processedCount = 0;
             int maxPerTick = 50; // Limit processing to prevent lag spikes
@@ -101,10 +101,9 @@ public class FluidHandler {
                 }
             }
             
-            // Safety cleanup: prevent unbounded growth
             if (scheduledMixtures.size() > 1000) {
                 // Remove oldest entries
-                int toRemove = Math.min(100, scheduledMixtures.size() - 500);
+                int toRemove = 100;
                 for (int i = 0; i < toRemove; i++) {
                     scheduledMixtures.poll();
                 }

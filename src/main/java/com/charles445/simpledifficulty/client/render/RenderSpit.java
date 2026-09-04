@@ -28,7 +28,7 @@ public class RenderSpit extends TileEntitySpecialRenderer<TileEntitySpit> {
     
     @Override
     public void render(TileEntitySpit te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (te == null || te.items == null) {
+        if (te.items == null) {
             return;
         }
 

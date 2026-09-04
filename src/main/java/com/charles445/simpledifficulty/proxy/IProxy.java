@@ -8,19 +8,19 @@ import javax.annotation.Nullable;
 
 public interface IProxy 
 {
-	public void preInit();
+	void preInit();
 	
-	public void init();
+	void init();
 	
-	public void postInit();
+	void postInit();
 	
-	public Side getSide();
-	
-	@Nullable
-	public EntityPlayer getClientMinecraftPlayer();
+	Side getSide();
 	
 	@Nullable
-	public Boolean isClientConnectedToServer();
+    EntityPlayer getClientMinecraftPlayer();
 	
-	public void spawnClientParticle(World world, String type, double xPos, double yPos, double zPos, double motionX, double motionY, double motionZ);
+	@Nullable
+    Boolean isClientConnectedToServer();
+	
+	void spawnClientParticle(World world, String type, double xPos, double yPos, double zPos, double motionX, double motionY, double motionZ);
 }

@@ -7,7 +7,6 @@ import com.charles445.simpledifficulty.api.SDItems;
 import com.charles445.simpledifficulty.block.IBlockStateIgnore;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -103,13 +102,7 @@ public class RegisterClientModels
 		//SimpleDifficulty.logger.debug("Registering item model: "+path);
 		final ModelResourceLocation fullModelLocation = new ModelResourceLocation(path, "inventory");
 		ModelBakery.registerItemVariants(item, fullModelLocation);
-		ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-		{
-			public ModelResourceLocation getModelLocation(ItemStack stack)
-			{
-				return fullModelLocation;
-			}
-		});
+		ModelLoader.setCustomMeshDefinition(item, stack -> fullModelLocation);
 	}
 	
 	public class MetadataPropertyGetter implements IItemPropertyGetter

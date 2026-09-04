@@ -10,10 +10,6 @@ import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 
-/**
- * Basic fluid implementation with Fluidlogged API compatibility.
- * Automatically registers the fluid and its corresponding bucket.
- */
 @Optional.Interface(iface = "git.jbredwards.fluidlogged_api.api.fluid.ICompatibleFluid", modid = "fluidlogged_api")
 public class FluidBasic extends Fluid implements ICompatibleFluid
 {

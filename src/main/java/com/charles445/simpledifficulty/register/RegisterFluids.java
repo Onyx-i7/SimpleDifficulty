@@ -1,7 +1,6 @@
 package com.charles445.simpledifficulty.register;
 
 import com.charles445.simpledifficulty.SimpleDifficulty;
-import com.charles445.simpledifficulty.block.BlockFluidBasic;
 import com.charles445.simpledifficulty.block.BlockFluidBasicMixable;
 import com.charles445.simpledifficulty.block.BlockFluidSaltWater;
 import com.charles445.simpledifficulty.fluid.FluidBasic;

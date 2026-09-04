@@ -3,7 +3,7 @@ package com.charles445.simpledifficulty.block;
 import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.tileentity.TileEntitySpit;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider; // Changed to a new interface to avoid BlockContainer bugs
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;

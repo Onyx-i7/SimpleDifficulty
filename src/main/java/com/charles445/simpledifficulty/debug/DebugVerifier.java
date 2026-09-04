@@ -77,12 +77,12 @@ public class DebugVerifier {
         String strB = b.toString();
         
         if (!a.equals(b)) {
-            SimpleDifficulty.logger.debug("Test Failure: " + strA + ".equals(" + strB + ")");
+            SimpleDifficulty.logger.debug("Test Failure: {}.equals({})", strA, strB);
             printFailure(" .equals ", a, b);
         }
         
         if (a != b) {
-            SimpleDifficulty.logger.debug("Test Failure: " + strA + " == " + strB);
+            SimpleDifficulty.logger.debug("Test Failure: {} == {}", strA, strB);
             printFailure(" == ", a, b);
         }
     }
@@ -90,6 +90,6 @@ public class DebugVerifier {
     private void printFailure(String s, Object a, Object b) {
         String strA = (a == null) ? "null" : a.toString();
         String strB = (b == null) ? "null" : b.toString();
-        SimpleDifficulty.logger.error("Pointer verification failure: " + strA + s + strB);
+        SimpleDifficulty.logger.error("Pointer verification failure: {}{}{}", strA, s, strB);
     }
 }

@@ -23,7 +23,7 @@ public class ItemDragonCanteen extends ItemCanteen {
         
         Integer oCapacity = extraItem.getInteger(EI_CAPACITY);
         if (oCapacity != null) {
-            this.capacity = oCapacity.intValue();
+            this.capacity = oCapacity;
         }
         
         addPropertyOverride(new ResourceLocation("contain"), (stack, worldIn, entityIn) -> {

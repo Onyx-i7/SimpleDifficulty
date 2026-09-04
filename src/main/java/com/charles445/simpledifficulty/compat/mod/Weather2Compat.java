@@ -68,7 +68,7 @@ public class Weather2Compat {
                     return -2;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return 0;
     }

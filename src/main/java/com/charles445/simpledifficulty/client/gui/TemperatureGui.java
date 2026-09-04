@@ -76,7 +76,7 @@ public class TemperatureGui {
     public void onPreRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.getType() == ElementType.ALL && QuickConfig.isTemperatureEnabled() && mc.playerController != null && mc.playerController.gameIsSurvivalOrAdventure()) {
             // Set the seed to avoid shaking during pausing
-            rand.setSeed((long) (updateCounter * 445));
+            rand.setSeed((long) (updateCounter * 445L));
             
             boolean classic = ModConfig.client.classicHUDTemperature;
             
@@ -317,9 +317,8 @@ public class TemperatureGui {
                         }
                         
                         if (ModConfig.client.thermometer.hudThermometer && ModConfig.client.thermometer.enableThermometer) {
-                            worldThermometerTemperature = TemperatureUtil.clampTemperature((int) WorldUtil.calculateClientWorldEntityTemperature(world, player));
+                            worldThermometerTemperature = TemperatureUtil.clampTemperature(WorldUtil.calculateClientWorldEntityTemperature(world, player));
                             
-                            // Fix: Replaced nonexistent hasItem with vanilla inventory scan via itemstack
                             hasThermometer = player.inventory.hasItemStack(new ItemStack(SDItems.thermometer));
                         }
                     }

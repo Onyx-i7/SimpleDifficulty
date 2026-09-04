@@ -11,7 +11,6 @@ import com.charles445.simpledifficulty.api.thirst.IThirstCapability;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
 import com.charles445.simpledifficulty.api.thirst.ThirstUtil;
 import com.charles445.simpledifficulty.compat.CompatRightClick;
-import com.charles445.simpledifficulty.compat.ModNames;
 import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.network.MessageDrinkWater;
 import com.charles445.simpledifficulty.network.PacketHandler;
@@ -41,7 +40,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -51,7 +49,7 @@ public class ThirstHandler {
     // Cached registry name strings to avoid repeated allocations
     private static final String MC_DOMAIN = "minecraft";
     
-    private final boolean harvestcraftLoaded = Loader.isModLoaded(ModNames.HARVESTCRAFT);
+    // private final boolean harvestcraftLoaded = Loader.isModLoaded(ModNames.HARVESTCRAFT);
     
     // Both Sides
     @SubscribeEvent
@@ -145,20 +143,20 @@ public class ThirstHandler {
             // So now it takes 2k every single time, way better
             // I'll be using this system for any further compatibility things like this, probably
             /*
-            if (harvestcraftLoaded && regName.getNamespace().equals(ModNames.HARVESTCRAFT) && 
-                ModConfig.server.compatibility.toggles.harvestCraft && 
+            if (harvestcraftLoaded && regName.getNamespace().equals(ModNames.HARVESTCRAFT) &&
+                ModConfig.server.compatibility.toggles.harvestCraft &&
                 !SDCompatibility.disabledCompletely.contains(ModNames.HARVESTCRAFT)) {
                 if (OreDictUtil.isOre("listAlljuice", stack)) {
-                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.juiceThirst, 
-                        (float) ModConfig.server.compatibility.harvestcraft.juiceSaturation, 
+                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.juiceThirst,
+                        (float) ModConfig.server.compatibility.harvestcraft.juiceSaturation,
                         (float) ModConfig.server.compatibility.harvestcraft.juiceThirstyChance);
                 } else if (OreDictUtil.isOre("listAllsmoothie", stack)) {
-                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.smoothieThirst, 
-                        (float) ModConfig.server.compatibility.harvestcraft.smoothieSaturation, 
+                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.smoothieThirst,
+                        (float) ModConfig.server.compatibility.harvestcraft.smoothieSaturation,
                         (float) ModConfig.server.compatibility.harvestcraft.smoothieThirstyChance);
                 } else if (OreDictUtil.isOre("listAllsoda", stack)) {
-                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.sodaThirst, 
-                        (float) ModConfig.server.compatibility.harvestcraft.sodaSaturation, 
+                    ThirstUtil.takeDrink(player, ModConfig.server.compatibility.harvestcraft.sodaThirst,
+                        (float) ModConfig.server.compatibility.harvestcraft.sodaSaturation,
                         (float) ModConfig.server.compatibility.harvestcraft.sodaThirstyChance);
                 }
             }
@@ -293,7 +291,7 @@ public class ThirstHandler {
         // Server Side
         EntityPlayer player = event.getEntityPlayer();
         
-        if (!shouldSkipThirst(player)) {
+        if (shouldSkipThirst(player)) {
             Entity monster = event.getTarget();
             if (monster.canBeAttackedWithItem() && !monster.hitByEntity(player)) {
                 float exhaustion = (float) (ModConfig.server.thirst.thirstAttacking * QuickConfig.getThirstExhaustionMultiplier());
@@ -311,7 +309,7 @@ public class ThirstHandler {
         
         EntityPlayer player = event.getPlayer();
         
-        if (!shouldSkipThirst(player)) {
+        if (shouldSkipThirst(player)) {
             if (event.getState().getBlock().canHarvestBlock(world, event.getPos(), player)) {
                 float exhaustion = (float) (ModConfig.server.thirst.thirstBreakBlock * QuickConfig.getThirstExhaustionMultiplier());
                 addExhaustion(player, exhaustion);
@@ -329,7 +327,7 @@ public class ThirstHandler {
         if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
             
-            if (!shouldSkipThirst(player)) {
+            if (shouldSkipThirst(player)) {
                 // Fix: Apply global multiplier to vanilla hunger damage conversion for consistency
                 float exhaustion = (float) (event.getSource().getHungerDamage() * QuickConfig.getThirstExhaustionMultiplier());
                 addExhaustion(player, exhaustion);
@@ -347,7 +345,7 @@ public class ThirstHandler {
         if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
             
-            if (!shouldSkipThirst(player)) {
+            if (shouldSkipThirst(player)) {
                 double multiplier = QuickConfig.getThirstExhaustionMultiplier();
                 float exhaustion = player.isSprinting() 
                     ? (float) (ModConfig.server.thirst.thirstSprintJump * multiplier)
@@ -359,7 +357,7 @@ public class ThirstHandler {
     }
     
     private boolean shouldSkipThirst(EntityPlayer player) {
-        return player.isCreative() || player.isSpectator();
+        return !player.isCreative() && !player.isSpectator();
     }
     
     private void addExhaustion(EntityPlayer player, float exhaustion) {

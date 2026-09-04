@@ -171,7 +171,7 @@ public class ItemCanteen extends ItemDrinkBase implements IItemCanteen {
     
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
-        double max = (double) this.getMaxDoses(stack);
+        double max = this.getMaxDoses(stack);
         return max == 0.0d ? 1.0d : (max - (double) getDoses(stack)) / max;
     }
     

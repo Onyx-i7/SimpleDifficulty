@@ -20,11 +20,6 @@ public class EnchantmentArmorTemperature extends Enchantment {
     
     @Override
     protected boolean canApplyTogether(Enchantment ench) {
-        if (ench == null) {
-            return false;
-        }
-        
-        // Ensure no two temperature-related armor enchantments can stack together, while respecting super regulations
         return !(ench instanceof EnchantmentArmorTemperature) && super.canApplyTogether(ench);
     }
 }

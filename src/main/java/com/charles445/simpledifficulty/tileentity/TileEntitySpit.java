@@ -4,7 +4,6 @@ import com.charles445.simpledifficulty.api.SDBlocks;
 import com.charles445.simpledifficulty.block.BlockCampfire;
 import com.charles445.simpledifficulty.config.ModConfig;
 import com.charles445.simpledifficulty.util.SoundUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -109,9 +108,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
             if (isCooked(items.getStackInSlot(i))) {
                 withdrewToHand = withdrawFromSlot(player, hand, i);
                 dumpExperience(world, pos);
-                if (!playedSound) {
-                    playedSound = playWorldSound(world, pos, false);
-                }
+                playedSound = playWorldSound(world, pos, false);
                 found = true;
                 break;
             }
@@ -138,7 +135,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
                         progress = 0;
                         
                         if (!playedSound) {
-                            playedSound = playWorldSound(world, pos, true);
+                            playWorldSound(world, pos, true);
                         }
                         found = true;
                         break;
@@ -152,9 +149,7 @@ public class TileEntitySpit extends TileEntity implements ITickable {
             for (int i = 0; i < items.getSlots(); i++) {
                 if (!items.getStackInSlot(i).isEmpty()) {
                     withdrawFromSlot(player, hand, i);
-                    if (!playedSound) {
-                        playedSound = playWorldSound(world, pos, false);
-                    }
+                    playWorldSound(world, pos, false);
                     break;
                 }
             }

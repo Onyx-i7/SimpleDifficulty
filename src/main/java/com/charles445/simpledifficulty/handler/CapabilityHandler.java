@@ -37,9 +37,7 @@ public class CapabilityHandler
 			event.addCapability(new ResourceLocation(SimpleDifficulty.MODID, SDCapabilities.TEMPERATURE_IDENTIFIER), new TemperatureProvider(SDCapabilities.TEMPERATURE));
 			
 			//Attach thirst
-			//event.addCapability(new ResourceLocation(SimpleDifficulty.MODID, SimpleDifficultyCapabilities.THIRST_IDENTIFIER), new GenericProvider(SimpleDifficultyCapabilities.THIRST));
-			//DebugUtil.messageAll("Capability attached to player");
-			event.addCapability(new ResourceLocation(SimpleDifficulty.MODID, SDCapabilities.THIRST_IDENTIFIER), new ThirstProvider(SDCapabilities.THIRST));
+            event.addCapability(new ResourceLocation(SimpleDifficulty.MODID, SDCapabilities.THIRST_IDENTIFIER), new ThirstProvider(SDCapabilities.THIRST));
 		}
 	}
 	
@@ -53,7 +51,7 @@ public class CapabilityHandler
 		{
 			
 			//Clientside sprinting
-			//This is better but you can still hold control
+			//This is better, but you can still hold control
 			/*
 				if(QuickConfig.isThirstEnabled() && player.isSprinting() && ModCapabilities.getThirstData(player).getThirstLevel()<=6)
 				player.setSprinting(false);
@@ -100,7 +98,7 @@ public class CapabilityHandler
 	
 	private void sendTemperatureUpdate(EntityPlayerMP player)
 	{
-		Capability capability = SDCapabilities.TEMPERATURE;
+		Capability<ITemperatureCapability> capability = SDCapabilities.TEMPERATURE;
 		
 		//Make new message with new data
 		MessageUpdateTemperature message = new MessageUpdateTemperature(capability.getStorage().writeNBT(capability, SDCapabilities.getTemperatureData(player), null));
@@ -112,7 +110,7 @@ public class CapabilityHandler
 	private void sendThirstUpdate(EntityPlayerMP player)
 	{
 		//DebugUtil.messageAll("Player thirst has updated via sendThirstUpdate");
-		Capability capability = SDCapabilities.THIRST;
+		Capability<IThirstCapability> capability = SDCapabilities.THIRST;
 		
 		//Make new message with new data
 		MessageUpdateThirst message = new MessageUpdateThirst(capability.getStorage().writeNBT(capability, SDCapabilities.getThirstData(player), null));
