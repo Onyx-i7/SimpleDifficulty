@@ -1,4 +1,4 @@
-<h1 align="center">SimpleDifficulty for Underdog</h1>
+<h1 align="center">SimpleDifficulty Reforged: Optimization Edition</h1>
 
 <div align="center">
 
@@ -7,7 +7,7 @@
 [![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
 [![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files)
 
-**An improved [SimpleDifficulty](https://github.com/juraj-hrivnak/SimpleDifficulty) fork**
+**An improved [SimpleDifficulty For Underdog](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog) fork**
 
 [Installation](#installation) • [Features](#features) • [API](#api-usage) • [Compatibility](#mod-integrations)
 
@@ -251,5 +251,5 @@ This project is distributed under the MIT License
 - Onyx_i7: Optimizer & Contributor  
 
 ## Support
-- Bug Reports: [GitHub Issues](https://github.com/juraj-hrivnak/SimpleDifficulty/issues)
-- Feature Requests: [GitHub Issues](https://github.com/juraj-hrivnak/SimpleDifficulty/issues)
+- Bug Reports: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
+- Feature Requests: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
