@@ -246,9 +246,9 @@ To set up a development environment:
 ### **License**
 This project is distributed under the MIT License
 ### **Authors & Contributors**
-- Charles445: Created the original version
-- juraj-hrivnak: Created the Underdog fork
-- Onyx_i7: Optimizer & Contributor  
+- **Charles445**: Created the original version
+- **juraj-hrivnak**: Created the Underdog fork
+- **Onyx-i7**: Maintained, updated to RetroFuturaGradle, eliminated memory leaks, and lead author of the Optimization Edition
 
 ## Support
 - Bug Reports: [GitHub Issues](https://github.com/Onyx-i7/SimpleDifficulty/issues)
