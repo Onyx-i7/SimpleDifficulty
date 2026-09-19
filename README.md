@@ -1,4 +1,4 @@
-<h1 align="center">SimpleDifficulty Reforged: Optimization Edition</h1>
+<h1 align="center">SimpleDifficulty Reforged</h1>
 
 <div align="center">
 
