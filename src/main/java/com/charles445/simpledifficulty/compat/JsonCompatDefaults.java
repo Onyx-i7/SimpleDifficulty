@@ -28,6 +28,7 @@ public class JsonCompatDefaults
 		populateRustic();
 		populateSimpleCampfire();
 		populateTinkersConstruct();
+		populateHBM();
 	}
 	
 	public boolean populate(String modid)
@@ -43,8 +44,7 @@ public class JsonCompatDefaults
 			case RUSTIC: return populateRustic();
 			case SIMPLECAMPFIRE: return populateSimpleCampfire();
 			case TINKERSCONSTRUCT: return populateTinkersConstruct();
-		
-		
+			case HBMNTM: return populateHBM();
 			default: return false;
 		}
 	}
@@ -341,6 +341,12 @@ public class JsonCompatDefaults
 		
 		return true;
 	}
+	
+	private boolean populateHBM() {
+        if (!canUseModJsonDefaults(HBMNTM)) return false;
+
+        return true;
+    }
 	
 	//
 	// API
