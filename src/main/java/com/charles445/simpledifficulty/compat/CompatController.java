@@ -5,7 +5,11 @@ import com.charles445.simpledifficulty.api.temperature.ITemperatureDynamicModifi
 import com.charles445.simpledifficulty.api.temperature.ITemperatureModifier;
 import com.charles445.simpledifficulty.api.temperature.TemperatureRegistry;
 import com.charles445.simpledifficulty.compat.mod.SereneSeasonsReflectionBridge;
+import com.charles445.simpledifficulty.compat.mod.HBMNTMHandler;
+import com.charles445.simpledifficulty.compat.mod.HBMTemperatureModifier;
 import com.charles445.simpledifficulty.util.CompatUtil;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +27,13 @@ public class CompatController {
                 SimpleDifficulty.logger.error("Failed to initialize Weather2 bridge!", e);
             }
         }
+
+        if (Loader.isModLoaded(ModNames.HBMNTM)) {
+			HBMNTMHandler.init();
+			MinecraftForge.EVENT_BUS.register(new HBMNTMHandler());
+			TemperatureRegistry.registerModifier(new HBMTemperatureModifier());
+			SimpleDifficulty.logger.info("HBM NTM CE compatibility loaded!");
+		}
 
         // Create standard compatibility objects
         Object auwDynamicModifier = newCompatObject(ModNames.AUW, compatMod + "AUWDynamicModifier");
