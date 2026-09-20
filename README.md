@@ -2,11 +2,6 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green.svg?style=flat-square)](https://minecraft.net)
-[![Forge](https://img.shields.io/badge/Forge-14.23.5.2847+-red.svg?style=flat-square)](https://files.minecraftforge.net/)
-[![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg?style=flat-square)](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog/files)
-
 **An improved [SimpleDifficulty For Underdog](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog) fork**
 
 [Installation](#installation) • [Features](#features) • [API](#api-usage) • [Compatibility](#mod-integrations)
@@ -122,6 +117,7 @@ The following mods have dedicated integration code and full compatibility:
 - Tinkers' Construct
 - The Betweenlands
 - Weather2 Remastered
+- HBM's Nuclear Tech Mod: Community Edition
 
 </details>
 
@@ -251,7 +247,7 @@ To set up a development environment:
 This project is distributed under the MIT License
 ### **Authors & Contributors**
 - **Charles445**: Created the original version
-- **juraj-hrivnak**: Created the Underdog fork
+- **teksturepako**: Created the Underdog fork
 - **Onyx-i7**: Maintained, updated to RetroFuturaGradle, eliminated memory leaks, and lead author of the Optimization Edition
 
 ## Support
