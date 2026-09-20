@@ -19,4 +19,5 @@ public class ModNames
 	public static final String SIMPLECAMPFIRE = "campfire";
 	public static final String TINKERSCONSTRUCT = "tconstruct";
 	public static final String WEATHER2REMASTER = "weather2remaster";
+	public static final String HBMNTM = "hbm";
 } 
