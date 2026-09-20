@@ -6,10 +6,10 @@
     "version": "${version}",
     "mcversion": "1.12.2",
     "url": "https://www.curseforge.com/minecraft/mc-mods/simpledifficulty-for-underdog",
-    "updateUrl": "https://raw.githubusercontent.com/juraj-hrivnak/SimpleDifficulty/refs/heads/master/modupdatechecker.json",
+    "updateUrl": "https://raw.githubusercontent.com/Onyx-i7/SimpleDifficulty/refs/heads/SDOE/modupdatechecker.json",
     "authorList": [
       "Charles445",
-      "juraj-hrivnak",
+      "teksturepako",
       "Onyx-i7"
     ],
     "credits": "Original concept and development by Charles445. Underdog fork and maintenance by juraj-hrivnak. Performance optimization, and bug fixes by Onyx-i7.",
@@ -17,7 +17,7 @@
     "screenshots": [],
     "dependencies": [],
     "modProperties": {
-      "issueTrackerUrl": "https://github.com/juraj-hrivnak/SimpleDifficulty/issues",
+      "issueTrackerUrl": "https://github.com/Onyx-i7/SimpleDifficulty/issues",
       "license": "MIT"
     }
   }
