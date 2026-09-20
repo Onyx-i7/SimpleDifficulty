@@ -26,6 +26,10 @@ public class ConfigServerCompatibility
 	@Config.Name("Serene Seasons")
 	public final ConfigSereneSeasons sereneseasons = new ConfigSereneSeasons();
 	
+	@Config.Comment("HBM's Nuclear Tech Mod: Community Edition compatibility")
+    @Config.Name("HBM Nuclear Tech")
+    public final ConfigHBM hbm = new ConfigHBM();
+	
 	public class ConfigToggles
 	{
 		@Config.Comment("Enable Armor Underwear - Built-In Compatibility")
@@ -192,4 +196,36 @@ public class ConfigServerCompatibility
 		@Config.RangeDouble(min=0.0, max=1.0)
 		public double swampWaterDirtyChance = 0.85;
 	}
+    
+    public static class ConfigHBM {
+        @Config.Comment("Enable all HBM NTM compatibility features")
+        @Config.Name("Enabled")
+        public boolean enabled = true;
+
+        @Config.Comment("Radiation causes thirst exhaustion (higher rads = faster dehydration)")
+        @Config.Name("RadiationThirst")
+        public boolean radiationThirst = true;
+
+        @Config.Comment("Multiplier for radiation-induced thirst exhaustion")
+        @Config.Name("RadiationThirstMultiplier")
+        @Config.RangeDouble(min = 0.0)
+        public double radiationThirstMultiplier = 1.0d;
+
+        @Config.Comment("Hazmat suits increase body temperature (overheating risk)")
+        @Config.Name("HazmatHeat")
+        public boolean hazmatHeat = true;
+
+        @Config.Comment("Temperature bonus per hazmat armor piece worn")
+        @Config.Name("HazmatHeatPerPiece")
+        @Config.RangeDouble(min = 0.0)
+        public double hazmatHeatPerPiece = 2.5d;
+
+        @Config.Comment("Industrial machines (reactors, boilers, furnaces) emit heat")
+        @Config.Name("MachineHeat")
+        public boolean machineHeat = true;
+
+        @Config.Comment("Cryogenic blocks and toxic fluids emit cold")
+        @Config.Name("CryoCold")
+        public boolean cryoCold = true;
+    }
 }
