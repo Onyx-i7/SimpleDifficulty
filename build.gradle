@@ -8,7 +8,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.gtnewhorizons:retrofuturagradle:2.0.2'
+        classpath 'com.gtnewhorizons:retrofuturagradle:2.0.4'
     }
 }
 
@@ -17,7 +17,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'com.gtnewhorizons.retrofuturagradle'
 
-version = "0.8.0"
+version = "0.8.1"
 group = "com.charles445.simpledifficulty"
 
 // Gradle 9 syntax
@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    def mixin = 'zone.rong:mixinbooter:11.15'
+    def mixin = 'zone.rong:mixinbooter:11.17'
 
     modUtils.enableMixins(mixin)
     
@@ -85,6 +85,9 @@ dependencies {
 
     // Weather2 Remastered
     compileOnly rfg.deobf("curse.maven:weather-2-remastered-695602:7670711")
+    
+    //  HBM's Nuclear Tech Mod Community Edition 
+    compileOnly rfg.deobf('curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:8873889')
 }
 
 tasks.named('processResources', ProcessResources).configure {
