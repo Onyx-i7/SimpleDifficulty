@@ -23,6 +23,8 @@ SimpleDifficulty brings a **temperature and thirst system** to Minecraft 1.12.2,
 
 > This mod is the result of four months of continuous and dedicated development (from May to September). Since the optimizations and code refactoring are so extensive (more than 9,000 lines modified), I’ve decided to release this updated version separately so you can immediately benefit from the memory leak fixes and performance improvements. If you’d like to see a complete technical breakdown of all the changes, feel free to check out the [original pull request](https://github.com/juraj-hrivnak/SimpleDifficulty/pull/16)
 
+For a simpler, easier-to-understand list of changes, check out this [file in the repository](https://github.com/Onyx-i7/SimpleDifficulty/blob/SDOE/Changelog.md)
+
 ---
 
 ## Features
